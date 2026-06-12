@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Siddhartha Bank — AI Customer Assistant</title>
-  <meta name="description" content="Siddhartha Bank को AI-powered customer service chatbot। Nepali र English दुवै भाषामा 24/7 banking assistance।" />
+  <title>Siddhartha Bank — AI Customer & Compliance Assistant</title>
+  <meta name="description" content="Siddhartha Bank को AI-powered assistant। Customer Service र Regulatory Compliance (Graph RAG) को लागि।" />
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     /* =============================================
@@ -21,18 +21,20 @@
       --primary-gradient: linear-gradient(135deg, #8B1A1A, #B22222);
       --gold: #D4AF37;
       --gold-light: #F0D060;
-      --bg-dark: #0D0D14;
-      --bg-sidebar: #101018;
-      --bg-chat: #0A0A10;
+      --gold-gradient: linear-gradient(135deg, #D4AF37, #F0D060);
+      --bg-dark: #07070C;
+      --bg-sidebar: #0C0C14;
+      --bg-chat: #05050A;
       --bg-message-user: linear-gradient(135deg, #8B1A1A, #B22222);
-      --bg-message-bot: #1A1A28;
-      --bg-input: #16161F;
+      --bg-message-bot: #121220;
+      --bg-input: #101018;
       --text-primary: #F0F0F5;
-      --text-secondary: #8080A0;
-      --text-muted: #505070;
-      --border: rgba(255,255,255,0.07);
-      --border-hover: rgba(255,255,255,0.15);
-      --shadow-red: 0 4px 30px rgba(139,26,26,0.35);
+      --text-secondary: #8E8EA8;
+      --text-muted: #505068;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --shadow-red: 0 4px 25px rgba(139,26,26,0.3);
+      --shadow-gold: 0 0 20px rgba(212,175,55,0.3);
     }
 
     /* =============================================
@@ -51,13 +53,18 @@
     }
 
     /* =============================================
-       App Layout — Sidebar + Chat Area
+       App Layout — Sidebar + Chat Area + Graph Panel
        ============================================= */
     .app-container {
       display: grid;
-      /* Sidebar 280px, chat takes rest */
+      /* Sidebar 280px, chat takes rest, compliance graph is added dynamically */
       grid-template-columns: 280px 1fr;
       height: 100vh;
+      transition: grid-template-columns 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .app-container.compliance-active {
+      grid-template-columns: 280px 1fr 420px;
     }
 
     /* =============================================
@@ -69,11 +76,12 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      z-index: 20;
     }
 
     /* Bank Logo header in sidebar */
     .sidebar-header {
-      padding: 24px 20px;
+      padding: 20px;
       border-bottom: 1px solid var(--border);
     }
 
@@ -84,17 +92,16 @@
       margin-bottom: 8px;
     }
 
-    /* Bank logo icon — Siddhartha Bank S */
     .bank-icon {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       background: var(--primary-gradient);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Outfit', sans-serif;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: white;
       box-shadow: var(--shadow-red);
@@ -115,6 +122,46 @@
       font-weight: 500;
       font-family: 'Inter', sans-serif;
       letter-spacing: 0.5px;
+    }
+
+    /* Mode Selection segment switcher */
+    .mode-selector {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin: 12px 20px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mode-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .mode-btn.active {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: var(--shadow-red);
+      border: 1px solid rgba(212,175,55,0.2);
     }
 
     .online-badge {
@@ -139,19 +186,19 @@
       50% { box-shadow: 0 0 0 5px rgba(76,175,80,0); }
     }
 
-    /* API Key section in sidebar */
+    /* API Key section */
     .api-section {
-      padding: 16px 20px;
+      padding: 12px 20px;
       border-bottom: 1px solid var(--border);
     }
 
     .api-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       color: var(--text-secondary);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .api-input-wrap {
@@ -162,19 +209,15 @@
 
     .api-input {
       width: 100%;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 9px 36px 9px 12px;
-      font-size: 12px;
-      font-family: 'Inter', monospace;
+      padding: 8px 30px 8px 10px;
+      font-size: 11px;
+      font-family: monospace;
       color: var(--text-secondary);
       outline: none;
       transition: all 0.3s ease;
-    }
-
-    .api-input::placeholder {
-      color: var(--text-muted);
     }
 
     .api-input:focus {
@@ -183,27 +226,20 @@
       background: rgba(139,26,26,0.08);
     }
 
-    /* Toggle show/hide API key */
     .api-toggle {
       position: absolute;
-      right: 10px;
+      right: 8px;
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--text-muted);
-      padding: 2px;
-      transition: color 0.2s;
-    }
-
-    .api-toggle:hover {
-      color: var(--text-secondary);
     }
 
     .api-hint {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     .api-hint a {
@@ -211,7 +247,7 @@
       text-decoration: none;
     }
 
-    /* Quick Topics in sidebar */
+    /* Quick Topics List */
     .topics-section {
       padding: 16px 20px;
       flex: 1;
@@ -219,86 +255,82 @@
     }
 
     .topics-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 1px;
       color: var(--text-secondary);
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .topic-btn {
       width: 100%;
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 10px 12px;
       text-align: left;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      color: var(--text-secondary);
       font-size: 13px;
+      color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.25s ease;
       display: flex;
       align-items: center;
       gap: 10px;
+      transition: all 0.2s ease;
+      margin-bottom: 6px;
     }
 
     .topic-btn:hover {
-      background: rgba(139,26,26,0.12);
-      border-color: rgba(139,26,26,0.3);
+      background: rgba(255,255,255,0.03);
+      border-color: var(--border);
       color: var(--text-primary);
-      transform: translateX(3px);
+      transform: translateX(2px);
     }
 
     .topic-icon {
-      font-size: 16px;
+      font-size: 15px;
       flex-shrink: 0;
     }
 
-    /* New Chat button */
     .new-chat-btn {
       margin: 16px 20px;
-      padding: 12px;
-      background: var(--primary-gradient);
-      border: none;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      color: white;
-      font-size: 14px;
+      padding: 11px;
+      font-size: 13px;
       font-weight: 600;
+      color: var(--text-primary);
       cursor: pointer;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: var(--shadow-red);
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
     }
 
     .new-chat-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(139,26,26,0.5);
+      background: var(--primary-gradient);
+      border-color: var(--gold-light);
+      box-shadow: var(--shadow-red);
     }
 
-    /* Back to home link */
     .back-link {
       padding: 16px 20px;
       border-top: 1px solid var(--border);
+      font-size: 11px;
     }
 
     .back-link a {
+      color: var(--text-secondary);
+      text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: var(--text-muted);
-      font-size: 12px;
-      text-decoration: none;
-      transition: color 0.2s ease;
+      gap: 6px;
     }
 
     .back-link a:hover {
-      color: var(--text-secondary);
+      color: var(--gold);
     }
 
     /* =============================================
@@ -310,27 +342,27 @@
       background: var(--bg-chat);
       position: relative;
       overflow: hidden;
+      height: 100vh;
     }
 
-    /* Subtle background grid pattern */
     .chat-area::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(rgba(139,26,26,0.06) 1px, transparent 1px);
-      background-size: 30px 30px;
+      background-image: radial-gradient(rgba(139,26,26,0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
       pointer-events: none;
     }
 
     /* Chat header */
     .chat-header {
-      padding: 18px 28px;
+      padding: 16px 24px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(13,13,20,0.8);
-      backdrop-filter: blur(10px);
+      background: rgba(12,12,20,0.85);
+      backdrop-filter: blur(15px);
       position: relative;
       z-index: 10;
     }
@@ -338,23 +370,23 @@
     .chat-header-info {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .bot-avatar {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       background: var(--primary-gradient);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 18px;
       box-shadow: var(--shadow-red);
     }
 
     .bot-info h2 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
     }
 
@@ -363,23 +395,29 @@
       color: var(--text-secondary);
     }
 
-    .header-model-badge {
-      background: rgba(212,175,55,0.1);
-      border: 1px solid rgba(212,175,55,0.25);
-      border-radius: 20px;
-      padding: 5px 12px;
-      font-size: 11px;
-      color: var(--gold-light);
-      font-weight: 500;
+    .header-badge-wrap {
+      display: flex;
+      gap: 8px;
     }
 
-    /* =============================================
-       Messages Container — Scrollable chat area
-       ============================================= */
+    .header-model-badge {
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 10px;
+      color: var(--gold-light);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Messages Container */
     .messages-container {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 28px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -387,21 +425,15 @@
       z-index: 1;
     }
 
-    /* Custom scrollbar — thin and subtle */
     .messages-container::-webkit-scrollbar {
       width: 4px;
     }
-    .messages-container::-webkit-scrollbar-track {
-      background: transparent;
-    }
     .messages-container::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
       border-radius: 10px;
     }
 
-    /* =============================================
-       Welcome Screen — shown when no messages
-       ============================================= */
+    /* Welcome Screen */
     .welcome-screen {
       display: flex;
       flex-direction: column;
@@ -409,121 +441,118 @@
       justify-content: center;
       text-align: center;
       flex: 1;
-      padding: 40px;
-      gap: 20px;
+      padding: 30px;
+      gap: 16px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .welcome-icon {
-      width: 80px;
-      height: 80px;
+      width: 72px;
+      height: 72px;
       background: var(--primary-gradient);
-      border-radius: 24px;
+      border-radius: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
-      box-shadow: var(--shadow-red), 0 0 60px rgba(139,26,26,0.2);
+      font-size: 32px;
+      box-shadow: var(--shadow-red);
     }
 
     .welcome-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
     }
 
     .welcome-subtitle {
-      font-size: 15px;
+      font-size: 13px;
       color: var(--text-secondary);
-      max-width: 400px;
-      line-height: 1.7;
+      max-width: 440px;
+      line-height: 1.6;
     }
 
-    /* Quick suggestion chips below welcome */
     .suggestion-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       justify-content: center;
-      margin-top: 10px;
+      margin-top: 8px;
+      max-width: 500px;
     }
 
     .suggestion-chip {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 9px 16px;
-      font-size: 13px;
+      padding: 8px 14px;
+      font-size: 12px;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.25s ease;
-      white-space: nowrap;
+      transition: all 0.2s ease;
     }
 
     .suggestion-chip:hover {
-      background: rgba(139,26,26,0.15);
-      border-color: rgba(139,26,26,0.4);
+      background: rgba(139,26,26,0.12);
+      border-color: rgba(139,26,26,0.3);
       color: var(--text-primary);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
     }
 
-    /* =============================================
-       Individual Messages
-       ============================================= */
+    /* Individual Messages */
     .message {
       display: flex;
       gap: 12px;
-      max-width: 75%;
-      animation: messageSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 80%;
+      animation: messageSlideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     @keyframes messageSlideIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* User messages — right aligned */
     .message.user {
       align-self: flex-end;
       flex-direction: row-reverse;
     }
 
-    /* Bot messages — left aligned */
     .message.bot {
       align-self: flex-start;
     }
 
-    /* Avatar for bot */
     .msg-avatar {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 10px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     .msg-avatar.bot-msg-avatar {
       background: var(--primary-gradient);
-      box-shadow: 0 2px 12px rgba(139,26,26,0.4);
+      box-shadow: 0 2px 8px rgba(139,26,26,0.3);
     }
 
     .msg-avatar.user-msg-avatar {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
       border: 1px solid var(--border);
     }
 
-    /* Message bubble */
     .msg-bubble {
       border-radius: 16px;
-      padding: 13px 18px;
-      font-size: 14px;
-      line-height: 1.65;
-      max-width: 100%;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      line-height: 1.6;
     }
 
-    /* Bot bubble style */
     .message.bot .msg-bubble {
       background: var(--bg-message-bot);
       border: 1px solid var(--border);
@@ -531,7 +560,6 @@
       color: var(--text-primary);
     }
 
-    /* User bubble style */
     .message.user .msg-bubble {
       background: var(--bg-message-user);
       border-top-right-radius: 4px;
@@ -539,26 +567,62 @@
       box-shadow: var(--shadow-red);
     }
 
-    /* Message time */
     .msg-time {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
-      margin-top: 5px;
-      padding: 0 4px;
+      margin-top: 4px;
+      padding: 0 2px;
     }
 
     .message.user .msg-time {
       text-align: right;
     }
 
-    /* =============================================
-       Typing Indicator — 3 bouncing dots
-       ============================================= */
+    /* Citations / Sources list in compliance response */
+    .response-sources {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 11px;
+    }
+
+    .sources-title {
+      font-weight: 600;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sources-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-left: 0;
+    }
+
+    .sources-list li a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .sources-list li a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    /* Typing Indicator */
     .typing-indicator {
       display: flex;
       align-items: center;
-      gap: 5px;
-      padding: 14px 18px;
+      gap: 4px;
+      padding: 12px 16px;
       background: var(--bg-message-bot);
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -567,8 +631,8 @@
     }
 
     .typing-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       background: var(--text-muted);
       border-radius: 50%;
       animation: typingBounce 1.2s ease-in-out infinite;
@@ -578,17 +642,15 @@
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-      30% { transform: translateY(-8px); opacity: 1; }
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
     }
 
-    /* =============================================
-       Input Area — Fixed at bottom
-       ============================================= */
+    /* Input Area fixed at bottom */
     .input-area {
-      padding: 20px 28px;
+      padding: 16px 24px;
       border-top: 1px solid var(--border);
-      background: rgba(13,13,20,0.9);
+      background: rgba(12,12,20,0.9);
       backdrop-filter: blur(10px);
       position: relative;
       z-index: 10;
@@ -604,16 +666,14 @@
       flex: 1;
       background: var(--bg-input);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       display: flex;
       align-items: flex-end;
-      padding: 4px 4px 4px 16px;
-      transition: border-color 0.3s ease;
+      padding: 2px 2px 2px 12px;
     }
 
     .input-wrapper:focus-within {
       border-color: var(--primary-light);
-      box-shadow: 0 0 0 3px rgba(139,26,26,0.12);
     }
 
     .message-input {
@@ -622,100 +682,276 @@
       border: none;
       outline: none;
       color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 13.5px;
       line-height: 1.5;
       resize: none;
       max-height: 120px;
-      padding: 10px 0;
-      min-height: 44px;
-    }
-
-    .message-input::placeholder {
-      color: var(--text-muted);
+      padding: 8px 0;
+      min-height: 38px;
     }
 
     .send-btn {
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
       background: var(--primary-gradient);
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      font-size: 16px;
+      color: white;
       box-shadow: var(--shadow-red);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      margin: 4px;
+      margin: 2px;
+      transition: all 0.2s;
     }
 
     .send-btn:hover:not(:disabled) {
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(139,26,26,0.5);
+      transform: scale(1.05);
     }
 
     .send-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
-      transform: none;
     }
 
-    /* Disclaimer text below input */
     .input-disclaimer {
       text-align: center;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     /* =============================================
-       Responsive — Mobile layout
+       RIGHT PANEL: GRAPH RAG DASHBOARD
        ============================================= */
-    @media (max-width: 768px) {
-      .app-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-      }
-
-      .sidebar {
-        display: none; /* Sidebar hidden on mobile — keep it simple for demo */
-      }
-
-      .chat-area {
-        grid-column: 1;
-      }
+    .graph-dashboard {
+      display: none; /* Shown in compliance mode */
+      flex-direction: column;
+      background: #090910;
+      border-left: 1px solid var(--border);
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      z-index: 15;
     }
 
-    /* =============================================
-       Formatted bot responses — markdown-like
-       ============================================= */
+    .dashboard-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(12,12,20,0.85);
+    }
+
+    .dashboard-header h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dashboard-header p {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Graph Canvas container */
+    .graph-panel {
+      flex: 1.2;
+      position: relative;
+      background: #05050A;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #graphCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    #graphCanvas:active {
+      cursor: grabbing;
+    }
+
+    /* Graph Info overlay button / legend */
+    .graph-overlay {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(12,12,20,0.8);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 9px;
+      color: var(--text-secondary);
+      pointer-events: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    /* Graph controls zoom in/out */
+    .graph-controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-btn {
+      width: 26px;
+      height: 26px;
+      background: rgba(12,12,20,0.8);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .control-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Agent Reasoning Console Panel */
+    .console-panel {
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      background: #030307;
+      font-family: 'Fira Code', monospace;
+      font-size: 11.5px;
+      line-height: 1.5;
+    }
+
+    .console-header {
+      padding: 8px 16px;
+      background: rgba(12,12,20,0.9);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .console-header h4 {
+      font-size: 10px;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .console-indicator {
+      width: 6px;
+      height: 6px;
+      background: #4CAF50;
+      border-radius: 50%;
+      animation: pulse-green 1.5s infinite;
+    }
+
+    .console-indicator.busy {
+      background: #FF9800;
+    }
+
+    .console-container {
+      flex: 1;
+      padding: 12px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      color: #00E676; /* Glowing retro terminal green */
+      text-shadow: 0 0 4px rgba(0,230,118,0.2);
+    }
+
+    .console-container::-webkit-scrollbar {
+      width: 3px;
+    }
+    .console-container::-webkit-scrollbar-thumb {
+      background: rgba(0,230,118,0.15);
+      border-radius: 10px;
+    }
+
+    .console-line {
+      word-break: break-all;
+    }
+
+    .console-line.text-muted {
+      color: var(--text-muted);
+      text-shadow: none;
+    }
+
+    .console-line.text-warn {
+      color: #FF9800;
+      text-shadow: 0 0 4px rgba(255,152,0,0.2);
+    }
+
+    .console-line.text-info {
+      color: #00B0FF;
+      text-shadow: 0 0 4px rgba(0,176,255,0.2);
+    }
+
+    /* Markdown Formatting for response */
     .msg-bubble p { margin-bottom: 8px; }
     .msg-bubble p:last-child { margin-bottom: 0; }
-    .msg-bubble ul { margin: 8px 0 8px 16px; }
-    .msg-bubble li { margin-bottom: 4px; }
+    .msg-bubble ul, .msg-bubble ol { margin: 6px 0 6px 16px; }
+    .msg-bubble li { margin-bottom: 3px; }
     .msg-bubble strong { color: var(--gold-light); font-weight: 600; }
-    .msg-bubble .bot-table {
+    .msg-bubble table {
       border-collapse: collapse;
       width: 100%;
-      margin: 10px 0;
-      font-size: 13px;
+      margin: 8px 0;
+      font-size: 12px;
     }
-    .msg-bubble .bot-table th, .msg-bubble .bot-table td {
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 7px 12px;
+    .msg-bubble th, .msg-bubble td {
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 10px;
     }
-    .msg-bubble .bot-table th {
-      background: rgba(139,26,26,0.2);
+    .msg-bubble th {
+      background: rgba(139,26,26,0.15);
       color: var(--gold-light);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .app-container.compliance-active {
+        grid-template-columns: 280px 1fr;
+      }
+      .graph-dashboard {
+        display: none !important;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-container" id="appContainer">
 
   <!-- =============================================
        LEFT SIDEBAR
@@ -737,7 +973,17 @@
       </div>
     </div>
 
-    <!-- API Key Input — Gemini API key यहाँ राख्नुस् -->
+    <!-- Dual Mode Switcher -->
+    <div class="mode-selector">
+      <button class="mode-btn active" id="customerModeBtn" onclick="toggleMode('customer')">
+        <span>🏦</span> Customer
+      </button>
+      <button class="mode-btn" id="complianceModeBtn" onclick="toggleMode('compliance')">
+        <span>⚖️</span> Compliance
+      </button>
+    </div>
+
+    <!-- API Key Input -->
     <div class="api-section">
       <div class="api-label">Gemini API Key</div>
       <div class="api-input-wrap">
@@ -757,49 +1003,12 @@
       </p>
     </div>
 
-    <!-- Quick Topics — Pre-made questions -->
+    <!-- Quick Topics List (Dynamically updated based on mode) -->
     <div class="topics-section">
-      <div class="topics-label">Topic छान्नुस्</div>
-      
-      <button class="topic-btn" onclick="askQuestion('Home Loan को interest rate कति हो?')" aria-label="Ask about home loan">
-        <span class="topic-icon">🏠</span>
-        Home Loan Rates
-      </button>
-      
-      <button class="topic-btn" onclick="askQuestion('Fixed Deposit (FD) मा कति ब्याज पाइन्छ?')" aria-label="Ask about fixed deposit">
-        <span class="topic-icon">💰</span>
-        FD Interest Rates
-      </button>
-      
-      <button class="topic-btn" onclick="askQuestion('Savings Account खोल्न के-के कागज चाहिन्छ?')" aria-label="Ask about savings account">
-        <span class="topic-icon">📋</span>
-        Account Opening
-      </button>
-      
-      <button class="topic-btn" onclick="askQuestion('Kathmandu मा Siddhartha Bank को branch कहाँ छन्?')" aria-label="Ask about branch locations">
-        <span class="topic-icon">📍</span>
-        Branch Locations
-      </button>
-      
-      <button class="topic-btn" onclick="askQuestion('Mobile Banking कसरी register गर्ने?')" aria-label="Ask about mobile banking">
-        <span class="topic-icon">📱</span>
-        Mobile Banking
-      </button>
-      
-      <button class="topic-btn" onclick="askQuestion('Education Loan को बारेमा जानकारी दिनुस्')" aria-label="Ask about education loan">
-        <span class="topic-icon">🎓</span>
-        Education Loan
-      </button>
-
-      <button class="topic-btn" onclick="askQuestion('Remittance — विदेशबाट पैसा कसरी पठाउने?')" aria-label="Ask about remittance">
-        <span class="topic-icon">💸</span>
-        Remittance Service
-      </button>
-
-      <button class="topic-btn" onclick="askQuestion('ऋणको EMI Calculator — Rs. 50 लाख, 15 साल, Home Loan')" aria-label="Calculate EMI">
-        <span class="topic-icon">🧮</span>
-        EMI Calculator
-      </button>
+      <div class="topics-label" id="topicsLabel">Topic छान्नुस्</div>
+      <div id="topicsContainer">
+        <!-- Rendered by Javascript -->
+      </div>
     </div>
 
     <!-- New Chat button -->
@@ -814,45 +1023,31 @@
   </aside>
 
   <!-- =============================================
-       RIGHT: CHAT AREA
+       CENTER: CHAT AREA
        ============================================= -->
   <main class="chat-area" aria-label="Chat conversation">
 
     <!-- Chat header -->
     <header class="chat-header">
       <div class="chat-header-info">
-        <div class="bot-avatar" aria-hidden="true">🤖</div>
+        <div class="bot-avatar" id="headerAvatar" aria-hidden="true">🤖</div>
         <div class="bot-info">
-          <h2>Siddhartha AI Assistant</h2>
-          <p>Nepali र English दुवैमा बोल्न सक्छु</p>
+          <h2 id="headerTitle">Siddha Customer Assistant</h2>
+          <p id="headerSubtitle">Nepali र English दुवैमा बोल्न सक्छु</p>
         </div>
       </div>
-      <div class="header-model-badge">Gemini 2.0 Flash ✨</div>
+      <div class="header-badge-wrap">
+        <div class="header-model-badge" id="modeBadge">Customer Mode</div>
+        <div class="header-model-badge" style="background:rgba(255,255,255,0.04); border-color:var(--border);">Gemini 2.0 Flash ✨</div>
+      </div>
     </header>
 
-    <!-- Messages — यहाँ chat messages देखिन्छ -->
+    <!-- Messages Container -->
     <div class="messages-container" id="messagesContainer" role="log" aria-live="polite" aria-label="Chat messages">
-      
-      <!-- Welcome screen — initially shown -->
-      <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-icon" aria-hidden="true">🏦</div>
-        <h2 class="welcome-title">नमस्ते! म Siddhartha Bank को AI Assistant हुँ</h2>
-        <p class="welcome-subtitle">
-          Banking सम्बन्धी जुनसुकै प्रश्न सोध्नुस् — Loan, FD, Account, Branch Locator, 
-          Remittance — सबैको जवाफ दिन्छु। Nepali र English दुवैमा!
-        </p>
-        <div class="suggestion-chips" role="list" aria-label="Quick question suggestions">
-          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Home Loan को interest rate कति हो?')">🏠 Home Loan Rate</button>
-          <button class="suggestion-chip" role="listitem" onclick="askQuestion('FD मा कति ब्याज पाइन्छ?')">💰 FD ब्याज</button>
-          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Savings Account खोल्न के चाहिन्छ?')">📋 Account खोल्ने</button>
-          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Rs. 50 Lakh को Home Loan EMI कति हुन्छ? 15 साल period')">🧮 EMI हिसाब</button>
-          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Siddhartha Bank को बारेमा बताउनुस्')">ℹ️ Bank बारे</button>
-        </div>
-      </div>
-
+      <!-- Welcome Screen (Rendered by JS) -->
     </div>
 
-    <!-- Input area — message type गर्ने ठाउँ -->
+    <!-- Input area -->
     <div class="input-area">
       <form class="input-form" id="chatForm" onsubmit="handleSubmit(event)" aria-label="Message input form">
         <div class="input-wrapper">
@@ -869,126 +1064,293 @@
           </button>
         </div>
       </form>
-      <p class="input-disclaimer">
+      <p class="input-disclaimer" id="disclaimerText">
         यो AI assistant demo purpose को लागि हो। Financial decisions लिनु अघि बैंकमा सम्पर्क गर्नुस्।
       </p>
     </div>
 
   </main>
+
+  <!-- =============================================
+       RIGHT: COMPLIANCE KNOWLEDGE GRAPH & CONSOLE
+       ============================================= -->
+  <aside class="graph-dashboard" id="graphDashboard">
+    <div class="dashboard-header">
+      <h3>⚖️ Compliance Knowledge Graph</h3>
+      <p>Real-time regulatory network & entity traversal</p>
+    </div>
+    
+    <!-- Visual Graph Panel -->
+    <div class="graph-panel">
+      <canvas id="graphCanvas"></canvas>
+      
+      <!-- Graph Zoom Controls -->
+      <div class="graph-controls">
+        <button class="control-btn" onclick="zoomGraph(1.2)" aria-label="Zoom in">+</button>
+        <button class="control-btn" onclick="zoomGraph(0.8)" aria-label="Zoom out">-</button>
+        <button class="control-btn" onclick="resetGraphView()" aria-label="Reset zoom">↺</button>
+      </div>
+
+      <!-- Graph Legend -->
+      <div class="graph-overlay">
+        <div class="legend-item"><span class="legend-dot" style="background:#E53935;"></span>Law / Act</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#D4AF37;"></span>Governance</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#FFB300;"></span>Category</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#FB8C00;"></span>Offence</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#00E676;"></span>Compliance</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#8E24AA;"></span>Directives</div>
+      </div>
+    </div>
+
+    <!-- Agent Reasoning Console -->
+    <div class="console-panel">
+      <div class="console-header">
+        <h4>🖥️ Agentic Traversal Console</h4>
+        <div class="console-indicator" id="consoleIndicator"></div>
+      </div>
+      <div class="console-container" id="consoleLogs">
+        <!-- Logs rendered dynamically -->
+      </div>
+    </div>
+  </aside>
+
 </div>
 
 <script>
   /*
    * =============================================
-   * Siddhartha Bank AI Chatbot — JavaScript
-   * 
-   * यो script मा:
-   * 1. Gemini API call गर्ने function
-   * 2. Message render गर्ने function
-   * 3. Chat state manage गर्ने function
+   * Siddhartha Bank AI Assistant — JS System
    * =============================================
    */
 
-  // Chat को इतिहास राख्ने array — Gemini API लाई context दिन
+  // State Variables
+  let currentMode = 'customer'; // 'customer' or 'compliance'
   let conversationHistory = [];
-  let isLoading = false; // loading state track गर्न
+  let isLoading = false;
+  let complianceDatabase = null; // Loaded from laws_db.json
+
+  // Graph Visualization State
+  let nodes = [];
+  let edges = [];
+  let traversedNodes = new Set();
+  let traversedEdges = new Set();
+  let transform = { x: 0, y: 0, k: 1 };
+  let hoveredNode = null;
+  let draggedNode = null;
+  let mouseOffset = { x: 0, y: 0 };
+  let isPanning = false;
+  let panStart = { x: 0, y: 0 };
+  let animationId = null;
+
+  // Pre-compiled list of compliance topics
+  const COMPLIANCE_TOPICS = [
+    { label: "BAFIA Term Limits", q: "BAFIA ऐन अनुसार Board of Directors र CEO को कार्यकाल के छ?" },
+    { label: "Labor Act Leaves", q: "श्रम ऐन २०७४ अनुसार कर्मचारीको बिदा कति हुन्छ?" },
+    { label: "NPL Provisioning", q: "NPL कर्जा वर्गीकरण र Provisioning को नियम के हो?" },
+    { label: "Check Bounce Penalty", q: "चेक बाउन्स भएमा के सजाय हुन्छ?" },
+    { label: "STR/TTR Reports", q: "TTR र STR रिपोर्टिङ भनेको के हो?" }
+  ];
+
+  // Pre-compiled list of customer topics
+  const CUSTOMER_TOPICS = [
+    { label: "Home Loan Rates", q: "Home Loan को interest rate कति हो?" },
+    { label: "FD Interest Rates", q: "Fixed Deposit (FD) मा कति ब्याज पाइन्छ?" },
+    { label: "Account Opening", q: "Savings Account खोल्न के-के कागज चाहिन्छ?" },
+    { label: "Branch Locations", q: "Kathmandu मा Siddhartha Bank को branch कहाँ छन्?" },
+    { label: "Mobile Banking", q: "Mobile Banking कसरी register गर्ने?" }
+  ];
 
   /*
-   * Siddhartha Bank को system prompt
-   * यो prompt ले AI लाई बताउँछ — तिमी कसको representative हौ
+   * Page Initialization
    */
-  const SYSTEM_PROMPT = `तिमी Siddhartha Bank Limited को friendly र professional AI customer service assistant हौ। 
-तिम्रो नाम "Siddha" हो।
+  window.addEventListener('DOMContentLoaded', async () => {
+    renderSidebarTopics();
+    clearChat();
+    
+    // Load Compliance DB from json
+    try {
+      const response = await fetch('laws_db.json');
+      if (response.ok) {
+        complianceDatabase = await response.json();
+        console.log("Compliance database loaded successfully.");
+        initGraphData(complianceDatabase.graph);
+      }
+    } catch (err) {
+      console.warn("Could not fetch laws_db.json. Falling back to internal definition.");
+    }
 
-## तिम्रो व्यक्तित्व:
-- Warm, helpful, र professional
-- Nepali र English दुवैमा राम्रोसँग बोल्न सक्छौ
-- Banking terms सरल भाषामा explain गर्छौ
-- Customer को प्रश्नको exact उत्तर दिन्छौ
-
-## Siddhartha Bank को जानकारी:
-**ब्याज दरहरू (2081 BS / 2024-25):**
-- Home Loan: 9.5% - 11.5% per annum
-- Auto Loan: 10% - 12% per annum  
-- Education Loan: 8.5% - 10.5% per annum
-- Personal Loan: 13% - 16% per annum
-- Business Loan: 10% - 13% per annum
-- Agriculture Loan: 7% - 9% per annum
-
-**Deposit Rates:**
-- Savings Account: 5% - 7% per annum
-- Fixed Deposit (1 year): 8% - 10% per annum
-- Fixed Deposit (2 year): 8.5% - 10.5% per annum
-- Fixed Deposit (3 year): 9% - 11% per annum
-- Call Deposit: 4% - 6% per annum
-- Recurring Deposit: 7.5% - 9% per annum
-
-**Account Types:**
-- Regular Savings Account (minimum Rs. 500)
-- Premium Savings Account (minimum Rs. 5,000)
-- Current Account (minimum Rs. 5,000)
-- Fixed Deposit Account
-- Junior Account (बच्चाहरूको लागि)
-- Nari Bachat (महिलाहरूको लागि, special rates)
-
-**Documents required for account opening:**
-- Citizenship certificate (नागरिकता)
-- 2 passport size photos
-- PAN card (optional for savings)
-- Utility bill or address proof
-
-**Siddhartha Bank Branches in Kathmandu:**
-- Head Office: Hattisar, Kathmandu
-- Lazimpat Branch
-- New Road Branch
-- Koteshwor Branch
-- Baneshwor Branch
-- Maharajgunj Branch
-- Thamel Branch
-- Kupondole Branch, Lalitpur
-
-**Services:**
-- Mobile Banking (SBL mBanking app)
-- Internet Banking
-- VISA/VISA Debit Card
-- International Remittance (Western Union, MoneyGram)
-- Domestic Remittance (SCT)
-- Locker Service
-- Trade Finance (LC, BG)
-- SMS Banking
-
-**EMI Calculation Formula:**
-EMI = P × r × (1+r)^n / [(1+r)^n - 1]
-जहाँ: P = Principal, r = monthly rate, n = months
-
-## Response Guidelines:
-- उत्तर short र clear दिनुस् — bullet points र tables use गर्नुस्
-- EMI calculation सोधे — exact calculation गर्नुस्
-- Branch location सोधे — exact area बताउनुस्
-- Rate confirm गर्न बैंकमा सम्पर्क गर्न सुझाव दिनुस्
-- Always end with "के अरू कुनै प्रश्न छ?" या "आफ्नो नजिकको Siddhartha Bank branch मा सम्पर्क गर्नुहोला"`;
+    // Initialize Canvas event listeners
+    const canvas = document.getElementById('graphCanvas');
+    if (canvas) {
+      setupCanvasListeners(canvas);
+      startGraphSimulation();
+    }
+  });
 
   /*
-   * getCurrentTime — अहिलेको समय नेपाली format मा
+   * Toggle between Customer and Compliance Mode
    */
-  function getCurrentTime() {
-    return new Date().toLocaleTimeString('ne-NP', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+  function toggleMode(mode) {
+    if (mode === currentMode) return;
+    currentMode = mode;
+
+    const container = document.getElementById('appContainer');
+    const customerBtn = document.getElementById('customerModeBtn');
+    const complianceBtn = document.getElementById('complianceModeBtn');
+    const headerTitle = document.getElementById('headerTitle');
+    const headerSubtitle = document.getElementById('headerSubtitle');
+    const headerAvatar = document.getElementById('headerAvatar');
+    const modeBadge = document.getElementById('modeBadge');
+    const disclaimerText = document.getElementById('disclaimerText');
+    const messageInput = document.getElementById('messageInput');
+
+    if (mode === 'compliance') {
+      container.classList.add('compliance-active');
+      customerBtn.classList.remove('active');
+      complianceBtn.classList.add('active');
+      
+      headerTitle.textContent = "Siddha Compliance Assistant";
+      headerSubtitle.textContent = "BAFIA, NRB Act, AML/CFT, Directives & labor laws";
+      headerAvatar.textContent = "⚖️";
+      modeBadge.textContent = "Compliance Agent";
+      modeBadge.style.color = "var(--gold-light)";
+      modeBadge.style.background = "rgba(212,175,55,0.08)";
+      modeBadge.style.borderColor = "rgba(212,175,55,0.2)";
+      disclaimerText.textContent = "यो अनुपालन सहायक सिद्धार्थ बैंकको आन्तरिक कानुन र नीतिहरूमा आधारित छ।";
+      messageInput.placeholder = "बैंकिङ ऐन, नीति वा निर्देशन सम्बन्धी प्रश्न सोध्नुस्...";
+      
+      // Clear console
+      clearConsole();
+      logConsole("Agent status: Ready to parse regulatory inquiries.", "info");
+
+      // Reset Graph Highlight
+      traversedNodes.clear();
+      traversedEdges.clear();
+
+      // Trigger canvas resize once panel shows
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 450); // After transition finishes
+    } else {
+      container.classList.remove('compliance-active');
+      customerBtn.classList.add('active');
+      complianceBtn.classList.remove('active');
+
+      headerTitle.textContent = "Siddha Customer Assistant";
+      headerSubtitle.textContent = "Siddhartha Bank Customer Support 24/7";
+      headerAvatar.textContent = "🤖";
+      modeBadge.textContent = "Customer Mode";
+      modeBadge.style.color = "var(--text-secondary)";
+      modeBadge.style.background = "rgba(255,255,255,0.04)";
+      modeBadge.style.borderColor = "var(--border)";
+      disclaimerText.textContent = "यो AI assistant demo purpose को लागि हो। Financial decisions लिनु अघि बैंकमा सम्पर्क गर्नुस्।";
+      messageInput.placeholder = "Banking सम्बन्धी प्रश्न सोध्नुस्... (Nepali या English मा)";
+    }
+
+    renderSidebarTopics();
+    clearChat();
+  }
+
+  /*
+   * Render Sidebar Topics list depending on active mode
+   */
+  function renderSidebarTopics() {
+    const container = document.getElementById('topicsContainer');
+    const label = document.getElementById('topicsLabel');
+    container.innerHTML = '';
+
+    const list = currentMode === 'customer' ? CUSTOMER_TOPICS : COMPLIANCE_TOPICS;
+    label.textContent = currentMode === 'customer' ? "Topic छान्नुस्" : "कानुनी प्रश्न छान्नुस्";
+
+    list.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'topic-btn';
+      btn.onclick = () => askQuestion(t.q);
+      
+      let icon = "🏦";
+      if (currentMode === 'compliance') icon = "⚖️";
+      else {
+        if (t.label.includes("Loan")) icon = "🏠";
+        if (t.label.includes("FD")) icon = "💰";
+        if (t.label.includes("Account")) icon = "📋";
+        if (t.label.includes("Branch")) icon = "📍";
+        if (t.label.includes("Mobile")) icon = "📱";
+      }
+
+      btn.innerHTML = `<span class="topic-icon">${icon}</span> ${t.label}`;
+      container.appendChild(btn);
     });
   }
 
   /*
-   * getApiKey — input field बाट API key लिने
+   * Ask pre-made question
    */
+  function askQuestion(q) {
+    const input = document.getElementById('messageInput');
+    input.value = q;
+    document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+  }
+
+  /*
+   * Clear Chat messages
+   */
+  function clearChat() {
+    const container = document.getElementById('messagesContainer');
+    conversationHistory = [];
+
+    if (currentMode === 'customer') {
+      container.innerHTML = `
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="welcome-icon">🏦</div>
+          <h2 class="welcome-title">नमस्ते! म Siddhartha Bank को AI Assistant हुँ</h2>
+          <p class="welcome-subtitle">
+            Banking सम्बन्धी जुनसुकै प्रश्न सोध्नुस् — Loan, FD, Account, Branch Locator, 
+            Remittance — सबैको जवाफ दिन्छु। Nepali र English दुवैमा!
+          </p>
+          <div class="suggestion-chips">
+            <button class="suggestion-chip" onclick="askQuestion('Home Loan को interest rate कति हो?')">🏠 Home Loan Rate</button>
+            <button class="suggestion-chip" onclick="askQuestion('FD मा कति ब्याज पाइन्छ?')">💰 FD ब्याज</button>
+            <button class="suggestion-chip" onclick="askQuestion('Savings Account खोल्न के चाहिन्छ?')">📋 Account खोल्ने</button>
+            <button class="suggestion-chip" onclick="askQuestion('Rs. 50 Lakh को Home Loan EMI कति हुन्छ? 15 साल period')">🧮 EMI हिसाब</button>
+            <button class="suggestion-chip" onclick="askQuestion('Siddhartha Bank को बारेमा बताउनुस्')">ℹ️ Bank बारे</button>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="welcome-icon" style="background:var(--gold-gradient)">⚖️</div>
+          <h2 class="welcome-title">Siddha Compliance Assistant</h2>
+          <p class="welcome-subtitle">
+            नेपालको बैंकिङ ऐन, नियम र राष्ट्र बैंकका निर्देशनहरू सम्बन्धी आन्तरिक ज्ञान केन्द्र। 
+            यहाँ Graph RAG प्रविधि प्रयोग गरेर प्रमाणिक उत्तरहरू फेला पारिन्छ।
+          </p>
+          <div class="suggestion-chips">
+            <button class="suggestion-chip" onclick="askQuestion('BAFIA ऐन अनुसार Board of Directors र CEO को कार्यकाल के छ?')">👔 BAFIA नियम</button>
+            <button class="suggestion-chip" onclick="askQuestion('श्रम ऐन २०७४ अनुसार कर्मचारीको बिदा कति हुन्छ?')">📋 श्रम ऐन बिदा</button>
+            <button class="suggestion-chip" onclick="askQuestion('NPL कर्जा वर्गीकरण र Provisioning को नियम के हो?')">📉 कर्जा वर्गीकरण</button>
+            <button class="suggestion-chip" onclick="askQuestion('चेक बाउन्स भएमा के सजाय हुन्छ?')">⚖️ Check Bounce</button>
+            <button class="suggestion-chip" onclick="askQuestion('TTR र STR रिपोर्टिङ भनेको के हो?')">🔍 STR / TTR नियम</button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  /*
+   * Text Helper functions
+   */
+  function getCurrentTime() {
+    return new Date().toLocaleTimeString('ne-NP', { hour: '2-digit', minute: '2-digit', hour12: true });
+  }
+
   function getApiKey() {
     return document.getElementById('apiKeyInput').value.trim();
   }
 
-  /*
-   * API Key show/hide toggle
-   */
   document.getElementById('apiToggle').addEventListener('click', () => {
     const input = document.getElementById('apiKeyInput');
     const toggle = document.getElementById('apiToggle');
@@ -1001,311 +1363,158 @@ EMI = P × r × (1+r)^n / [(1+r)^n - 1]
     }
   });
 
-  /*
-   * hideWelcome — welcome screen हटाउने जब पहिलो message पठाइन्छ
-   */
-  function hideWelcome() {
-    const welcome = document.getElementById('welcomeScreen');
-    if (welcome) {
-      welcome.style.opacity = '0';
-      welcome.style.transform = 'scale(0.95)';
-      welcome.style.transition = 'all 0.3s ease';
-      setTimeout(() => welcome.remove(), 300);
-    }
-  }
-
-  /*
-   * appendMessage — chat area मा नयाँ message थप्ने
-   * @param {string} role - 'user' या 'bot'
-   * @param {string} text - message को content
-   */
-  function appendMessage(role, text) {
-    hideWelcome();
-    
+  function appendMessage(role, text, sources = null) {
     const container = document.getElementById('messagesContainer');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${role}`;
-    
-    // Avatar icon — user को लागि 👤, bot को लागि 🤖
-    const avatarEmoji = role === 'bot' ? '🤖' : '👤';
-    const avatarClass = role === 'bot' ? 'bot-msg-avatar' : 'user-msg-avatar';
-    
-    // Bot को response मा simple markdown formatting
-    const formattedText = role === 'bot' ? formatBotText(text) : escapeHtml(text);
-    
-    messageDiv.innerHTML = `
-      <div class="msg-avatar ${avatarClass}" aria-hidden="true">${avatarEmoji}</div>
-      <div>
-        <div class="msg-bubble">${formattedText}</div>
-        <div class="msg-time">${getCurrentTime()}</div>
-      </div>
-    `;
-    
-    container.appendChild(messageDiv);
-    
-    // Auto scroll to bottom
+    const welcome = document.getElementById('welcomeScreen');
+    if (welcome) welcome.remove();
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${role}`;
+
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = `msg-avatar ${role}-msg-avatar`;
+    avatarDiv.innerHTML = role === 'bot' ? (currentMode === 'customer' ? '🤖' : '⚖️') : '👤';
+
+    const bubbleWrapper = document.createElement('div');
+    bubbleWrapper.style.display = 'flex';
+    bubbleWrapper.style.flexDirection = 'column';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.innerHTML = formatBotText(text);
+
+    bubbleWrapper.appendChild(bubble);
+
+    // If sources are provided (compliance mode), render them beautifully
+    if (sources && sources.length > 0) {
+      const sourcesDiv = document.createElement('div');
+      sourcesDiv.className = 'response-sources';
+      
+      let sourcesHtml = `<div class="sources-title">📄 Retrieved Citations:</div><ul class="sources-list">`;
+      sources.forEach(src => {
+        // Relative path links for files
+        const path = `laws/corporate-laws/${src.file}`;
+        sourcesHtml += `<li><a href="${path}" target="_blank">📚 ${src.title} (Page Chunk: ${src.section})</a></li>`;
+      });
+      sourcesHtml += `</ul>`;
+      sourcesDiv.innerHTML = sourcesHtml;
+      bubble.appendChild(sourcesDiv);
+    }
+
+    const time = document.createElement('div');
+    time.className = 'msg-time';
+    time.textContent = getCurrentTime();
+
+    bubbleWrapper.appendChild(time);
+    msgDiv.appendChild(avatarDiv);
+    msgDiv.appendChild(bubbleWrapper);
+
+    container.appendChild(msgDiv);
     container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-    
-    return messageDiv;
   }
 
-  /*
-   * formatBotText — bot को text मा basic markdown जस्तो formatting
-   * Bold, bullet points, newlines handle गर्छ
-   */
   function formatBotText(text) {
-    return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      // **bold** → <strong>bold</strong>
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // ## Heading → <br><strong>
-      .replace(/^## (.+)$/gm, '<br><strong style="color:var(--gold-light);font-size:15px;">$1</strong><br>')
-      // # Heading → <strong>
-      .replace(/^# (.+)$/gm, '<strong style="font-size:16px;">$1</strong><br>')
-      // - bullet → • 
-      .replace(/^[-•] (.+)$/gm, '• $1')
-      // newlines → <br>
-      .replace(/\n\n/g, '<br><br>')
-      .replace(/\n/g, '<br>');
+    let html = escapeHtml(text);
+    
+    // Markdown Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Line breaks
+    html = html.replace(/\n/g, '<br/>');
+
+    // Bullet points
+    html = html.replace(/(?:^|<br\/>)-\s+(.*?)(?=(?:<br\/>|$))/g, '$&'); // Pre-check
+    html = html.replace(/-\s+(.*?)(?=<br\/>|$)/g, '<li>$1</li>');
+    html = html.replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>');
+
+    // Simple markdown tables conversion
+    if (html.includes('|')) {
+      const lines = html.split('<br/>');
+      let tableHtml = '<table>';
+      let inTable = false;
+      let headerPassed = false;
+      const filteredLines = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+          inTable = true;
+          // Skip the divider row |---|---|
+          if (line.includes('---')) continue;
+          
+          const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+          let rowType = !headerPassed ? 'th' : 'td';
+          
+          let row = '<tr>';
+          cells.forEach(cell => {
+            row += `<${rowType}>${cell}</${rowType}>`;
+          });
+          row += '</tr>';
+          
+          tableHtml += row;
+          if (!headerPassed) headerPassed = true;
+        } else {
+          if (inTable) {
+            tableHtml += '</table>';
+            filteredLines.push(tableHtml);
+            tableHtml = '<table>';
+            inTable = false;
+            headerPassed = false;
+          }
+          filteredLines.push(line);
+        }
+      }
+      if (inTable) {
+        tableHtml += '</table>';
+        filteredLines.push(tableHtml);
+      }
+      html = filteredLines.join('<br/>');
+    }
+
+    return html;
   }
 
-  /*
-   * escapeHtml — user input लाई safe बनाउने (XSS prevent)
-   */
   function escapeHtml(text) {
     return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/\n/g, '<br>');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
-  /*
-   * showTypingIndicator — bot typing हुँदा animated dots देखाउने
-   */
   function showTypingIndicator() {
     const container = document.getElementById('messagesContainer');
     const indicator = document.createElement('div');
-    indicator.className = 'message bot';
+    indicator.className = 'typing-indicator';
     indicator.id = 'typingIndicator';
     indicator.innerHTML = `
-      <div class="msg-avatar bot-msg-avatar" aria-hidden="true">🤖</div>
-      <div class="typing-indicator" aria-label="Bot is typing">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-      </div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
     `;
     container.appendChild(indicator);
     container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   }
 
-  /*
-   * removeTypingIndicator — typing dots हटाउने
-   */
   function removeTypingIndicator() {
     const indicator = document.getElementById('typingIndicator');
     if (indicator) indicator.remove();
   }
 
   /*
-   * callGeminiAPI — Gemini API मा request पठाउने मुख्य function
-   * @param {string} userMessage - user ले लेखेको message
-   */
-  async function callGeminiAPI(userMessage) {
-    const apiKey = getApiKey();
-    
-    // API key नभएमा fallback demo response दिने
-    if (!apiKey) {
-      return getDemoResponse(userMessage);
-    }
-
-    // Conversation history मा user को message थप्ने
-    conversationHistory.push({
-      role: 'user',
-      parts: [{ text: userMessage }]
-    });
-
-    // Gemini 2.0 Flash API endpoint — latest र fastest model
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: {
-          parts: [{ text: SYSTEM_PROMPT }]
-        },
-        contents: conversationHistory,
-        generationConfig: {
-          temperature: 0.7,      // Creativity level — 0.7 balanced छ
-          maxOutputTokens: 1024, // Maximum response length
-          topP: 0.95,
-          topK: 40
-        },
-        safetySettings: [
-          { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-          { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
-        ]
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // Response बाट text extract गर्ने
-    const botText = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-                    'माफ गर्नुस्, अहिले response दिन सकिएन।';
-    
-    // Bot को response पनि history मा राख्ने (multi-turn conversation को लागि)
-    conversationHistory.push({
-      role: 'model',
-      parts: [{ text: botText }]
-    });
-
-    return botText;
-  }
-
-  /*
-   * getDemoResponse — API key नभएमा demo responses दिने
-   * Interview demo को लागि backup — API बिना पनि काम गर्छ
-   */
-  function getDemoResponse(message) {
-    const msg = message.toLowerCase();
-    
-    if (msg.includes('home loan') || msg.includes('घर')) {
-      return `**🏠 Home Loan — Siddhartha Bank**\n\n**ब्याज दर:** 9.5% - 11.5% प्रति वर्ष\n\n**Features:**\n- Maximum: Rs. 5 Crore\n- Tenure: 20 साल सम्म\n- Processing fee: 0.5% - 1%\n- Nepal Rastra Bank को नियमानुसार\n\n**Documents:**\n- Citizenship certificate\n- Income proof (salary slip / IT return)\n- Property valuation report\n- 6 month bank statement\n\nके अरू जानकारी चाहिन्छ? आफ्नो नजिकको **Siddhartha Bank branch** मा सम्पर्क गर्नुहोला! 🏦`;
-    }
-    
-    if (msg.includes('fd') || msg.includes('fixed deposit') || msg.includes('ब्याज')) {
-      return `**💰 Fixed Deposit (FD) — Siddhartha Bank**\n\n| Duration | Interest Rate |\n|----------|---------------|\n| 3 months | 7.5% - 8.5% |\n| 6 months | 8% - 9% |\n| 1 year | 8.5% - 10% |\n| 2 years | 9% - 10.5% |\n| 3 years | 9.5% - 11% |\n\n**Minimum Amount:** Rs. 5,000\n**Senior Citizen:** Extra 0.5% ब्याज\n\n**नोट:** ब्याज दर बजारको अवस्था अनुसार परिवर्तन हुन सक्छ। Current rates को लागि bank मा सम्पर्क गर्नुस्।`;
-    }
-    
-    if (msg.includes('emi') || msg.includes('calculator') || msg.includes('हिसाब')) {
-      return `**🧮 EMI Calculator**\n\n**Rs. 50 Lakh, 15 साल, Home Loan (10.5% rate)**\n\nEMI = **Rs. 55,238 / महिना** (approximate)\n\nTotal amount payable: Rs. 99,43,000\nTotal interest: Rs. 49,43,000\n\n**EMI Formula:** P × r × (1+r)^n / [(1+r)^n - 1]\n\nआफ्नो loan amount र period अनुसार calculate गर्न Siddhartha Bank को branch मा visit गर्नुस् या Mobile App use गर्नुस्।`;
-    }
-    
-    if (msg.includes('mobile banking') || msg.includes('app')) {
-      return `**📱 Siddhartha Bank Mobile Banking**\n\n**App नाम:** SBL mBanking\n\n**Features:**\n- Fund Transfer (Domestic)\n- Bill Payment (NEA, NTC, Ncell, WLINK)\n- Mobile Top-up\n- Account Statement\n- FD Management\n- Loan EMI Payment\n- QR Payment\n\n**कसरी Register गर्ने:**\n1. SBL mBanking app download गर्नुस् (Play Store / App Store)\n2. "Register" click गर्नुस्\n3. Account number र ATM PIN enter गर्नुस्\n4. OTP verify गर्नुस्\n5. Done! ✅\n\nके अरू सहायता चाहिन्छ?`;
-    }
-
-    if (msg.includes('branch') || msg.includes('काठमाडौं') || msg.includes('kathmandu') || msg.includes('location')) {
-      return `**📍 Siddhartha Bank Branches — Kathmandu Valley**\n\n**काठमाडौं:**\n- Hattisar (Head Office)\n- Lazimpat\n- New Road\n- Koteshwor\n- Baneshwor\n- Maharajgunj\n- Thamel\n- Chabahil\n- Balaju\n\n**ललितपुर:**\n- Kupondole\n- Sanepa\n- Pulchowk\n\n**भक्तपुर:**\n- Suryabinayak\n\n**Banking Hours:** आइतबार - शुक्रबार, 10:00 AM - 4:00 PM\n\nआफ्नो नजिकको branch थाहा पाउन **SBL mBanking app** वा website visit गर्नुस्।`;
-    }
-    
-    // Default response
-    return `नमस्ते! म Siddhartha Bank को AI Assistant **Siddha** हुँ। 🏦\n\nDemo Mode मा चलिरहेको छु (API key enter गर्नुभएन)। Gemini API key राखेर full AI conversation enjoy गर्नुस्!\n\n**मैले जवाफ दिन सक्ने विषयहरू:**\n- Loan information (Home, Car, Education, Personal)\n- FD र Savings rates\n- Account opening process\n- Branch locations\n- Mobile Banking setup\n- EMI calculation\n\nकुनै specific प्रश्न छ?`;
-  }
-
-  /*
-   * handleSubmit — form submit हुँदा call हुने function
+   * Submit Handling
    */
   async function handleSubmit(e) {
-    e.preventDefault(); // Form को default submit रोक्ने
-    
+    e.preventDefault();
     const input = document.getElementById('messageInput');
     const message = input.value.trim();
-    
-    if (!message || isLoading) return; // Empty या loading मा नजाने
-    
-    sendMessage(message);
+    if (!message || isLoading) return;
+
     input.value = '';
-    input.style.height = 'auto'; // Textarea reset
+    input.style.height = 'auto';
+    
+    await sendMessage(message);
   }
 
-  /*
-   * sendMessage — message process गर्ने मुख्य function
-   */
-  async function sendMessage(message) {
-    if (isLoading) return;
-    
-    isLoading = true;
-    
-    // Send button disable गर्ने
-    const sendBtn = document.getElementById('sendBtn');
-    sendBtn.disabled = true;
-    
-    // User को message देखाउने
-    appendMessage('user', message);
-    
-    // Typing indicator देखाउने
-    showTypingIndicator();
-    
-    try {
-      // Gemini API call गर्ने
-      const response = await callGeminiAPI(message);
-      
-      // Typing indicator हटाउने
-      removeTypingIndicator();
-      
-      // Bot को response देखाउने
-      appendMessage('bot', response);
-      
-    } catch (error) {
-      removeTypingIndicator();
-      
-      // Error message देखाउने
-      let errorMsg = '⚠️ माफ गर्नुस्, अहिले server मा समस्या आयो।';
-      if (error.message.includes('401') || error.message.includes('403')) {
-        errorMsg = '🔑 API Key गलत छ वा expire भयो। Google AI Studio बाट नयाँ key लिनुस्।';
-      } else if (error.message.includes('429')) {
-        errorMsg = '⏳ धेरै requests पठाइयो। एक छिन पर्खेर फेरि try गर्नुस्।';
-      }
-      appendMessage('bot', errorMsg);
-      console.error('Chatbot error:', error);
-    } finally {
-      isLoading = false;
-      sendBtn.disabled = false;
-    }
-  }
-
-  /*
-   * askQuestion — sidebar topics र suggestion chips बाट question पठाउने
-   */
-  function askQuestion(question) {
-    const input = document.getElementById('messageInput');
-    input.value = question;
-    sendMessage(question);
-    input.value = '';
-  }
-
-  /*
-   * clearChat — नयाँ conversation सुरु गर्ने
-   */
-  function clearChat() {
-    const container = document.getElementById('messagesContainer');
-    
-    // Conversation history reset
-    conversationHistory = [];
-    
-    // Messages हटाउने र welcome screen देखाउने
-    container.innerHTML = `
-      <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-icon">🏦</div>
-        <h2 class="welcome-title">नमस्ते! म Siddhartha Bank को AI Assistant हुँ</h2>
-        <p class="welcome-subtitle">
-          Banking सम्बन्धी जुनसुकै प्रश्न सोध्नुस् — Loan, FD, Account, Branch Locator, 
-          Remittance — सबैको जवाफ दिन्छु। Nepali र English दुवैमा!
-        </p>
-        <div class="suggestion-chips">
-          <button class="suggestion-chip" onclick="askQuestion('Home Loan को interest rate कति हो?')">🏠 Home Loan Rate</button>
-          <button class="suggestion-chip" onclick="askQuestion('FD मा कति ब्याज पाइन्छ?')">💰 FD ब्याज</button>
-          <button class="suggestion-chip" onclick="askQuestion('Savings Account खोल्न के चाहिन्छ?')">📋 Account खोल्ने</button>
-          <button class="suggestion-chip" onclick="askQuestion('Rs. 50 Lakh को Home Loan EMI कति हुन्छ? 15 साल period')">🧮 EMI हिसाब</button>
-          <button class="suggestion-chip" onclick="askQuestion('Siddhartha Bank को बारेमा बताउनुस्')">ℹ️ Bank बारे</button>
-        </div>
-      </div>
-    `;
-  }
-
-  /*
-   * handleKeyDown — Enter key मा send, Shift+Enter मा new line
-   */
   function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -1313,14 +1522,774 @@ EMI = P × r × (1+r)^n / [(1+r)^n - 1]
     }
   }
 
-  /*
-   * Auto-resize textarea — user ले धेरै लेख्दा textarea ठूलो हुन्छ
-   */
   const textarea = document.getElementById('messageInput');
   textarea.addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
   });
+
+  /*
+   * Send Message core loop
+   */
+  async function sendMessage(message) {
+    if (isLoading) return;
+    isLoading = true;
+
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+
+    appendMessage('user', message);
+    showTypingIndicator();
+
+    try {
+      let botResponse = '';
+      let activeSources = null;
+
+      if (currentMode === 'compliance') {
+        // Run Graph RAG retrieval pipeline
+        const ragResult = await runGraphRAGPipeline(message);
+        botResponse = ragResult.response;
+        activeSources = ragResult.sources;
+      } else {
+        // Customer Mode
+        botResponse = await callGeminiAPI(message);
+      }
+
+      removeTypingIndicator();
+      appendMessage('bot', botResponse, activeSources);
+
+    } catch (error) {
+      removeTypingIndicator();
+      let errorMsg = '⚠️ माफ गर्नुस्, अहिले server मा समस्या आयो।';
+      if (error.message.includes('401') || error.message.includes('403')) {
+        errorMsg = '🔑 API Key गलत छ वा expire भयो। Google AI Studio बाट नयाँ key लिनुस्।';
+      } else if (error.message.includes('429')) {
+        errorMsg = '⏳ धेरै requests पठाइयो। एक छिन पर्खेर फेरि try गर्नुस्।';
+      }
+      appendMessage('bot', errorMsg);
+      console.error(error);
+    } finally {
+      isLoading = false;
+      sendBtn.disabled = false;
+    }
+  }
+
+  /*
+   * API communication with Gemini
+   */
+  async function callGeminiAPI(message, systemPromptOverride = null) {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      return getDemoResponse(message);
+    }
+
+    const sysPrompt = systemPromptOverride || SYSTEM_PROMPT;
+
+    conversationHistory.push({
+      role: 'user',
+      parts: [{ text: message }]
+    });
+
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: sysPrompt }] },
+        contents: conversationHistory,
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 1536,
+          topP: 0.95
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+
+    conversationHistory.push({
+      role: 'model',
+      parts: [{ text: text }]
+    });
+
+    return text;
+  }
+
+  /*
+   * Fallback offline answers for standard customer questions
+   */
+  function getDemoResponse(message) {
+    const msg = message.toLowerCase();
+    
+    if (msg.includes('home loan') || msg.includes('घर')) {
+      return `**🏠 Home Loan — Siddhartha Bank**\n\n**ब्याज दर:** 9.5% - 11.5% प्रति वर्ष\n\n**विशेषताहरू:**\n- अधिकतम कर्जा: रु ५ करोड सम्म\n- अवधि: २० वर्ष सम्म\n- सेवा शुल्क: 0.5% - 1%\n\n**आवश्यक कागजातहरू:**\n- नागरिकताको प्रमाणपत्र र फोटो\n- आयस्रोत खुलेको प्रमाण (Salary slip वा Business balance sheet)\n- धितो मूल्याङ्कन रिपोर्ट (Property valuation report)\n- ६ महिनाको बैंक स्टेटमेन्ट\n\nके अरू केही जानकारी चाहिन्छ? आफ्नो नजिकको Siddhartha Bank शाखामा सम्पर्क गर्नुहोला!`;
+    }
+    
+    if (msg.includes('fd') || msg.includes('fixed deposit') || msg.includes('ब्याज')) {
+      return `**💰 Fixed Deposit (FD) — Siddhartha Bank**\n\n| अवधि | ब्याज दर (साधारण) | मुद्दती (Senior Citizen) |\n|----------|---------------|-----------------------|\n| ३ महिना | 7.50% | 8.00% |\n| ६ महिना | 8.00% | 8.50% |\n| १ वर्ष | 9.00% | 9.50% |\n| २ वर्ष वा सो भन्दा बढी | 10.00% | 10.50% |\n\n**न्युनतम रकम:** रु ५,०००/-\n\n**नोट:** बजारको तरलता अनुसार ब्याज परिवर्तन हुन सक्छ। हालको दर यकिन गर्न बैंकमा बुझ्नुहोला।`;
+    }
+    
+    if (msg.includes('savings') || msg.includes('खाता') || msg.includes('खोल्न')) {
+      return `**📋 Savings Account (बचत खाता) — Siddhartha Bank**\n\n**खाताका प्रकारहरू:**\n- साधारण बचत खाता (न्युनतम मौज्दात रु ५००)\n- प्रिमियम बचत खाता (न्युनतम मौज्दात रु ५,०००, free debit card)\n- नारी बचत खाता (महिलाहरूको लागि विशेष, locker मा 50% छुट)\n\n**आवश्यक कागजातहरू:**\n- नागरिकताको प्रमाणपत्र (Citizenship Certificate) को प्रतिलिपि\n- २ प्रति पासपोर्ट साइज फोटो\n- घर नक्सा वा बिजुली/खानेपानीको बिल (ठेगाना प्रमाणित गर्न)\n- नाबालकको हकमा जन्मदर्ता र अभिभावकको नागरिकता।`;
+    }
+
+    if (msg.includes('branch') || msg.includes('काठमाडौं') || msg.includes('शाखा') || msg.includes('location')) {
+      return `**📍 Siddhartha Bank Branches — Kathmandu Valley**\n\n**काठमाडौं उपत्यकाका मुख्य शाखाहरू:**\n- **Hattisar**: मुख्य कार्यालय (Head Office)\n- **Lazimpat**: लाजिम्पाट शाखा\n- **New Road**: न्युरोड शाखा\n- **Koteshwor**: कोटेश्वर शाखा\n- **Baneshwor**: नयाँ बानेश्वर शाखा\n- **Maharajgunj**: महाराजगन्ज शाखा\n- **Kupondole**: कुपण्डोल शाखा (ललितपुर)\n- **Suryabinayak**: सूर्यविनायक शाखा (भक्तपुर)\n\n**बैंकिङ समय:** आइतबार देखि बिहीबार बिहान १०:०० देखि अपरान्ह ४:०० सम्म। शुक्रबार बिहान १०:०० देखि दिउँसो ३:०० सम्म।`;
+    }
+
+    if (msg.includes('mobile banking') || msg.includes('app') || msg.includes('मोबाइल')) {
+      return `**📱 SBL mBanking Service**\n\nSiddhartha Bank को आधिकारिक मोबाइल बैंकिङ एप **SBL mBanking** बाट निम्न सेवाहरू लिन सक्नुहुन्छ:\n- **Fund Transfer**: अन्य बैंकमा तुरुन्त पैसा पठाउन\n- **Utility Payments**: NTC/Ncell Topup, Electricity, Drinking Water, Internet Bill\n- **QR Payment**: पसलहरूमा स्क्यान गरी भुक्तानी गर्न\n- **statement**: खाताको विवरण हेर्न\n\n**सक्रिय गर्ने तरिका:**\n1. Google Play Store वा App Store बाट **SBL mBanking** एप डाउनलोड गर्नुस्।\n2. 'Activate' मा क्लिक गरी आफ्नो खाता नम्बर र दर्ता भएको मोबाइल नम्बर राख्नुस्।\n3. प्राप्त OTP कोड हालेर आफैं पासवर्ड र MPIN सेट गर्नुस्।`;
+    }
+
+    return `नमस्ते! म Siddhartha Bank को AI Assistant **Siddha** हुँ। 🏦\n\nअहिले म **Demo Mode** मा चलिरहेको छु (API key नराखिएको हुनाले)।\n\nतपाईंले मलाई निम्न विषयहरू सोध्न सक्नुहुन्छ:\n- Home Loan, Car Loan र Interest Rates\n- Savings र Fixed Deposit खाताका प्रकारहरू\n- खाता खोल्ने प्रक्रिया र आवश्यक कागजात\n- बैंकका शाखाहरू र मोबाइल बैंकिङ सेवा\n\nकृप्या, Gemini API key राखेर full AI experience लिनुहोस्।`;
+  }
+
+  /*
+   * =============================================
+   * AGENTIC GRAPH RAG SYSTEM
+   * =============================================
+   */
+
+  async function runGraphRAGPipeline(message) {
+    const indicator = document.getElementById('consoleIndicator');
+    indicator.className = 'console-indicator busy';
+    
+    clearConsole();
+    logConsole("▶ STARTING AGENTIC RETRIEVAL PIPELINE...", "info");
+    await delay(300);
+    
+    // Step 1: Intent Routing & Entity Extraction
+    logConsole(`[Step 1] Router: Analyzing query: "${message.substring(0, 45)}..."`);
+    const entities = extractEntitiesFromQuery(message);
+    await delay(500);
+
+    if (entities.length === 0) {
+      logConsole(`[Step 1] Router warning: No legal entities identified. Defaulting to general search.`, "warn");
+    } else {
+      logConsole(`[Step 1] Router: Extracted keywords & entity tags: [${entities.join(", ")}]`, "info");
+    }
+    await delay(400);
+
+    // Step 2: Knowledge Graph Walk
+    logConsole(`[Step 2] Graph Walker: Initializing traversal from database graph...`);
+    const parsedGraphResult = walkKnowledgeGraph(entities);
+    highlightGraphNodes(parsedGraphResult.matchedNodes, parsedGraphResult.traversedEdges);
+    await delay(800);
+
+    logConsole(`[Step 2] Graph Walker: Traversed ${parsedGraphResult.matchedNodes.length} nodes and matched ${parsedGraphResult.traversedEdges.length} relation edges.`, "info");
+    await delay(400);
+
+    // Step 3: Document Chunk Retrieval
+    logConsole(`[Step 3] Retriever: Extracting matching law text chunks from parsed database...`);
+    const retrievedChunks = retrieveTextChunks(parsedGraphResult.matchedNodes);
+    await delay(600);
+
+    if (retrievedChunks.length === 0) {
+      logConsole(`[Step 3] Retriever: No specific chunks fetched. Pulling fallback index.`, "warn");
+    } else {
+      logConsole(`[Step 3] Retriever: Loaded ${retrievedChunks.length} compliance chunks.`, "info");
+      retrievedChunks.forEach(c => {
+        logConsole(` - Retrieved: ${c.doc_title} -> ${c.section} (ID: ${c.id})`);
+      });
+    }
+    await delay(600);
+
+    // Step 4: Prompt Assembly & Synthesis
+    logConsole(`[Step 4] Assembler: Building structural Graph RAG prompt...`);
+    const contextText = compileContextText(retrievedChunks);
+    const systemPrompt = buildComplianceSystemPrompt(contextText, parsedGraphResult.matchedNodes);
+    await delay(400);
+
+    logConsole(`[Step 4] LLM Generator: Sending query + legal context to Gemini 2.0 Flash...`);
+    
+    let responseText = '';
+    const apiKey = getApiKey();
+
+    if (apiKey) {
+      responseText = await callGeminiAPI(message, systemPrompt);
+    } else {
+      // Offline mock response for compliance topics
+      await delay(1000);
+      responseText = getMockComplianceResponse(message, entities);
+    }
+
+    logConsole(`✔ Response generated successfully! Agent idle.`, "info");
+    indicator.className = 'console-indicator';
+
+    // Compile unique sources for citations
+    const sources = [];
+    const addedDocs = new Set();
+    retrievedChunks.forEach(c => {
+      let file = '';
+      if (c.doc.includes('bafia')) file = 'bank_and_financial_institutions_act_2073.pdf';
+      else if (c.doc.includes('nrb_act')) file = 'nepal_rastra_bank_act_2058.pdf';
+      else if (c.doc.includes('labor')) file = 'labor_act_2074.pdf';
+      else if (c.doc.includes('offence')) file = 'banking_offence_and_punishment_act_2064.pdf';
+      else if (c.doc.includes('aml')) file = 'anti_money_laundering_act_2064.pdf';
+      else file = 'nrb_directives.pdf';
+
+      const key = `${c.doc_title}_${c.section}`;
+      if (!addedDocs.has(key)) {
+        addedDocs.add(key);
+        sources.push({
+          title: c.doc_title,
+          section: c.section,
+          file: file
+        });
+      }
+    });
+
+    return {
+      response: responseText,
+      sources: sources
+    };
+  }
+
+  /*
+   * Helper function to match keywords with entities
+   */
+  function extractEntitiesFromQuery(query) {
+    const text = query.toLowerCase();
+    const entities = [];
+
+    const matches = {
+      "BAFIA": ["bafia", "commercial bank", "ceo", "board of directors", "director", "term limit", "age limit", "कार्यकाल", "संचालक", "paid-up", "capital", "class", "vittiya"],
+      "NRB Act": ["nrb", "nrb act", "rastra bank", "governor", "price stability", "monetary", "currency", "supervise", "directive", "निर्देशन"],
+      "Labor Act": ["labor", "shram", "leave", "holiday", "maternity", "sick", "provident", "gratuity", "working hours", "overtime", "बिदा", "श्रम"],
+      "Banking Offence": ["offence", "kasoor", "check bounce", "cheque", "collateral", "valuation", "fraud", "blacklist", "double", "punishment", "सजाय", "कसूर"],
+      "AML/CFT": ["aml", "cft", "laundering", "money laundering", "str", "ttr", "fiu", "suspicious", "threshold", "kyc", "due diligence", "शुद्धीकरण"],
+      "NPL": ["npl", "provisioning", "classification", "pass loan", "watchlist", "substandard", "doubtful", "loss", "overdue", "वर्गीकरण", "कर्जा"]
+    };
+
+    for (let ent in matches) {
+      for (let kw of matches[ent]) {
+        if (text.includes(kw)) {
+          entities.push(ent);
+          break;
+        }
+      }
+    }
+    
+    // Add specific child entities if parent is found
+    if (entities.includes("BAFIA")) {
+      if (text.includes("ceo") || text.includes("कार्यकाल")) entities.push("CEO");
+      if (text.includes("director") || text.includes("board") || text.includes("संचालक")) entities.push("Board of Directors");
+      if (text.includes("class") || text.includes("capital")) {
+        entities.push("Class A BFI");
+        entities.push("Class B BFI");
+      }
+    }
+    if (entities.includes("Banking Offence") && (text.includes("check") || text.includes("cheque") || text.includes("bounce"))) {
+      entities.push("Check Bounce");
+    }
+    if (entities.includes("AML/CFT")) {
+      if (text.includes("str") || text.includes("शंकास्पद")) entities.push("STR");
+      if (text.includes("ttr") || text.includes("सीमा")) entities.push("TTR");
+    }
+
+    return [...new Set(entities)];
+  }
+
+  /*
+   * Walk graph edges based on seed query entities
+   */
+  function walkKnowledgeGraph(queryEntities) {
+    const matchedNodes = [...queryEntities];
+    const matchedEdges = [];
+
+    // Simple BFS/walk over local edges definition
+    // For each query entity, check if it's a seed node, then find outgoing/incoming links
+    queryEntities.forEach(ent => {
+      edges.forEach(edge => {
+        if (edge.source.id === ent || edge.target.id === ent) {
+          matchedEdges.push(edge);
+          // Add neighboring nodes to traversal list to extract broader context
+          const neighbor = edge.source.id === ent ? edge.target.id : edge.source.id;
+          if (!matchedNodes.includes(neighbor)) {
+            matchedNodes.push(neighbor);
+          }
+        }
+      });
+    });
+
+    return {
+      matchedNodes: [...new Set(matchedNodes)],
+      traversedEdges: matchedEdges
+    };
+  }
+
+  /*
+   * Fetch matching text chunks from database
+   */
+  function retrieveTextChunks(matchedNodes) {
+    if (!complianceDatabase || !complianceDatabase.chunks) {
+      return [];
+    }
+
+    const matchedChunks = [];
+    complianceDatabase.chunks.forEach(chunk => {
+      // If chunk has any overlap with matched graph nodes
+      const hasOverlap = chunk.entities.some(e => matchedNodes.includes(e));
+      if (hasOverlap) {
+        matchedChunks.push(chunk);
+      }
+    });
+
+    return matchedChunks;
+  }
+
+  function compileContextText(chunks) {
+    return chunks.map((c, i) => `[Source ${i+1}: ${c.doc_title} - ${c.section}]\n${c.content}`).join("\n\n");
+  }
+
+  function buildComplianceSystemPrompt(contextText, matchedNodes) {
+    return `तिमी Siddhartha Bank Limited को आन्तरिक regulatory compliance advisor हौ। 
+तिम्रो काम बैंकका कर्मचारी र व्यवस्थापकहरूलाई नेपालको बैंकिङ ऐन, नियम, श्रम ऐन र नेपाल राष्ट्र बैंकको एकीकृत निर्देशन (Unified Directives) सम्बन्धी प्रमाणिक र सही जानकारी दिनु हो।
+
+तिमीलाई सोधिएको प्रश्नको उत्तर दिन तलको कानुनी सन्दर्भ (Context) र ज्ञान ग्राफ (Knowledge Graph entities) प्रयोग गर।
+
+## Traversed Entities:
+${matchedNodes.join(", ")}
+
+## Legal Reference Context:
+${contextText}
+
+## Guidelines:
+1. उत्तर दिँदा केवल प्रदान गरिएको सन्दर्भ (Context) मा आधारित हुनुपर्छ। बाहिरको वा मनगढन्ते कुरा नलेख।
+2. सन्दर्भमा नभएको विषय सोधिएमा "माफ गर्नुस्, मेरो अनुपालन ज्ञानकोषमा यो विषयको पर्याप्त प्रमाण फेला परेन" भन।
+3. ऐनको दफा (Section), नियम र राष्ट्र बैंकको निर्देशन नम्बर (Directive number) प्रष्ट उल्लेख गर।
+4. उत्तर नेपाली भाषामा दिनुस् तर आवश्यक बैंकिङ प्राविधिक शब्दहरू English मा लेख्न सक्छौ।
+5. उत्तरको अन्त्यमा सधैं कुन PDF ऐनबाट यो साभार गरिएको हो, त्यो उल्लेख गर (Retrieved Citations हेर्नुहोस्)।`;
+  }
+
+  /*
+   * Mock compliance answers when API Key is not present (Demo Mode)
+   */
+  function getMockComplianceResponse(message, entities) {
+    const text = message.toLowerCase();
+
+    if (entities.includes("CEO") || entities.includes("Board of Directors")) {
+      return `**👔 BAFIA ऐन २०७३ अनुसार सञ्चालक समिति र CEO को कार्यकाल**\n\nसम्बन्धित कानुनी प्रावधानहरू यस प्रकार छन्:\n\n**१. सञ्चालक समिति (Board of Directors) - BAFIA दफा १४-२२:**\n- **सङ्ख्या:** बैंक तथा वित्तीय संस्थाको संचालक समितिमा **न्यूनतम ५ र अधिकतम ७ जना** सदस्यहरू रहनेछन्।\n- **स्वतन्त्र संचालक:** समितिमा नेपाल राष्ट्र बैंकले तोकेको मापदण्ड बमोजिम कम्तीमा एक जना **स्वतन्त्र संचालक (Independent Director)** नियुक्त गर्नुपर्नेछ।\n- **कार्यकाल:** संचालकको कार्यकाल **४ वर्षको** हुनेछ र निज पुनः नियुक्त हुन योग्य हुनेछ।\n\n**२. प्रमुख कार्यकारी अधिकृत (CEO) - BAFIA दफा २९:**\n- **कार्यकाल:** CEO को नियुक्ति संचालक समितिले **४ वर्षको** लागि गर्नेछ। निजलाई अर्को एक कार्यकालका लागि मात्र पुनः नियुक्त गर्न सकिनेछ (अधिकतम २ कार्यकाल)।\n- **उमेर हद:** BAFIA अनुसार बैंकको CEO को रूपमा काम गर्न **अधिकतम उमेर ६५ वर्ष** तोकिएको छ। ६५ वर्ष पुगेपछि निज स्वतः पदमुक्त हुनेछ।`;
+    }
+
+    if (entities.includes("Labor Act")) {
+      return `**📋 नेपाल श्रम ऐन, २०७४ अनुसार कर्मचारीको बिदा सम्बन्धी व्यवस्था**\n\nबैंक तथा वित्तीय संस्थामा कार्यरत कर्मचारीहरू श्रम ऐन, २०७४ अनुसार देहायका बिदाहरू पाउन कानुनी रूपमा हकदार छन्:\n\n- **साप्ताहिक बिदा:** हप्तामा १ दिन (सामान्यतया शनिबार/आइतबार)।\n- **सार्वजनिक बिदा:** वर्षमा १३ दिन (महिला कर्मचारीको हकमा अन्तर्राष्ट्रिय महिला दिवस सहित १४ दिन)।\n- **घर बिदा (Annual Leave):** प्रत्येक २० दिन काम गरेकोमा **१ दिन** (अधिकतम ९० दिन सम्म संचित गर्न मिल्ने)।\n- **बिरामी बिदा (Sick Leave):** वर्षमा **१२ दिन** पूर्ण तलब सहित (अधिकतम ४५ दिन सम्म संचित गर्न मिल्ने)।\n- **सुत्केरी बिदा (Maternity Leave):** महिला कर्मचारीले सुत्केरी हुनु अघि वा पछि गरी कुल **९८ दिन (१४ हप्ता)** बिदा पाउनेछन्। यसमध्ये **६० दिन** पूर्ण तलब सहित र बाँकी ३८ दिन बिना तलब वा अन्य बिदामा कट्टा गर्न सकिनेछ।\n- **सुत्केरी स्याहार बिदा (Paternity Leave):** पुरुष कर्मचारीले श्रीमती सुत्केरी भएमा **१५ दिन** पूर्ण तलब सहित बिदा पाउनेछन्।\n- **क्रिया बिदा (Mourning Leave):** आफ्नो कुलधर्म अनुसार आफैं बस्नुपर्ने भएमा **१३ दिन** पूर्ण तलब सहित।`;
+    }
+
+    if (entities.includes("NPL")) {
+      return `**📉 नेपाल राष्ट्र बैंक एकीकृत निर्देशन अनुसार निष्क्रिय कर्जा (NPL) र Provisioning सम्बन्धी नियम**\n\nबैंकहरूले प्रवाह गरेको कर्जाको भाखा नाघेको अवधिका आधारमा कर्जा वर्गीकरण र नोक्सानी व्यवस्था (Loan Loss Provision) निम्न बमोजिम गर्नुपर्दछ:\n\n**१. सक्रिय कर्जा (Performing Loans):**\n- **असल कर्जा (Pass Loan):** भाखा ननाघेको वा १ महिना सम्म भाखा नाघेको कर्जा। यसमा **1.1%** कर्जा नोक्सानी व्यवस्था (General Provision) गर्नुपर्छ।\n- **सूक्ष्म निगरानी (Watchlist):** १ महिना देखि ३ महिना सम्म भाखा नाघेको कर्जा। यसमा **5%** नोक्सानी व्यवस्था गर्नुपर्छ।\n\n**२. निष्क्रिय कर्जा (Non-Performing Loans - NPL):**\n- **कमसल कर्जा (Substandard):** ३ महिना देखि ६ महिना सम्म भाखा नाघेको कर्जा। यसमा **25%** Provisioning गर्नुपर्छ।\n- **शङ्कास्पद कर्जा (Doubtful):** ६ महिना देखि १ वर्ष सम्म भाखा नाघेको कर्जा। यसमा **50%** Provisioning गर्नुपर्छ।\n- **खराब कर्जा (Loss):** १ वर्ष भन्दा बढी अवधि भाखा नाघेको वा ऋणी टाट पल्टेको कर्जा। यसमा **100%** Provisioning गर्नुपर्छ।`;
+    }
+
+    if (entities.includes("Check Bounce")) {
+      return `**⚖️ बैंकिङ्ग कसूर तथा सजाय ऐन, २०६४ अनुसार चेक बाउन्स (Check Bounce) को सजाय**\n\nचेक बाउन्स हुनुलाई नेपालको कानुनमा फौजदारी कसूर (Criminal Offence) मानिन्छ। यस सम्बन्धी व्यवस्थाहरू निम्नानुसार छन्:\n\n**१. कसूर (दफा ७):**\nआफ्नो खातामा पर्याप्त मौज्दात (Balance) छैन भन्ने जानीजानी चेक काटी दिनु वा चेक भुक्तानी रोक्न आदेश दिनु चेक बाउन्स कसूर मानिन्छ। लगातार ३ पटक सम्म चेक बाउन्स भएमा कानुनी कारबाही सुरु हुन्छ।\n\n**२. सजाय (दफा १५):**\nचेक बाउन्स भएको प्रमाणित भएमा कसूरदारलाई निम्न सजाय हुन्छ:\n- **बिगो फिर्ता:** चेकमा उल्लेख भएको बिगो रकम (चेक रकम) पिडितलाई फिर्ता गर्नुपर्ने।\n- **जरिवाना:** बिगो बमोजिमको जरिवाना (चेक रकम बराबरको जरिवाना)।\n- **कैद:** कसूरको गम्भीरता हेरी कम्तीमा **३ महिना सम्मको कैद** सजाय हुन सक्ने।\n\n**३. कर्मचारीको मिलेमतो भएमा:**\nयदि बैंकको कुनै कर्मचारी यसमा संलग्न रहेको पाइएमा निजलाई दोब्बर सजाय हुने र बैंकले तुरुन्त बर्खास्त गरी कालोसूचीमा राख्ने कानुनी व्यवस्था छ।`;
+    }
+
+    if (entities.includes("STR") || entities.includes("TTR")) {
+      return `**🔍 सम्पत्ति शुद्धीकरण निवारण ऐन, २०६४ अनुसार TTR र STR रिपोर्टिङ**\n\nबैंक तथा वित्तीय संस्थाहरूले सम्पत्ति शुद्धीकरण (Anti-Money Laundering) नियन्त्रणका लागि नेपाल राष्ट्र बैंकको वित्तीय जानकारी एकाई (FIU - Financial Information Unit) लाई बुझाउनुपर्ने दुई महत्वपूर्ण रिपोर्टहरू निम्न हुन्:\n\n**१. TTR (Threshold Transaction Report) - सीमा कारोबार प्रतिवेदन:**\n- **परिभाषा:** कुनै ग्राहकले एकै दिनमा नगदमा गरेको ठूलो कारोबारको प्रतिवेदन।\n- **न्यूनतम सीमा:** **रु १० लाख (NRs. 10 Lakhs वा 1 Million)** वा सो भन्दा बढीको एकल वा एकीकृत नगद कारोबार।\n- **बुझाउने अवधि:** कारोबार भएको **१५ दिन भित्र** वित्तीय जानकारी एकाई (FIU) मा अनिवार्य रूपमा रिपोर्ट गरिसक्नुपर्छ।\n\n**२. STR (Suspicious Transaction Report) - शङ्कास्पद कारोबार प्रतिवेदन:**\n- **परिभाषा:** ग्राहकको कारोबार शङ्कास्पद लागेमा वा आपराधिक आर्जन वा आतंकवादमा वित्तीय लगानी भएको शङ्का लागेमा बुझाइने प्रतिवेदन।\n- **सीमा:** STR मा **कुनै न्युनतम मौज्दात वा रकमको सीमा हुँदैन**। रु १ को शङ्कास्पद कारोबार पनि STR अन्तर्गत पर्छ।\n- **बुझाउने अवधि:** शङ्का लागेको वा पहिचान भएको **३ दिन भित्र** तुरुन्तै FIU मा रिपोर्ट गर्नुपर्छ। यसलाई अति गोप्य राखिन्छ ("Tipping Off" निषेध छ)।`;
+    }
+
+    return `नमस्ते! म Siddha Compliance Advisor (अनुपालन सहायक) हुँ।\n\nनेपालको बैंकिङ ऐन, श्रम नियमावली र राष्ट्र बैंकका निर्देशनहरू सम्बन्धी प्रश्नको सही जवाफ दिन म तयार छु।\n\nतपाईंले मलाई निम्न विषयहरू सोध्न सक्नुहुन्छ:\n- BAFIA अनुसार संचालक र CEO को नियम\n- श्रम ऐन २०७४ अनुसार कर्मचारीको बिदा र सुविधाहरू\n- कर्जा वर्गीकरण (NPL) र नोक्सानी व्यवस्था (Provisioning)\n- चेक बाउन्स सम्बन्धी सजाय र जरिवाना\n- सम्पत्ति शुद्धीकरण रोक्न TTR र STR को नियम`;
+  }
+
+  /*
+   * Terminal Console Utilities
+   */
+  function logConsole(message, type = "normal") {
+    const consoleLogs = document.getElementById('consoleLogs');
+    const line = document.createElement('div');
+    line.className = `console-line ${type === 'info' ? 'text-info' : (type === 'warn' ? 'text-warn' : '')}`;
+    
+    const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    line.textContent = `[${time}] ${message}`;
+    
+    consoleLogs.appendChild(line);
+    consoleLogs.scrollTop = consoleLogs.scrollHeight;
+  }
+
+  function clearConsole() {
+    document.getElementById('consoleLogs').innerHTML = '';
+  }
+
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /*
+   * =============================================
+   * INTERACTIVE 2D FORCE-DIRECTED NETWORK GRAPH
+   * =============================================
+   */
+
+  function initGraphData(graphData) {
+    if (!graphData) return;
+    
+    // Assign properties for force simulation
+    nodes = graphData.nodes.map(n => {
+      // Pick initial random layout positions centered
+      return {
+        ...n,
+        x: 200 + (Math.random() - 0.5) * 120,
+        y: 200 + (Math.random() - 0.5) * 120,
+        vx: 0,
+        vy: 0,
+        radius: n.type === 'law' ? 22 : (n.type === 'governance' || n.type === 'directives' ? 16 : 13)
+      };
+    });
+
+    edges = graphData.edges.map(e => {
+      // Link node pointers
+      const sourceNode = nodes.find(n => n.id === e.source);
+      const targetNode = nodes.find(n => n.id === e.target);
+      return {
+        ...e,
+        source: sourceNode,
+        target: targetNode
+      };
+    }).filter(e => e.source && e.target);
+  }
+
+  function setupCanvasListeners(canvas) {
+    const ctx = canvas.getContext('2d');
+    
+    // Set proper backing store size for high DPI
+    const resize = () => {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    };
+    
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Mouse Event Handlers
+    canvas.addEventListener('mousedown', (e) => {
+      const pos = getMousePos(canvas, e);
+      const clicked = findNodeAt(pos.x, pos.y);
+
+      if (clicked) {
+        draggedNode = clicked;
+        mouseOffset.x = pos.x - clicked.x;
+        mouseOffset.y = pos.y - clicked.y;
+      } else {
+        isPanning = true;
+        panStart.x = e.clientX - transform.x;
+        panStart.y = e.clientY - transform.y;
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      const pos = getMousePos(canvas, e);
+      hoveredNode = findNodeAt(pos.x, pos.y);
+
+      if (draggedNode) {
+        draggedNode.x = pos.x - mouseOffset.x;
+        draggedNode.y = pos.y - mouseOffset.y;
+        draggedNode.vx = 0;
+        draggedNode.vy = 0;
+      } else if (isPanning) {
+        transform.x = e.clientX - panStart.x;
+        transform.y = e.clientY - panStart.y;
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      draggedNode = null;
+      isPanning = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      draggedNode = null;
+      isPanning = false;
+      hoveredNode = null;
+    });
+
+    // Zoom on scroll
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.05 : 0.95;
+      zoomGraph(zoomFactor);
+    });
+  }
+
+  function getMousePos(canvas, evt) {
+    const rect = canvas.getBoundingClientRect();
+    const x = evt.clientX - rect.left;
+    const y = evt.clientY - rect.top;
+    
+    // Reverse transform to get coordinates in simulated world space
+    return {
+      x: (x - transform.x) / transform.k,
+      y: (y - transform.y) / transform.k
+    };
+  }
+
+  function findNodeAt(x, y) {
+    for (let node of nodes) {
+      const dx = node.x - x;
+      const dy = node.y - y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < node.radius + 6) return node;
+    }
+    return null;
+  }
+
+  function zoomGraph(factor) {
+    transform.k = Math.max(0.4, Math.min(3, transform.k * factor));
+  }
+
+  function resetGraphView() {
+    transform = { x: 0, y: 0, k: 1 };
+    // Trigger reset layout positions
+    nodes.forEach((n, i) => {
+      n.x = 200 + (Math.random() - 0.5) * 120;
+      n.y = 200 + (Math.random() - 0.5) * 120;
+      n.vx = 0;
+      n.vy = 0;
+    });
+  }
+
+  /*
+   * Highlight traversed paths
+   */
+  function highlightGraphNodes(nodeIds, matchedEdges) {
+    traversedNodes = new Set(nodeIds);
+    traversedEdges = new Set(matchedEdges);
+    
+    // Give active nodes a little kinetic push to trigger animation draw
+    nodes.forEach(n => {
+      if (traversedNodes.has(n.id)) {
+        n.vx += (Math.random() - 0.5) * 15;
+        n.vy += (Math.random() - 0.5) * 15;
+      }
+    });
+  }
+
+  /*
+   * Physics Engine loop
+   */
+  function startGraphSimulation() {
+    const canvas = document.getElementById('graphCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const updatePhysics = () => {
+      const width = canvas.width / window.devicePixelRatio;
+      const height = canvas.height / window.devicePixelRatio;
+      const cx = width / 2;
+      const cy = height / 2;
+
+      // 1. Repulsion between all nodes
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n1 = nodes[i];
+          const n2 = nodes[j];
+          const dx = n1.x - n2.x;
+          const dy = n1.y - n2.y;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          
+          if (dist < 180) {
+            const force = 3000 / (dist * dist);
+            const fx = force * (dx / dist);
+            const fy = force * (dy / dist);
+            
+            n1.vx += fx;
+            n1.vy += fy;
+            n2.vx -= fx;
+            n2.vy -= fy;
+          }
+        }
+      }
+
+      // 2. Attraction along edges
+      edges.forEach(e => {
+        const s = e.source;
+        const t = e.target;
+        const dx = t.x - s.x;
+        const dy = t.y - s.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        
+        // Spring target length
+        const targetLen = e.source.type === 'law' ? 120 : 90;
+        const force = (dist - targetLen) * 0.025;
+        const fx = force * (dx / dist);
+        const fy = force * (dy / dist);
+
+        s.vx += fx;
+        s.vy += fy;
+        t.vx -= fx;
+        t.vy -= fy;
+      });
+
+      // 3. Gravity pulling to center
+      nodes.forEach(n => {
+        const dx = cx - n.x;
+        const dy = cy - n.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        
+        n.vx += dx * 0.003;
+        n.vy += dy * 0.003;
+      });
+
+      // 4. Update positions & apply damping
+      nodes.forEach(n => {
+        if (n !== draggedNode) {
+          n.x += n.vx;
+          n.y += n.vy;
+          n.vx *= 0.75;
+          n.vy *= 0.75;
+
+          // Constraints
+          n.x = Math.max(30, Math.min(width - 30, n.x));
+          n.y = Math.max(30, Math.min(height - 30, n.y));
+        }
+      });
+    };
+
+    const draw = () => {
+      const width = canvas.width / window.devicePixelRatio;
+      const height = canvas.height / window.devicePixelRatio;
+      
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.save();
+      // Apply panning and zoom
+      ctx.translate(transform.x, transform.y);
+      ctx.scale(transform.k, transform.k);
+
+      // Draw Edges
+      edges.forEach(e => {
+        const isActive = traversedEdges.has(e);
+        
+        ctx.beginPath();
+        ctx.moveTo(e.source.x, e.source.y);
+        ctx.lineTo(e.target.x, e.target.y);
+        
+        if (isActive) {
+          ctx.strokeStyle = '#D4AF37'; // Glowing gold edge
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = '#D4AF37';
+          ctx.shadowBlur = 8;
+        } else {
+          ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+          ctx.lineWidth = 1;
+          ctx.shadowBlur = 0;
+        }
+        ctx.stroke();
+      });
+      ctx.shadowBlur = 0; // Reset shadow
+
+      // Draw Nodes
+      nodes.forEach(n => {
+        const isActive = traversedNodes.has(n.id);
+        const isHovered = hoveredNode === n;
+        
+        // Node Type Colors
+        let nodeColor = '#3F51B5'; // default Indigo
+        if (n.type === 'law') nodeColor = '#8B1A1A'; // Siddhartha Maroon
+        else if (n.type === 'governance') nodeColor = '#D4AF37'; // Gold
+        else if (n.type === 'category') nodeColor = '#FFB300'; // Amber
+        else if (n.type === 'offence') nodeColor = '#FF5722'; // Orange/Red
+        else if (n.type === 'compliance') nodeColor = '#00E676'; // Terminal Green
+        else if (n.type === 'directives') nodeColor = '#8E24AA'; // Purple
+
+        // Traversal animation pulsing ring
+        if (isActive) {
+          ctx.beginPath();
+          const pulseRadius = n.radius + 6 + Math.sin(Date.now() / 150) * 3;
+          ctx.arc(n.x, n.y, pulseRadius, 0, 2 * Math.PI);
+          ctx.strokeStyle = 'rgba(212,175,55,0.4)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Draw inner circle
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = nodeColor;
+        
+        if (isActive || isHovered) {
+          ctx.shadowColor = nodeColor;
+          ctx.shadowBlur = 12;
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2;
+        } else {
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+          ctx.lineWidth = 1;
+        }
+        
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0; // Reset
+
+        // Node label
+        ctx.fillStyle = isActive ? '#FFFFFF' : '#8E8EA8';
+        ctx.font = `bold ${n.type === 'law' ? '11px' : '10px'} Inter, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Shorten label for node fitting
+        let label = n.label;
+        if (label.length > 15) label = label.substring(0, 12) + "...";
+        ctx.fillText(label, n.x, n.y + n.radius + 12);
+      });
+
+      // Draw Tooltip / Node Description if hovered
+      if (hoveredNode) {
+        const n = hoveredNode;
+        ctx.fillStyle = 'rgba(12,12,20,0.95)';
+        ctx.strokeStyle = 'rgba(212,175,55,0.3)';
+        ctx.lineWidth = 1;
+        
+        const tooltipW = 200;
+        const tooltipH = 50;
+        const tx = n.x - tooltipW / 2;
+        const ty = n.y - n.radius - tooltipH - 12;
+
+        ctx.beginPath();
+        ctx.roundRect(tx, ty, tooltipW, tooltipH, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(n.label, tx + 10, ty + 18);
+
+        ctx.fillStyle = '#8E8EA8';
+        ctx.font = '9px Inter, sans-serif';
+        // Wrap description text
+        const words = n.desc.split(" ");
+        let line = "";
+        let lineY = ty + 30;
+        words.forEach(w => {
+          if ((line + w).length > 35) {
+            ctx.fillText(line, tx + 10, lineY);
+            line = w + " ";
+            lineY += 10;
+          } else {
+            line += w + " ";
+          }
+        });
+        ctx.fillText(line, tx + 10, lineY);
+      }
+
+      ctx.restore();
+      
+      updatePhysics();
+      animationId = requestAnimationFrame(draw);
+    };
+
+    animationId = requestAnimationFrame(draw);
+  }
 </script>
 
 </body>
