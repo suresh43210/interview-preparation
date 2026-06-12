@@ -1,0 +1,17 @@
+# API keys र secrets कहिल्यै GitHub मा नपठाउने
+.env
+.env.local
+*.env
+
+# Mac system files
+.DS_Store
+.DS_Store?
+._*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
+# Node modules (if any)
+node_modules/

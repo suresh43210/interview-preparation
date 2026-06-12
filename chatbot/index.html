@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siddhartha Bank — AI Customer Assistant</title>
+  <meta name="description" content="Siddhartha Bank को AI-powered customer service chatbot। Nepali र English दुवै भाषामा 24/7 banking assistance।" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS Variables — Color System
+       ============================================= */
+    :root {
+      --primary: #8B1A1A;
+      --primary-light: #B22222;
+      --primary-gradient: linear-gradient(135deg, #8B1A1A, #B22222);
+      --gold: #D4AF37;
+      --gold-light: #F0D060;
+      --bg-dark: #0D0D14;
+      --bg-sidebar: #101018;
+      --bg-chat: #0A0A10;
+      --bg-message-user: linear-gradient(135deg, #8B1A1A, #B22222);
+      --bg-message-bot: #1A1A28;
+      --bg-input: #16161F;
+      --text-primary: #F0F0F5;
+      --text-secondary: #8080A0;
+      --text-muted: #505070;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.15);
+      --shadow-red: 0 4px 30px rgba(139,26,26,0.35);
+    }
+
+    /* =============================================
+       Reset
+       ============================================= */
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    /* =============================================
+       App Layout — Sidebar + Chat Area
+       ============================================= */
+    .app-container {
+      display: grid;
+      /* Sidebar 280px, chat takes rest */
+      grid-template-columns: 280px 1fr;
+      height: 100vh;
+    }
+
+    /* =============================================
+       LEFT SIDEBAR
+       ============================================= */
+    .sidebar {
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Bank Logo header in sidebar */
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bank-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    /* Bank logo icon — Siddhartha Bank S */
+    .bank-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--primary-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      box-shadow: var(--shadow-red);
+      flex-shrink: 0;
+    }
+
+    .bank-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .bank-name small {
+      display: block;
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .online-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #4CAF50;
+      font-weight: 500;
+    }
+
+    .online-dot {
+      width: 7px;
+      height: 7px;
+      background: #4CAF50;
+      border-radius: 50%;
+      animation: pulse-green 2s infinite;
+    }
+
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.4); }
+      50% { box-shadow: 0 0 0 5px rgba(76,175,80,0); }
+    }
+
+    /* API Key section in sidebar */
+    .api-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .api-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .api-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .api-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 36px 9px 12px;
+      font-size: 12px;
+      font-family: 'Inter', monospace;
+      color: var(--text-secondary);
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .api-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .api-input:focus {
+      border-color: var(--primary-light);
+      color: var(--text-primary);
+      background: rgba(139,26,26,0.08);
+    }
+
+    /* Toggle show/hide API key */
+    .api-toggle {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-muted);
+      padding: 2px;
+      transition: color 0.2s;
+    }
+
+    .api-toggle:hover {
+      color: var(--text-secondary);
+    }
+
+    .api-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .api-hint a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* Quick Topics in sidebar */
+    .topics-section {
+      padding: 16px 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .topics-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .topic-btn {
+      width: 100%;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topic-btn:hover {
+      background: rgba(139,26,26,0.12);
+      border-color: rgba(139,26,26,0.3);
+      color: var(--text-primary);
+      transform: translateX(3px);
+    }
+
+    .topic-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* New Chat button */
+    .new-chat-btn {
+      margin: 16px 20px;
+      padding: 12px;
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-red);
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .new-chat-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(139,26,26,0.5);
+    }
+
+    /* Back to home link */
+    .back-link {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .back-link a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .back-link a:hover {
+      color: var(--text-secondary);
+    }
+
+    /* =============================================
+       RIGHT: CHAT AREA
+       ============================================= */
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-chat);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle background grid pattern */
+    .chat-area::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(139,26,26,0.06) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+    }
+
+    /* Chat header */
+    .chat-header {
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(13,13,20,0.8);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 10;
+    }
+
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .bot-avatar {
+      width: 42px;
+      height: 42px;
+      background: var(--primary-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: var(--shadow-red);
+    }
+
+    .bot-info h2 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .bot-info p {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .header-model-badge {
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: var(--gold-light);
+      font-weight: 500;
+    }
+
+    /* =============================================
+       Messages Container — Scrollable chat area
+       ============================================= */
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Custom scrollbar — thin and subtle */
+    .messages-container::-webkit-scrollbar {
+      width: 4px;
+    }
+    .messages-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .messages-container::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+
+    /* =============================================
+       Welcome Screen — shown when no messages
+       ============================================= */
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+      padding: 40px;
+      gap: 20px;
+    }
+
+    .welcome-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--primary-gradient);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: var(--shadow-red), 0 0 60px rgba(139,26,26,0.2);
+    }
+
+    .welcome-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .welcome-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 400px;
+      line-height: 1.7;
+    }
+
+    /* Quick suggestion chips below welcome */
+    .suggestion-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .suggestion-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 9px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .suggestion-chip:hover {
+      background: rgba(139,26,26,0.15);
+      border-color: rgba(139,26,26,0.4);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    /* =============================================
+       Individual Messages
+       ============================================= */
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 75%;
+      animation: messageSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes messageSlideIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* User messages — right aligned */
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    /* Bot messages — left aligned */
+    .message.bot {
+      align-self: flex-start;
+    }
+
+    /* Avatar for bot */
+    .msg-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .msg-avatar.bot-msg-avatar {
+      background: var(--primary-gradient);
+      box-shadow: 0 2px 12px rgba(139,26,26,0.4);
+    }
+
+    .msg-avatar.user-msg-avatar {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+    }
+
+    /* Message bubble */
+    .msg-bubble {
+      border-radius: 16px;
+      padding: 13px 18px;
+      font-size: 14px;
+      line-height: 1.65;
+      max-width: 100%;
+    }
+
+    /* Bot bubble style */
+    .message.bot .msg-bubble {
+      background: var(--bg-message-bot);
+      border: 1px solid var(--border);
+      border-top-left-radius: 4px;
+      color: var(--text-primary);
+    }
+
+    /* User bubble style */
+    .message.user .msg-bubble {
+      background: var(--bg-message-user);
+      border-top-right-radius: 4px;
+      color: white;
+      box-shadow: var(--shadow-red);
+    }
+
+    /* Message time */
+    .msg-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 5px;
+      padding: 0 4px;
+    }
+
+    .message.user .msg-time {
+      text-align: right;
+    }
+
+    /* =============================================
+       Typing Indicator — 3 bouncing dots
+       ============================================= */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 18px;
+      background: var(--bg-message-bot);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      border-top-left-radius: 4px;
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-8px); opacity: 1; }
+    }
+
+    /* =============================================
+       Input Area — Fixed at bottom
+       ============================================= */
+    .input-area {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      background: rgba(13,13,20,0.9);
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 10;
+    }
+
+    .input-form {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      align-items: flex-end;
+      padding: 4px 4px 4px 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(139,26,26,0.12);
+    }
+
+    .message-input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      max-height: 120px;
+      padding: 10px 0;
+      min-height: 44px;
+    }
+
+    .message-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-red);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      margin: 4px;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(139,26,26,0.5);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Disclaimer text below input */
+    .input-disclaimer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* =============================================
+       Responsive — Mobile layout
+       ============================================= */
+    @media (max-width: 768px) {
+      .app-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        display: none; /* Sidebar hidden on mobile — keep it simple for demo */
+      }
+
+      .chat-area {
+        grid-column: 1;
+      }
+    }
+
+    /* =============================================
+       Formatted bot responses — markdown-like
+       ============================================= */
+    .msg-bubble p { margin-bottom: 8px; }
+    .msg-bubble p:last-child { margin-bottom: 0; }
+    .msg-bubble ul { margin: 8px 0 8px 16px; }
+    .msg-bubble li { margin-bottom: 4px; }
+    .msg-bubble strong { color: var(--gold-light); font-weight: 600; }
+    .msg-bubble .bot-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .msg-bubble .bot-table th, .msg-bubble .bot-table td {
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 7px 12px;
+    }
+    .msg-bubble .bot-table th {
+      background: rgba(139,26,26,0.2);
+      color: var(--gold-light);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- =============================================
+       LEFT SIDEBAR
+       ============================================= -->
+  <aside class="sidebar" aria-label="Chat sidebar">
+
+    <!-- Bank logo header -->
+    <div class="sidebar-header">
+      <div class="bank-logo">
+        <div class="bank-icon">S</div>
+        <div class="bank-name">
+          Siddhartha Bank
+          <small>AI Assistant · 24/7</small>
+        </div>
+      </div>
+      <div class="online-badge">
+        <span class="online-dot"></span>
+        Online — सेवामा छौं
+      </div>
+    </div>
+
+    <!-- API Key Input — Gemini API key यहाँ राख्नुस् -->
+    <div class="api-section">
+      <div class="api-label">Gemini API Key</div>
+      <div class="api-input-wrap">
+        <input 
+          type="password" 
+          class="api-input" 
+          id="apiKeyInput"
+          placeholder="AIza..." 
+          autocomplete="off"
+          aria-label="Gemini API Key input"
+        />
+        <button class="api-toggle" id="apiToggle" aria-label="Toggle API key visibility">👁️</button>
+      </div>
+      <p class="api-hint">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a> 
+        बाट free API key लिनुस्
+      </p>
+    </div>
+
+    <!-- Quick Topics — Pre-made questions -->
+    <div class="topics-section">
+      <div class="topics-label">Topic छान्नुस्</div>
+      
+      <button class="topic-btn" onclick="askQuestion('Home Loan को interest rate कति हो?')" aria-label="Ask about home loan">
+        <span class="topic-icon">🏠</span>
+        Home Loan Rates
+      </button>
+      
+      <button class="topic-btn" onclick="askQuestion('Fixed Deposit (FD) मा कति ब्याज पाइन्छ?')" aria-label="Ask about fixed deposit">
+        <span class="topic-icon">💰</span>
+        FD Interest Rates
+      </button>
+      
+      <button class="topic-btn" onclick="askQuestion('Savings Account खोल्न के-के कागज चाहिन्छ?')" aria-label="Ask about savings account">
+        <span class="topic-icon">📋</span>
+        Account Opening
+      </button>
+      
+      <button class="topic-btn" onclick="askQuestion('Kathmandu मा Siddhartha Bank को branch कहाँ छन्?')" aria-label="Ask about branch locations">
+        <span class="topic-icon">📍</span>
+        Branch Locations
+      </button>
+      
+      <button class="topic-btn" onclick="askQuestion('Mobile Banking कसरी register गर्ने?')" aria-label="Ask about mobile banking">
+        <span class="topic-icon">📱</span>
+        Mobile Banking
+      </button>
+      
+      <button class="topic-btn" onclick="askQuestion('Education Loan को बारेमा जानकारी दिनुस्')" aria-label="Ask about education loan">
+        <span class="topic-icon">🎓</span>
+        Education Loan
+      </button>
+
+      <button class="topic-btn" onclick="askQuestion('Remittance — विदेशबाट पैसा कसरी पठाउने?')" aria-label="Ask about remittance">
+        <span class="topic-icon">💸</span>
+        Remittance Service
+      </button>
+
+      <button class="topic-btn" onclick="askQuestion('ऋणको EMI Calculator — Rs. 50 लाख, 15 साल, Home Loan')" aria-label="Calculate EMI">
+        <span class="topic-icon">🧮</span>
+        EMI Calculator
+      </button>
+    </div>
+
+    <!-- New Chat button -->
+    <button class="new-chat-btn" id="newChatBtn" onclick="clearChat()" aria-label="Start new chat">
+      ✨ नयाँ कुराकानी
+    </button>
+
+    <!-- Back to main portfolio -->
+    <div class="back-link">
+      <a href="../index.html">← मुख्य पृष्ठमा फर्कनुस्</a>
+    </div>
+  </aside>
+
+  <!-- =============================================
+       RIGHT: CHAT AREA
+       ============================================= -->
+  <main class="chat-area" aria-label="Chat conversation">
+
+    <!-- Chat header -->
+    <header class="chat-header">
+      <div class="chat-header-info">
+        <div class="bot-avatar" aria-hidden="true">🤖</div>
+        <div class="bot-info">
+          <h2>Siddhartha AI Assistant</h2>
+          <p>Nepali र English दुवैमा बोल्न सक्छु</p>
+        </div>
+      </div>
+      <div class="header-model-badge">Gemini 2.0 Flash ✨</div>
+    </header>
+
+    <!-- Messages — यहाँ chat messages देखिन्छ -->
+    <div class="messages-container" id="messagesContainer" role="log" aria-live="polite" aria-label="Chat messages">
+      
+      <!-- Welcome screen — initially shown -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon" aria-hidden="true">🏦</div>
+        <h2 class="welcome-title">नमस्ते! म Siddhartha Bank को AI Assistant हुँ</h2>
+        <p class="welcome-subtitle">
+          Banking सम्बन्धी जुनसुकै प्रश्न सोध्नुस् — Loan, FD, Account, Branch Locator, 
+          Remittance — सबैको जवाफ दिन्छु। Nepali र English दुवैमा!
+        </p>
+        <div class="suggestion-chips" role="list" aria-label="Quick question suggestions">
+          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Home Loan को interest rate कति हो?')">🏠 Home Loan Rate</button>
+          <button class="suggestion-chip" role="listitem" onclick="askQuestion('FD मा कति ब्याज पाइन्छ?')">💰 FD ब्याज</button>
+          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Savings Account खोल्न के चाहिन्छ?')">📋 Account खोल्ने</button>
+          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Rs. 50 Lakh को Home Loan EMI कति हुन्छ? 15 साल period')">🧮 EMI हिसाब</button>
+          <button class="suggestion-chip" role="listitem" onclick="askQuestion('Siddhartha Bank को बारेमा बताउनुस्')">ℹ️ Bank बारे</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input area — message type गर्ने ठाउँ -->
+    <div class="input-area">
+      <form class="input-form" id="chatForm" onsubmit="handleSubmit(event)" aria-label="Message input form">
+        <div class="input-wrapper">
+          <textarea 
+            class="message-input" 
+            id="messageInput"
+            placeholder="Banking सम्बन्धी प्रश्न सोध्नुस्... (Nepali या English मा)"
+            rows="1"
+            aria-label="Type your banking question"
+            onkeydown="handleKeyDown(event)"
+          ></textarea>
+          <button type="submit" class="send-btn" id="sendBtn" aria-label="Send message">
+            ➤
+          </button>
+        </div>
+      </form>
+      <p class="input-disclaimer">
+        यो AI assistant demo purpose को लागि हो। Financial decisions लिनु अघि बैंकमा सम्पर्क गर्नुस्।
+      </p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  /*
+   * =============================================
+   * Siddhartha Bank AI Chatbot — JavaScript
+   * 
+   * यो script मा:
+   * 1. Gemini API call गर्ने function
+   * 2. Message render गर्ने function
+   * 3. Chat state manage गर्ने function
+   * =============================================
+   */
+
+  // Chat को इतिहास राख्ने array — Gemini API लाई context दिन
+  let conversationHistory = [];
+  let isLoading = false; // loading state track गर्न
+
+  /*
+   * Siddhartha Bank को system prompt
+   * यो prompt ले AI लाई बताउँछ — तिमी कसको representative हौ
+   */
+  const SYSTEM_PROMPT = `तिमी Siddhartha Bank Limited को friendly र professional AI customer service assistant हौ। 
+तिम्रो नाम "Siddha" हो।
+
+## तिम्रो व्यक्तित्व:
+- Warm, helpful, र professional
+- Nepali र English दुवैमा राम्रोसँग बोल्न सक्छौ
+- Banking terms सरल भाषामा explain गर्छौ
+- Customer को प्रश्नको exact उत्तर दिन्छौ
+
+## Siddhartha Bank को जानकारी:
+**ब्याज दरहरू (2081 BS / 2024-25):**
+- Home Loan: 9.5% - 11.5% per annum
+- Auto Loan: 10% - 12% per annum  
+- Education Loan: 8.5% - 10.5% per annum
+- Personal Loan: 13% - 16% per annum
+- Business Loan: 10% - 13% per annum
+- Agriculture Loan: 7% - 9% per annum
+
+**Deposit Rates:**
+- Savings Account: 5% - 7% per annum
+- Fixed Deposit (1 year): 8% - 10% per annum
+- Fixed Deposit (2 year): 8.5% - 10.5% per annum
+- Fixed Deposit (3 year): 9% - 11% per annum
+- Call Deposit: 4% - 6% per annum
+- Recurring Deposit: 7.5% - 9% per annum
+
+**Account Types:**
+- Regular Savings Account (minimum Rs. 500)
+- Premium Savings Account (minimum Rs. 5,000)
+- Current Account (minimum Rs. 5,000)
+- Fixed Deposit Account
+- Junior Account (बच्चाहरूको लागि)
+- Nari Bachat (महिलाहरूको लागि, special rates)
+
+**Documents required for account opening:**
+- Citizenship certificate (नागरिकता)
+- 2 passport size photos
+- PAN card (optional for savings)
+- Utility bill or address proof
+
+**Siddhartha Bank Branches in Kathmandu:**
+- Head Office: Hattisar, Kathmandu
+- Lazimpat Branch
+- New Road Branch
+- Koteshwor Branch
+- Baneshwor Branch
+- Maharajgunj Branch
+- Thamel Branch
+- Kupondole Branch, Lalitpur
+
+**Services:**
+- Mobile Banking (SBL mBanking app)
+- Internet Banking
+- VISA/VISA Debit Card
+- International Remittance (Western Union, MoneyGram)
+- Domestic Remittance (SCT)
+- Locker Service
+- Trade Finance (LC, BG)
+- SMS Banking
+
+**EMI Calculation Formula:**
+EMI = P × r × (1+r)^n / [(1+r)^n - 1]
+जहाँ: P = Principal, r = monthly rate, n = months
+
+## Response Guidelines:
+- उत्तर short र clear दिनुस् — bullet points र tables use गर्नुस्
+- EMI calculation सोधे — exact calculation गर्नुस्
+- Branch location सोधे — exact area बताउनुस्
+- Rate confirm गर्न बैंकमा सम्पर्क गर्न सुझाव दिनुस्
+- Always end with "के अरू कुनै प्रश्न छ?" या "आफ्नो नजिकको Siddhartha Bank branch मा सम्पर्क गर्नुहोला"`;
+
+  /*
+   * getCurrentTime — अहिलेको समय नेपाली format मा
+   */
+  function getCurrentTime() {
+    return new Date().toLocaleTimeString('ne-NP', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+
+  /*
+   * getApiKey — input field बाट API key लिने
+   */
+  function getApiKey() {
+    return document.getElementById('apiKeyInput').value.trim();
+  }
+
+  /*
+   * API Key show/hide toggle
+   */
+  document.getElementById('apiToggle').addEventListener('click', () => {
+    const input = document.getElementById('apiKeyInput');
+    const toggle = document.getElementById('apiToggle');
+    if (input.type === 'password') {
+      input.type = 'text';
+      toggle.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      toggle.textContent = '👁️';
+    }
+  });
+
+  /*
+   * hideWelcome — welcome screen हटाउने जब पहिलो message पठाइन्छ
+   */
+  function hideWelcome() {
+    const welcome = document.getElementById('welcomeScreen');
+    if (welcome) {
+      welcome.style.opacity = '0';
+      welcome.style.transform = 'scale(0.95)';
+      welcome.style.transition = 'all 0.3s ease';
+      setTimeout(() => welcome.remove(), 300);
+    }
+  }
+
+  /*
+   * appendMessage — chat area मा नयाँ message थप्ने
+   * @param {string} role - 'user' या 'bot'
+   * @param {string} text - message को content
+   */
+  function appendMessage(role, text) {
+    hideWelcome();
+    
+    const container = document.getElementById('messagesContainer');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+    
+    // Avatar icon — user को लागि 👤, bot को लागि 🤖
+    const avatarEmoji = role === 'bot' ? '🤖' : '👤';
+    const avatarClass = role === 'bot' ? 'bot-msg-avatar' : 'user-msg-avatar';
+    
+    // Bot को response मा simple markdown formatting
+    const formattedText = role === 'bot' ? formatBotText(text) : escapeHtml(text);
+    
+    messageDiv.innerHTML = `
+      <div class="msg-avatar ${avatarClass}" aria-hidden="true">${avatarEmoji}</div>
+      <div>
+        <div class="msg-bubble">${formattedText}</div>
+        <div class="msg-time">${getCurrentTime()}</div>
+      </div>
+    `;
+    
+    container.appendChild(messageDiv);
+    
+    // Auto scroll to bottom
+    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    
+    return messageDiv;
+  }
+
+  /*
+   * formatBotText — bot को text मा basic markdown जस्तो formatting
+   * Bold, bullet points, newlines handle गर्छ
+   */
+  function formatBotText(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      // **bold** → <strong>bold</strong>
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // ## Heading → <br><strong>
+      .replace(/^## (.+)$/gm, '<br><strong style="color:var(--gold-light);font-size:15px;">$1</strong><br>')
+      // # Heading → <strong>
+      .replace(/^# (.+)$/gm, '<strong style="font-size:16px;">$1</strong><br>')
+      // - bullet → • 
+      .replace(/^[-•] (.+)$/gm, '• $1')
+      // newlines → <br>
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  }
+
+  /*
+   * escapeHtml — user input लाई safe बनाउने (XSS prevent)
+   */
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>');
+  }
+
+  /*
+   * showTypingIndicator — bot typing हुँदा animated dots देखाउने
+   */
+  function showTypingIndicator() {
+    const container = document.getElementById('messagesContainer');
+    const indicator = document.createElement('div');
+    indicator.className = 'message bot';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+      <div class="msg-avatar bot-msg-avatar" aria-hidden="true">🤖</div>
+      <div class="typing-indicator" aria-label="Bot is typing">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    `;
+    container.appendChild(indicator);
+    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+  }
+
+  /*
+   * removeTypingIndicator — typing dots हटाउने
+   */
+  function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) indicator.remove();
+  }
+
+  /*
+   * callGeminiAPI — Gemini API मा request पठाउने मुख्य function
+   * @param {string} userMessage - user ले लेखेको message
+   */
+  async function callGeminiAPI(userMessage) {
+    const apiKey = getApiKey();
+    
+    // API key नभएमा fallback demo response दिने
+    if (!apiKey) {
+      return getDemoResponse(userMessage);
+    }
+
+    // Conversation history मा user को message थप्ने
+    conversationHistory.push({
+      role: 'user',
+      parts: [{ text: userMessage }]
+    });
+
+    // Gemini 2.0 Flash API endpoint — latest र fastest model
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: {
+          parts: [{ text: SYSTEM_PROMPT }]
+        },
+        contents: conversationHistory,
+        generationConfig: {
+          temperature: 0.7,      // Creativity level — 0.7 balanced छ
+          maxOutputTokens: 1024, // Maximum response length
+          topP: 0.95,
+          topK: 40
+        },
+        safetySettings: [
+          { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+          { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Response बाट text extract गर्ने
+    const botText = data.candidates?.[0]?.content?.parts?.[0]?.text || 
+                    'माफ गर्नुस्, अहिले response दिन सकिएन।';
+    
+    // Bot को response पनि history मा राख्ने (multi-turn conversation को लागि)
+    conversationHistory.push({
+      role: 'model',
+      parts: [{ text: botText }]
+    });
+
+    return botText;
+  }
+
+  /*
+   * getDemoResponse — API key नभएमा demo responses दिने
+   * Interview demo को लागि backup — API बिना पनि काम गर्छ
+   */
+  function getDemoResponse(message) {
+    const msg = message.toLowerCase();
+    
+    if (msg.includes('home loan') || msg.includes('घर')) {
+      return `**🏠 Home Loan — Siddhartha Bank**\n\n**ब्याज दर:** 9.5% - 11.5% प्रति वर्ष\n\n**Features:**\n- Maximum: Rs. 5 Crore\n- Tenure: 20 साल सम्म\n- Processing fee: 0.5% - 1%\n- Nepal Rastra Bank को नियमानुसार\n\n**Documents:**\n- Citizenship certificate\n- Income proof (salary slip / IT return)\n- Property valuation report\n- 6 month bank statement\n\nके अरू जानकारी चाहिन्छ? आफ्नो नजिकको **Siddhartha Bank branch** मा सम्पर्क गर्नुहोला! 🏦`;
+    }
+    
+    if (msg.includes('fd') || msg.includes('fixed deposit') || msg.includes('ब्याज')) {
+      return `**💰 Fixed Deposit (FD) — Siddhartha Bank**\n\n| Duration | Interest Rate |\n|----------|---------------|\n| 3 months | 7.5% - 8.5% |\n| 6 months | 8% - 9% |\n| 1 year | 8.5% - 10% |\n| 2 years | 9% - 10.5% |\n| 3 years | 9.5% - 11% |\n\n**Minimum Amount:** Rs. 5,000\n**Senior Citizen:** Extra 0.5% ब्याज\n\n**नोट:** ब्याज दर बजारको अवस्था अनुसार परिवर्तन हुन सक्छ। Current rates को लागि bank मा सम्पर्क गर्नुस्।`;
+    }
+    
+    if (msg.includes('emi') || msg.includes('calculator') || msg.includes('हिसाब')) {
+      return `**🧮 EMI Calculator**\n\n**Rs. 50 Lakh, 15 साल, Home Loan (10.5% rate)**\n\nEMI = **Rs. 55,238 / महिना** (approximate)\n\nTotal amount payable: Rs. 99,43,000\nTotal interest: Rs. 49,43,000\n\n**EMI Formula:** P × r × (1+r)^n / [(1+r)^n - 1]\n\nआफ्नो loan amount र period अनुसार calculate गर्न Siddhartha Bank को branch मा visit गर्नुस् या Mobile App use गर्नुस्।`;
+    }
+    
+    if (msg.includes('mobile banking') || msg.includes('app')) {
+      return `**📱 Siddhartha Bank Mobile Banking**\n\n**App नाम:** SBL mBanking\n\n**Features:**\n- Fund Transfer (Domestic)\n- Bill Payment (NEA, NTC, Ncell, WLINK)\n- Mobile Top-up\n- Account Statement\n- FD Management\n- Loan EMI Payment\n- QR Payment\n\n**कसरी Register गर्ने:**\n1. SBL mBanking app download गर्नुस् (Play Store / App Store)\n2. "Register" click गर्नुस्\n3. Account number र ATM PIN enter गर्नुस्\n4. OTP verify गर्नुस्\n5. Done! ✅\n\nके अरू सहायता चाहिन्छ?`;
+    }
+
+    if (msg.includes('branch') || msg.includes('काठमाडौं') || msg.includes('kathmandu') || msg.includes('location')) {
+      return `**📍 Siddhartha Bank Branches — Kathmandu Valley**\n\n**काठमाडौं:**\n- Hattisar (Head Office)\n- Lazimpat\n- New Road\n- Koteshwor\n- Baneshwor\n- Maharajgunj\n- Thamel\n- Chabahil\n- Balaju\n\n**ललितपुर:**\n- Kupondole\n- Sanepa\n- Pulchowk\n\n**भक्तपुर:**\n- Suryabinayak\n\n**Banking Hours:** आइतबार - शुक्रबार, 10:00 AM - 4:00 PM\n\nआफ्नो नजिकको branch थाहा पाउन **SBL mBanking app** वा website visit गर्नुस्।`;
+    }
+    
+    // Default response
+    return `नमस्ते! म Siddhartha Bank को AI Assistant **Siddha** हुँ। 🏦\n\nDemo Mode मा चलिरहेको छु (API key enter गर्नुभएन)। Gemini API key राखेर full AI conversation enjoy गर्नुस्!\n\n**मैले जवाफ दिन सक्ने विषयहरू:**\n- Loan information (Home, Car, Education, Personal)\n- FD र Savings rates\n- Account opening process\n- Branch locations\n- Mobile Banking setup\n- EMI calculation\n\nकुनै specific प्रश्न छ?`;
+  }
+
+  /*
+   * handleSubmit — form submit हुँदा call हुने function
+   */
+  async function handleSubmit(e) {
+    e.preventDefault(); // Form को default submit रोक्ने
+    
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (!message || isLoading) return; // Empty या loading मा नजाने
+    
+    sendMessage(message);
+    input.value = '';
+    input.style.height = 'auto'; // Textarea reset
+  }
+
+  /*
+   * sendMessage — message process गर्ने मुख्य function
+   */
+  async function sendMessage(message) {
+    if (isLoading) return;
+    
+    isLoading = true;
+    
+    // Send button disable गर्ने
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    
+    // User को message देखाउने
+    appendMessage('user', message);
+    
+    // Typing indicator देखाउने
+    showTypingIndicator();
+    
+    try {
+      // Gemini API call गर्ने
+      const response = await callGeminiAPI(message);
+      
+      // Typing indicator हटाउने
+      removeTypingIndicator();
+      
+      // Bot को response देखाउने
+      appendMessage('bot', response);
+      
+    } catch (error) {
+      removeTypingIndicator();
+      
+      // Error message देखाउने
+      let errorMsg = '⚠️ माफ गर्नुस्, अहिले server मा समस्या आयो।';
+      if (error.message.includes('401') || error.message.includes('403')) {
+        errorMsg = '🔑 API Key गलत छ वा expire भयो। Google AI Studio बाट नयाँ key लिनुस्।';
+      } else if (error.message.includes('429')) {
+        errorMsg = '⏳ धेरै requests पठाइयो। एक छिन पर्खेर फेरि try गर्नुस्।';
+      }
+      appendMessage('bot', errorMsg);
+      console.error('Chatbot error:', error);
+    } finally {
+      isLoading = false;
+      sendBtn.disabled = false;
+    }
+  }
+
+  /*
+   * askQuestion — sidebar topics र suggestion chips बाट question पठाउने
+   */
+  function askQuestion(question) {
+    const input = document.getElementById('messageInput');
+    input.value = question;
+    sendMessage(question);
+    input.value = '';
+  }
+
+  /*
+   * clearChat — नयाँ conversation सुरु गर्ने
+   */
+  function clearChat() {
+    const container = document.getElementById('messagesContainer');
+    
+    // Conversation history reset
+    conversationHistory = [];
+    
+    // Messages हटाउने र welcome screen देखाउने
+    container.innerHTML = `
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon">🏦</div>
+        <h2 class="welcome-title">नमस्ते! म Siddhartha Bank को AI Assistant हुँ</h2>
+        <p class="welcome-subtitle">
+          Banking सम्बन्धी जुनसुकै प्रश्न सोध्नुस् — Loan, FD, Account, Branch Locator, 
+          Remittance — सबैको जवाफ दिन्छु। Nepali र English दुवैमा!
+        </p>
+        <div class="suggestion-chips">
+          <button class="suggestion-chip" onclick="askQuestion('Home Loan को interest rate कति हो?')">🏠 Home Loan Rate</button>
+          <button class="suggestion-chip" onclick="askQuestion('FD मा कति ब्याज पाइन्छ?')">💰 FD ब्याज</button>
+          <button class="suggestion-chip" onclick="askQuestion('Savings Account खोल्न के चाहिन्छ?')">📋 Account खोल्ने</button>
+          <button class="suggestion-chip" onclick="askQuestion('Rs. 50 Lakh को Home Loan EMI कति हुन्छ? 15 साल period')">🧮 EMI हिसाब</button>
+          <button class="suggestion-chip" onclick="askQuestion('Siddhartha Bank को बारेमा बताउनुस्')">ℹ️ Bank बारे</button>
+        </div>
+      </div>
+    `;
+  }
+
+  /*
+   * handleKeyDown — Enter key मा send, Shift+Enter मा new line
+   */
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+    }
+  }
+
+  /*
+   * Auto-resize textarea — user ले धेरै लेख्दा textarea ठूलो हुन्छ
+   */
+  const textarea = document.getElementById('messageInput');
+  textarea.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+</script>
+
+</body>
+</html>

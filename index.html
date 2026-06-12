@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siddhartha Bank — AI Solutions Demo</title>
+  <meta name="description" content="Siddhartha Bank AI-powered solutions: Customer Chatbot, Branch Manager Assistant, and AI Marketing Tool — built for the future of banking in Nepal." />
+  
+  <!-- Google Fonts: Inter for modern, premium look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* =============================================
+       CSS Variables — Siddhartha Bank Color System
+       Maroon (primary) + Gold (accent) + Dark backgrounds
+       ============================================= */
+    :root {
+      --primary: #8B1A1A;        /* Siddhartha Bank को मुख्य रंग — गाढा रातो */
+      --primary-light: #B22222;  /* हल्का रातो */
+      --primary-dark: #5C0E0E;   /* अझ गाढा रातो */
+      --gold: #D4AF37;           /* सुनौलो accent */
+      --gold-light: #F0D060;     /* हल्का सुनौलो */
+      --bg-dark: #0A0A0F;        /* मुख्य background — लगभग कालो */
+      --bg-card: #12121A;        /* Card background */
+      --bg-glass: rgba(255,255,255,0.05); /* Glassmorphism effect */
+      --text-primary: #F5F5F5;   /* मुख्य text रंग */
+      --text-secondary: #A0A0B0; /* Secondary text */
+      --border: rgba(255,255,255,0.08); /* Border color */
+      --shadow-glow: 0 0 40px rgba(139, 26, 26, 0.3); /* Red glow effect */
+    }
+
+    /* =============================================
+       Reset र Base Styles
+       ============================================= */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* =============================================
+       Animated Background — Moving gradient orbs
+       ============================================= */
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* Orb 1 — रातो */
+    .bg-orbs::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(139,26,26,0.25) 0%, transparent 70%);
+      top: -200px;
+      left: -200px;
+      animation: floatOrb 15s ease-in-out infinite;
+      border-radius: 50%;
+    }
+
+    /* Orb 2 — सुनौलो */
+    .bg-orbs::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
+      bottom: -200px;
+      right: -200px;
+      animation: floatOrb 20s ease-in-out infinite reverse;
+      border-radius: 50%;
+    }
+
+    /* Floating animation */
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(60px, 40px) scale(1.1); }
+      66% { transform: translate(-40px, 60px) scale(0.9); }
+    }
+
+    /* =============================================
+       Navbar
+       ============================================= */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--gold));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+    }
+
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      background: linear-gradient(135deg, #fff, var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .navbar-badge {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+
+    /* =============================================
+       Hero Section
+       ============================================= */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 40px 80px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-bottom: 32px;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .hero-badge span {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.7s 0.1s ease both;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, var(--gold) 0%, #fff 50%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--text-secondary);
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      animation: fadeInUp 0.7s 0.2s ease both;
+    }
+
+    .hero-subtitle strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* =============================================
+       Stats Row
+       ============================================= */
+    .stats-row {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 80px;
+      animation: fadeInUp 0.7s 0.3s ease both;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: var(--border);
+    }
+
+    /* =============================================
+       Project Cards Section
+       ============================================= */
+    .section-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      margin-bottom: 56px;
+    }
+
+    .projects-section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 40px 120px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    /* Project Card */
+    .project-card {
+      position: relative;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    /* Hover glow effect */
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .project-card.chatbot::before {
+      background: radial-gradient(circle at top left, rgba(139,26,26,0.2) 0%, transparent 60%);
+    }
+
+    .project-card.marketing::before {
+      background: radial-gradient(circle at top left, rgba(212,175,55,0.15) 0%, transparent 60%);
+    }
+
+    .project-card.manager::before {
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.15) 0%, transparent 60%);
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5), var(--shadow-glow);
+    }
+
+    .project-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon-chatbot {
+      background: linear-gradient(135deg, rgba(139,26,26,0.3), rgba(178,34,34,0.3));
+      border: 1px solid rgba(139,26,26,0.5);
+    }
+
+    .icon-marketing {
+      background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(240,208,96,0.2));
+      border: 1px solid rgba(212,175,55,0.4);
+    }
+
+    .icon-manager {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(99,102,241,0.2));
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    .card-number {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+      z-index: 0;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .tag-chatbot {
+      background: rgba(139,26,26,0.2);
+      color: #FF6B6B;
+      border: 1px solid rgba(139,26,26,0.4);
+    }
+
+    .tag-marketing {
+      background: rgba(212,175,55,0.15);
+      color: var(--gold-light);
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+
+    .tag-manager {
+      background: rgba(59,130,246,0.15);
+      color: #93C5FD;
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* Feature list */
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .card-features li::before {
+      content: '✓';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(212,175,55,0.15);
+      color: var(--gold);
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    /* CTA Button on card */
+    .card-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      transition: gap 0.3s ease;
+    }
+
+    .project-card:hover .card-cta {
+      gap: 14px;
+    }
+
+    .card-cta .arrow {
+      font-size: 18px;
+      transition: transform 0.3s ease;
+    }
+
+    .project-card:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    /* =============================================
+       Tech Stack Section
+       ============================================= */
+    .tech-section {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 0 40px 120px;
+    }
+
+    .tech-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .tech-chip {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tech-chip .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    /* =============================================
+       Footer
+       ============================================= */
+    .footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 32px 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .footer span {
+      color: var(--gold);
+    }
+
+    /* =============================================
+       Animations
+       ============================================= */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Scroll reveal — cards */
+    .project-card {
+      animation: fadeInUp 0.7s ease both;
+    }
+
+    .project-card:nth-child(1) { animation-delay: 0.1s; }
+    .project-card:nth-child(2) { animation-delay: 0.25s; }
+    .project-card:nth-child(3) { animation-delay: 0.4s; }
+
+    /* =============================================
+       Responsive
+       ============================================= */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 14px 20px;
+      }
+
+      .hero {
+        padding: 100px 24px 60px;
+      }
+
+      .stats-row {
+        gap: 24px;
+      }
+
+      .stat-number {
+        font-size: 24px;
+      }
+
+      .projects-section {
+        padding: 60px 24px 80px;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Moving background orbs -->
+  <div class="bg-orbs" aria-hidden="true"></div>
+
+  <!-- =============================================
+       Navigation Bar
+       ============================================= -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <div class="logo-icon">S</div>
+      <span class="logo-text">Siddhartha Bank</span>
+    </div>
+    <div class="navbar-badge">🤖 AI Solutions Demo</div>
+  </nav>
+
+  <!-- =============================================
+       Hero Section — Main heading area
+       ============================================= -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-badge">
+      <span></span>
+      Powered by Google Gemini AI — Live Demo
+    </div>
+
+    <h1 class="hero-title" id="hero-heading">
+      Banking को<br />
+      <span class="gradient-text">भविष्य यहाँ छ</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Siddhartha Bank को लागि बनाइएको <strong>AI-powered solutions</strong> — 
+      Customer Service देखि Branch Management र Marketing सम्म, 
+      सबै कुरा Artificial Intelligence ले सजिलो बनाउँछ।
+    </p>
+
+    <!-- Quick stats -->
+    <div class="stats-row" aria-label="Key statistics">
+      <div class="stat-item">
+        <div class="stat-number">3</div>
+        <div class="stat-label">AI Solutions</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Service Available</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">₹0</div>
+        <div class="stat-label">Extra Infrastructure</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">2 भाषा</div>
+        <div class="stat-label">Nepali + English</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       Projects Section — Three app cards
+       ============================================= -->
+  <main class="projects-section" aria-labelledby="projects-heading">
+    <p class="section-label">Our AI Solutions</p>
+    <h2 class="section-title" id="projects-heading">तीन वटा Smart Solutions छान्नुस्</h2>
+
+    <div class="projects-grid">
+      
+      <!-- Project 1: Chatbot -->
+      <a href="./chatbot/index.html" class="project-card chatbot" id="project-chatbot" aria-label="Bank Customer Chatbot — Open demo">
+        <div class="card-icon icon-chatbot">🤖</div>
+        <div class="card-number">01</div>
+        
+        <div class="card-content">
+          <span class="card-tag tag-chatbot">Customer Service</span>
+          <h3 class="card-title">Bank Customer Chatbot</h3>
+          <p class="card-description">
+            Nepali र English दुवै भाषामा बोल्ने AI assistant। 
+            24/7 customer को प्रश्नहरूको तुरुन्त उत्तर दिन्छ।
+          </p>
+        </div>
+
+        <ul class="card-features" aria-label="Chatbot features">
+          <li>Loan rates र product information</li>
+          <li>नेपाली भाषा support</li>
+          <li>Real-time Gemini AI responses</li>
+          <li>Branch र ATM locator</li>
+        </ul>
+
+        <div class="card-cta">
+          <span>Demo हेर्नुस्</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+
+      <!-- Project 2: Marketing Tool -->
+      <a href="./marketing/index.html" class="project-card marketing" id="project-marketing" aria-label="AI Marketing Tool — Open demo">
+        <div class="card-icon icon-marketing">📢</div>
+        <div class="card-number">02</div>
+
+        <div class="card-content">
+          <span class="card-tag tag-marketing">Marketing AI</span>
+          <h3 class="card-title">AI Marketing Tool</h3>
+          <p class="card-description">
+            Google Pomelli-inspired tool। Bank को brand identity बुझेर 
+            मिनेटमा marketing content तयार गर्छ।
+          </p>
+        </div>
+
+        <ul class="card-features" aria-label="Marketing tool features">
+          <li>Social media post generator</li>
+          <li>Loan campaign creator</li>
+          <li>Brand-consistent content</li>
+          <li>Dashain, Tihar special campaigns</li>
+        </ul>
+
+        <div class="card-cta">
+          <span>Demo हेर्नुस्</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+
+      <!-- Project 3: Branch Manager -->
+      <a href="./branch-manager/index.html" class="project-card manager" id="project-manager" aria-label="Branch Manager Assistant — Open demo">
+        <div class="card-icon icon-manager">👔</div>
+        <div class="card-number">03</div>
+
+        <div class="card-content">
+          <span class="card-tag tag-manager">Management AI</span>
+          <h3 class="card-title">Branch Manager Assistant</h3>
+          <p class="card-description">
+            Branch Manager को दैनिक कामलाई AI ले सजिलो बनाउँछ। 
+            Reports, complaints, meetings — सबै एकै ठाउँमा।
+          </p>
+        </div>
+
+        <ul class="card-features" aria-label="Manager assistant features">
+          <li>Daily performance dashboard</li>
+          <li>AI meeting notes generator</li>
+          <li>Customer complaint analyzer</li>
+          <li>Smart daily briefing</li>
+        </ul>
+
+        <div class="card-cta">
+          <span>Demo हेर्नुस्</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- =============================================
+       Tech Stack Section
+       ============================================= -->
+  <section class="tech-section" aria-label="Technology stack used">
+    <p class="section-label">Technology Stack</p>
+    <h2 class="section-title">State-of-the-Art Technologies</h2>
+
+    <div class="tech-chips">
+      <div class="tech-chip"><span class="dot"></span>Google Gemini 2.0 Flash</div>
+      <div class="tech-chip"><span class="dot"></span>HTML5 + CSS3 + JavaScript</div>
+      <div class="tech-chip"><span class="dot"></span>GitHub Pages Hosting</div>
+      <div class="tech-chip"><span class="dot"></span>Zero Infrastructure Cost</div>
+      <div class="tech-chip"><span class="dot"></span>Nepali Language AI</div>
+      <div class="tech-chip"><span class="dot"></span>Mobile Responsive</div>
+      <div class="tech-chip"><span class="dot"></span>Real-time Streaming API</div>
+      <div class="tech-chip"><span class="dot"></span>Google Pomelli Concept</div>
+    </div>
+  </section>
+
+  <!-- =============================================
+       Footer
+       ============================================= -->
+  <footer class="footer">
+    <p>
+      Built with ❤️ for <span>Siddhartha Bank Limited</span> — 
+      AI Solutions Demo | Powered by <span>Google Gemini AI</span>
+    </p>
+  </footer>
+
+</body>
+</html>

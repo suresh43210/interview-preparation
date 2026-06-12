@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siddhartha Bank — AI Marketing Tool</title>
+  <meta name="description" content="Google Pomelli-inspired AI marketing tool for Siddhartha Bank. Generate brand-consistent social media posts, campaigns, and marketing content in seconds." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS Variables — Gold/Warm Theme for Marketing
+       Marketing = Creative, Bold, Warm colors
+       ============================================= */
+    :root {
+      --primary: #8B1A1A;
+      --primary-light: #B22222;
+      --gold: #D4AF37;
+      --gold-light: #F0D060;
+      --gold-dim: rgba(212,175,55,0.15);
+      --bg-dark: #0C0A00;          /* Very dark warm black */
+      --bg-card: #141006;
+      --bg-glass: rgba(212,175,55,0.04);
+      --text-primary: #F5F0E0;
+      --text-secondary: #A09070;
+      --text-muted: #60503A;
+      --border: rgba(212,175,55,0.12);
+      --border-hover: rgba(212,175,55,0.3);
+      --shadow-gold: 0 8px 40px rgba(212,175,55,0.2);
+      --shadow-red: 0 8px 40px rgba(139,26,26,0.3);
+    }
+
+    /* =============================================
+       Reset र Base
+       ============================================= */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* =============================================
+       Animated Background
+       ============================================= */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(139,26,26,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(212,175,55,0.08) 0%, transparent 50%);
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      from { opacity: 0.8; }
+      to { opacity: 1; transform: scale(1.05); }
+    }
+
+    /* =============================================
+       Top Navigation
+       ============================================= */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(12,10,0,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--gold));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: white;
+    }
+
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff, var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .topbar-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+    }
+
+    .page-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* API key input in topbar */
+    .topbar-api-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .topbar-api-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .topbar-api-input {
+      width: 180px;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .topbar-api-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 13px;
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--text-secondary);
+      border-color: var(--border-hover);
+    }
+
+    /* =============================================
+       Main Layout
+       ============================================= */
+    .main-layout {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+
+    /* =============================================
+       Hero Header
+       ============================================= */
+    .page-hero {
+      text-align: center;
+      padding: 40px 0 60px;
+    }
+
+    .pomelli-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 30px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-bottom: 24px;
+    }
+
+    .page-hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+
+    .page-hero h1 .highlight {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-hero p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* =============================================
+       Bank DNA Section — Pre-loaded bank identity
+       ============================================= */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .dna-section {
+      margin-bottom: 40px;
+    }
+
+    .dna-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+    }
+
+    .dna-item h4 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .dna-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .dna-tag {
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .dna-colors {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .color-name {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* =============================================
+       Content Generator — Main Tool Area
+       ============================================= */
+    .generator-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 28px;
+    }
+
+    /* LEFT: Controls Panel */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .control-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+    }
+
+    .control-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Content Type Selector */
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .type-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.25s ease;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-secondary);
+    }
+
+    .type-btn:hover {
+      background: var(--gold-dim);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .type-btn.active {
+      background: rgba(212,175,55,0.15);
+      border-color: rgba(212,175,55,0.5);
+      color: var(--gold-light);
+      box-shadow: 0 0 15px rgba(212,175,55,0.1);
+    }
+
+    .type-btn .type-icon {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .type-btn .type-name {
+      font-size: 12px;
+      font-weight: 500;
+      display: block;
+    }
+
+    /* Platform Selector */
+    .platform-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .platform-btn {
+      flex: 1;
+      min-width: 70px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 6px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .platform-btn:hover, .platform-btn.active {
+      background: rgba(139,26,26,0.15);
+      border-color: rgba(139,26,26,0.4);
+      color: #FF9090;
+    }
+
+    /* Tone Selector */
+    .tone-select {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .tone-select option {
+      background: #1A1A10;
+    }
+
+    /* Custom Prompt Input */
+    .prompt-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      resize: vertical;
+      min-height: 90px;
+      outline: none;
+      line-height: 1.6;
+      transition: border-color 0.3s;
+    }
+
+    .prompt-textarea:focus {
+      border-color: var(--border-hover);
+    }
+
+    .prompt-textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Generate Button */
+    .generate-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: var(--shadow-red);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(139,26,26,0.5);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Quick Campaign Templates */
+    .template-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .template-btn {
+      width: 100%;
+      text-align: left;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .template-btn:hover {
+      background: var(--gold-dim);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    /* =============================================
+       RIGHT: Output Panel
+       ============================================= */
+    .output-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Empty state */
+    .output-empty {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 60px 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--gold-dim);
+      border: 1px solid var(--border-hover);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+
+    .output-empty h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .output-empty p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    /* Generated content cards */
+    .generated-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .generated-header h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .history-count {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .content-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .content-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      animation: cardIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .content-card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(212,175,55,0.04);
+    }
+
+    .content-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .platform-tag {
+      background: rgba(139,26,26,0.2);
+      border: 1px solid rgba(139,26,26,0.3);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: #FF9090;
+      font-weight: 500;
+    }
+
+    .content-type-tag {
+      background: var(--gold-dim);
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--gold-light);
+      font-weight: 500;
+    }
+
+    .content-card-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .action-btn:hover {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .action-btn.copied {
+      color: #4CAF50;
+      border-color: rgba(76,175,80,0.3);
+    }
+
+    .content-body {
+      padding: 20px 18px;
+    }
+
+    .content-text {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+
+    .content-text strong {
+      color: var(--gold-light);
+    }
+
+    /* Character count */
+    .char-count {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    /* Loading skeleton */
+    .loading-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .skeleton {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      animation: shimmer 1.5s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+
+    /* =============================================
+       Tips Section — बैंकको marketing tips
+       ============================================= */
+    .tips-section {
+      margin-top: 60px;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .tip-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.3s ease;
+    }
+
+    .tip-card:hover {
+      border-color: var(--border-hover);
+      background: rgba(212,175,55,0.05);
+      transform: translateY(-3px);
+    }
+
+    .tip-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .tip-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--gold-light);
+    }
+
+    .tip-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* =============================================
+       Responsive
+       ============================================= */
+    @media (max-width: 900px) {
+      .generator-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .dna-card {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .topbar {
+        padding: 0 20px;
+      }
+
+      .main-layout {
+        padding: 24px 20px 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background gradient -->
+<div class="bg-gradient" aria-hidden="true"></div>
+
+<!-- =============================================
+     Top Navigation Bar
+     ============================================= -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">
+      <div class="logo-icon">S</div>
+      <span class="logo-text">Siddhartha Bank</span>
+    </div>
+    <div class="topbar-divider"></div>
+    <span class="page-title">📢 AI Marketing Tool</span>
+  </div>
+  
+  <div class="topbar-right">
+    <div class="topbar-api-wrap">
+      <span class="topbar-api-label">🔑 API:</span>
+      <input 
+        type="password" 
+        class="topbar-api-input" 
+        id="apiKeyInput"
+        placeholder="Gemini API Key..."
+        autocomplete="off"
+        aria-label="Gemini API Key"
+      />
+    </div>
+    <a href="../index.html" class="back-btn">← Home</a>
+  </div>
+</nav>
+
+<!-- =============================================
+     Main Content
+     ============================================= -->
+<main class="main-layout">
+
+  <!-- Hero Header -->
+  <div class="page-hero">
+    <div class="pomelli-badge">
+      ✨ Inspired by Google Pomelli — labs.google.com/pomelli
+    </div>
+    <h1>
+      Bank को Marketing<br />
+      <span class="highlight">AI ले गरोस्</span>
+    </h1>
+    <p>
+      Siddhartha Bank को brand identity र target audience बुझेर, 
+      मिनेटमा professional marketing content generate गर्नुस्।
+    </p>
+  </div>
+
+  <!-- Bank DNA Section — Pomelli concept को core idea -->
+  <div class="dna-section">
+    <p class="section-label">🧬 Siddhartha Bank DNA — Brand Identity</p>
+    <div class="dna-card" aria-label="Bank brand identity information">
+      
+      <div class="dna-item">
+        <h4>Brand Values</h4>
+        <div class="dna-tags">
+          <span class="dna-tag">Trust</span>
+          <span class="dna-tag">Reliability</span>
+          <span class="dna-tag">Innovation</span>
+          <span class="dna-tag">Customer-First</span>
+          <span class="dna-tag">Nepali Heritage</span>
+        </div>
+      </div>
+
+      <div class="dna-item">
+        <h4>Target Audience</h4>
+        <div class="dna-tags">
+          <span class="dna-tag">Young Professionals</span>
+          <span class="dna-tag">Business Owners</span>
+          <span class="dna-tag">Home Buyers</span>
+          <span class="dna-tag">NRN Community</span>
+          <span class="dna-tag">Farmers</span>
+        </div>
+      </div>
+
+      <div class="dna-item">
+        <h4>Brand Colors</h4>
+        <div class="dna-colors">
+          <div>
+            <div class="color-swatch" style="background: #8B1A1A;" title="Primary Maroon"></div>
+            <div class="color-name">Maroon</div>
+          </div>
+          <div>
+            <div class="color-swatch" style="background: #D4AF37;" title="Gold Accent"></div>
+            <div class="color-name">Gold</div>
+          </div>
+          <div>
+            <div class="color-swatch" style="background: #FFFFFF;" title="White"></div>
+            <div class="color-name">White</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Content Generator -->
+  <div class="generator-layout">
+
+    <!-- LEFT: Controls -->
+    <div class="controls-panel">
+
+      <!-- Content Type Selection -->
+      <div class="control-card">
+        <h3>📝 Content Type छान्नुस्</h3>
+        <div class="type-grid" role="group" aria-label="Content type selection">
+          <button class="type-btn active" id="type-social" onclick="selectType(this, 'social')" aria-pressed="true">
+            <span class="type-icon">📱</span>
+            <span class="type-name">Social Post</span>
+          </button>
+          <button class="type-btn" id="type-campaign" onclick="selectType(this, 'campaign')" aria-pressed="false">
+            <span class="type-icon">🎯</span>
+            <span class="type-name">Campaign</span>
+          </button>
+          <button class="type-btn" id="type-sms" onclick="selectType(this, 'sms')" aria-pressed="false">
+            <span class="type-icon">💬</span>
+            <span class="type-name">SMS/Viber</span>
+          </button>
+          <button class="type-btn" id="type-email" onclick="selectType(this, 'email')" aria-pressed="false">
+            <span class="type-icon">📧</span>
+            <span class="type-name">Email</span>
+          </button>
+          <button class="type-btn" id="type-ad" onclick="selectType(this, 'ad')" aria-pressed="false">
+            <span class="type-icon">📺</span>
+            <span class="type-name">Ad Copy</span>
+          </button>
+          <button class="type-btn" id="type-event" onclick="selectType(this, 'event')" aria-pressed="false">
+            <span class="type-icon">🎊</span>
+            <span class="type-name">Event Promo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Platform Selection -->
+      <div class="control-card">
+        <h3>🌐 Platform छान्नुस्</h3>
+        <div class="platform-row" role="group" aria-label="Platform selection">
+          <button class="platform-btn active" onclick="selectPlatform(this, 'Facebook')" aria-pressed="true">📘 Facebook</button>
+          <button class="platform-btn" onclick="selectPlatform(this, 'Instagram')" aria-pressed="false">📸 Instagram</button>
+          <button class="platform-btn" onclick="selectPlatform(this, 'Twitter/X')" aria-pressed="false">🐦 Twitter</button>
+          <button class="platform-btn" onclick="selectPlatform(this, 'Viber')" aria-pressed="false">💬 Viber</button>
+        </div>
+      </div>
+
+      <!-- Tone र Language -->
+      <div class="control-card">
+        <h3>🎭 Tone र Language</h3>
+        <select class="tone-select" id="toneSelect" aria-label="Select content tone">
+          <option value="professional">Professional — औपचारिक</option>
+          <option value="friendly">Friendly — मैत्रीपूर्ण</option>
+          <option value="festive">Festive — चाडपर्व Special</option>
+          <option value="urgent">Urgent — Limited Offer</option>
+          <option value="educational">Educational — जानकारी</option>
+        </select>
+      </div>
+
+      <!-- Custom Prompt -->
+      <div class="control-card">
+        <h3>✍️ Campaign Details</h3>
+        <textarea 
+          class="prompt-textarea" 
+          id="customPrompt"
+          placeholder="Example: Dashain special offer — Home Loan मा 0.5% छूट, 30 दिनसम्म मात्र। Target: 25-45 उमेरका professionals।"
+          aria-label="Campaign details input"
+        ></textarea>
+      </div>
+
+      <!-- Generate Button -->
+      <button class="generate-btn" id="generateBtn" onclick="generateContent()" aria-label="Generate marketing content">
+        <span id="generateBtnIcon">✨</span>
+        <span id="generateBtnText">Content Generate गर्नुस्</span>
+      </button>
+
+      <!-- Quick Templates -->
+      <div class="control-card">
+        <h3>⚡ Quick Templates</h3>
+        <div class="template-list">
+          <button class="template-btn" onclick="applyTemplate('dashain')">🪔 Dashain Special Offer</button>
+          <button class="template-btn" onclick="applyTemplate('tihar')">🪔 Tihar Savings Campaign</button>
+          <button class="template-btn" onclick="applyTemplate('homeloan')">🏠 Home Loan Promotion</button>
+          <button class="template-btn" onclick="applyTemplate('fd')">💰 FD Rate Announcement</button>
+          <button class="template-btn" onclick="applyTemplate('digital')">📱 Digital Banking Drive</button>
+          <button class="template-btn" onclick="applyTemplate('nrn')">✈️ NRN Remittance Campaign</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Output -->
+    <div class="output-panel" id="outputPanel">
+
+      <div class="output-empty" id="emptyState" aria-label="No content generated yet">
+        <div class="empty-icon">✨</div>
+        <h3>Content generate गर्न तयार!</h3>
+        <p>
+          बायाँ तर्फ content type, platform, र campaign details भरेर 
+          <strong>"Content Generate गर्नुस्"</strong> button click गर्नुस्।
+          AI ले Siddhartha Bank को brand identity बुझेर content बनाउँछ।
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =============================================
+       Marketing Tips Section
+       Bank को लागि easy marketing tips
+       ============================================= -->
+  <div class="tips-section">
+    <p class="section-label">💡 Bank Marketing Tips — AI ले दिने सुझावहरू</p>
+    <h2 style="font-family:'Outfit',sans-serif; font-size:28px; font-weight:700; margin-bottom:32px;">
+      Siddhartha Bank को लागि Effective Marketing Strategies
+    </h2>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <span class="tip-icon">🌙</span>
+        <h4>Festival-Based Campaigns</h4>
+        <p>Dashain, Tihar, New Year मा special loan offers र FD bonuses announce गर्नुस्। Nepali customers को festival spending pattern अनुसार campaigns बनाउनुस्।</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">📱</span>
+        <h4>Digital-First Approach</h4>
+        <p>Facebook र TikTok मा short video content — "30 seconds मा Home Loan apply गर्ने तरिका।" Young professionals लाई target गर्नुस् YouTube ads बाट।</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">🤝</span>
+        <h4>Referral Marketing</h4>
+        <p>Existing customers लाई नयाँ customer refer गर्दा gift, extra FD rate, वा cashback दिनुस्। Word-of-mouth Nepal मा सबैभन्दा powerful marketing हो।</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">📊</span>
+        <h4>Educational Content</h4>
+        <p>"कसरी home loan लिने?", "FD vs Savings — कुन राम्रो?" — यस्ता educational posts ले trust build गर्छ र organic reach बढाउँछ।</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">✈️</span>
+        <h4>NRN Community Target</h4>
+        <p>Remittance सेवाको promotion Qatar, UAE, Korea, Malaysia मा रहेका Nepalis लाई। Siddhartha Bank मार्फत पैसा पठाउँदा कम charge को campaign।</p>
+      </div>
+      <div class="tip-card">
+        <span class="tip-icon">🌾</span>
+        <h4>Agriculture Loan Drive</h4>
+        <p>Farming season (Asar, Kartik) मा agriculture loan को awareness। Rural branches बाट targeted SMSes र local radio मा advertisements।</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  /*
+   * =============================================
+   * Siddhartha Bank AI Marketing Tool
+   * 
+   * यो script मा:
+   * 1. Content type र platform select गर्ने
+   * 2. Gemini API बाट marketing content generate गर्ने
+   * 3. Generated content copy गर्ने
+   * =============================================
+   */
+
+  // वर्तमान selection state
+  let selectedType = 'social';
+  let selectedPlatform = 'Facebook';
+  let generatedCount = 0;
+
+  /*
+   * Siddhartha Bank को marketing context
+   * यो prompt ले AI लाई bank को identity बुझाउँछ
+   */
+  const MARKETING_SYSTEM_PROMPT = `तिमी Siddhartha Bank Limited को expert digital marketing content creator हौ।
+
+## Siddhartha Bank को Brand Identity:
+- **Founded:** 2002 AD (2059 BS)
+- **Type:** Class A Commercial Bank, Nepal
+- **Brand Values:** Trust, Reliability, Innovation, Customer-First
+- **Brand Voice:** Professional yet warm, Nepali pride
+- **Colors:** Maroon (#8B1A1A), Gold (#D4AF37), White
+- **Tagline Concept:** "Your Trusted Banking Partner"
+- **Services:** Loans, Deposits, Digital Banking, Remittance, Trade Finance
+
+## Target Audiences:
+1. Young Professionals (22-35): Digital banking, personal loans
+2. Business Owners (30-55): Business loans, trade finance  
+3. Home Buyers (28-45): Home loans, mortgages
+4. NRN Community: Remittance services
+5. Farmers/Rural: Agriculture loans
+6. Senior Citizens: FD, retirement savings
+
+## Content Creation Rules:
+- Nepali र English mix (Nepanglish) OK — natural लाग्छ
+- Emojis use गर्नुस् — engagement बढाउँछ
+- Clear CTA (Call to Action) हुनुपर्छ
+- Bank को phone number: 01-XXXXXXX (placeholder)
+- Website: www.siddharthabank.com
+- Hashtags: #SiddharthaBank #YourTrustedPartner #NepalBanking
+
+## Platform-Specific Tone:
+- Facebook: Informative, community feel
+- Instagram: Visual-friendly, lifestyle angle
+- Twitter/X: Concise, punchy, hashtag-heavy
+- Viber: Personal, direct, brief
+- Email: Formal, detailed, subject line first
+
+जहिले पनि authentic, non-spammy, र brand-consistent content बनाउनुस्।`;
+
+  /*
+   * selectType — Content type button click हुँदा
+   */
+  function selectType(btn, type) {
+    document.querySelectorAll('.type-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    selectedType = type;
+  }
+
+  /*
+   * selectPlatform — Platform button click हुँदा
+   */
+  function selectPlatform(btn, platform) {
+    document.querySelectorAll('.platform-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    selectedPlatform = platform;
+  }
+
+  /*
+   * applyTemplate — Quick template button click हुँदा prompt fill गर्ने
+   */
+  function applyTemplate(type) {
+    const templates = {
+      dashain: 'Dashain 2081 को मौकामा Siddhartha Bank को special offer — Home Loan मा 1% ब्याज छूट। 30 Ashoj सम्म apply गर्नुस्। Target: 28-45 age group, home buyers।',
+      tihar: 'Tihar को Laxmi Puja को अवसरमा, Siddhartha Bank मा नयाँ savings account खोल्नुस् र Lakshmi को आशीर्वाद पाउनुस्। Festival FD rates — 10.5% को special offer।',
+      homeloan: 'आफ्नो सपनाको घर बनाउनुस् Siddhartha Bank को Home Loan सँग। 9.5% बाट सुरु, 20 साल सम्म। EWS/LIG applicants को लागि special subsidy available।',
+      fd: 'सूचना: Siddhartha Bank ले Fixed Deposit ब्याज दर revise गरेको छ। 1 साल FD — अब 10% per annum! Senior citizens लाई थप 0.5% extra।',
+      digital: 'SBL mBanking — Banking अब तपाईंको हातमा! Fund transfer, bill payment, FD booking — सबै घरबाटै। Download गर्नुस् र Rs. 100 cashback पाउनुस्।',
+      nrn: 'विदेशमा हुनुहुन्छ? Siddhartha Bank मार्फत Nepal मा पैसा पठाउनुस् — सबैभन्दा कम charge मा। Western Union, MoneyGram, SCT — सबै available।'
+    };
+    document.getElementById('customPrompt').value = templates[type] || '';
+  }
+
+  /*
+   * getApiKey — Gemini API key लिने
+   */
+  function getApiKey() {
+    return document.getElementById('apiKeyInput').value.trim();
+  }
+
+  /*
+   * buildPrompt — Gemini API लाई पठाउने prompt बनाउने
+   */
+  function buildPrompt(details, type, platform, tone) {
+    const typeLabels = {
+      social: 'Social Media Post',
+      campaign: 'Full Marketing Campaign',
+      sms: 'SMS/Viber Message (160 characters सम्म)',
+      email: 'Email (Subject Line + Body)',
+      ad: 'Advertisement Copy',
+      event: 'Event Promotion Post'
+    };
+
+    return `
+Platform: **${platform}**
+Content Type: **${typeLabels[type] || type}**
+Tone: **${tone}**
+
+Campaign Details:
+${details || 'Siddhartha Bank को general promotional post बनाउनुस्।'}
+
+---
+माथिको जानकारी अनुसार ${platform} को लागि ${typeLabels[type]} बनाउनुस्।
+
+Format:
+- Platform-specific formatting use गर्नुस्
+- Emojis appropriate रूपमा use गर्नुस्
+- Clear CTA include गर्नुस्
+- Relevant hashtags include गर्नुस् (3-5 वटा)
+- Character count note गर्नुस्
+
+एउटा राम्रो, engaging, र brand-consistent content बनाउनुस्।`;
+  }
+
+  /*
+   * generateContent — Main generation function
+   * Gemini API call गरेर content बनाउँछ
+   */
+  async function generateContent() {
+    const customPrompt = document.getElementById('customPrompt').value.trim();
+    const tone = document.getElementById('toneSelect').value;
+    const btn = document.getElementById('generateBtn');
+    const btnText = document.getElementById('generateBtnText');
+    const btnIcon = document.getElementById('generateBtnIcon');
+    
+    // Button loading state
+    btn.disabled = true;
+    btnIcon.textContent = '⏳';
+    btnText.textContent = 'Generate हुँदैछ...';
+    
+    // Empty state हटाउने
+    document.getElementById('emptyState')?.remove();
+    
+    // Loading skeleton देखाउने
+    const loadingEl = createLoadingSkeleton();
+    document.getElementById('outputPanel').prepend(loadingEl);
+    
+    try {
+      let content;
+      const apiKey = getApiKey();
+      
+      if (apiKey) {
+        // Real Gemini API call
+        content = await callGeminiAPI(apiKey, customPrompt, tone);
+      } else {
+        // Demo mode — predefined responses
+        await new Promise(r => setTimeout(r, 1800)); // Simulate loading
+        content = getDemoContent(customPrompt, selectedType, selectedPlatform, tone);
+      }
+      
+      // Loading हटाउने र content देखाउने
+      loadingEl.remove();
+      addContentCard(content, selectedType, selectedPlatform);
+      
+    } catch (error) {
+      loadingEl.remove();
+      addErrorCard(error.message);
+    } finally {
+      btn.disabled = false;
+      btnIcon.textContent = '✨';
+      btnText.textContent = 'Content Generate गर्नुस्';
+    }
+  }
+
+  /*
+   * callGeminiAPI — Gemini 2.0 Flash API call गर्ने
+   */
+  async function callGeminiAPI(apiKey, userPrompt, tone) {
+    const prompt = buildPrompt(userPrompt, selectedType, selectedPlatform, tone);
+    
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: MARKETING_SYSTEM_PROMPT }] },
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.85,  // Creativity थोरै बढाएको — marketing content creative हुनुपर्छ
+            maxOutputTokens: 800,
+            topP: 0.95
+          }
+        })
+      }
+    );
+
+    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+    
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Content generate गर्न सकिएन।';
+  }
+
+  /*
+   * getDemoContent — API key नभएमा demo content दिने
+   */
+  function getDemoContent(prompt, type, platform, tone) {
+    const lowerPrompt = (prompt || '').toLowerCase();
+    
+    if (lowerPrompt.includes('dashain') || lowerPrompt.includes('dasain')) {
+      return `🪔 **Dashain 2081 — Special Offer!**
+
+यो Dashain, आफ्नो सपनाको घर बनाउनुस् Siddhartha Bank सँग! 🏠
+
+✅ Home Loan मा **1% ब्याज छूट**
+✅ Processing Fee **FREE**
+✅ EMI सुरु गर्ने **3 महिना grace period**
+✅ Online Apply — **30 मिनेटमा approval**
+
+सीमित समयको offer — **30 Ashoj 2081** सम्म मात्र!
+
+📞 Hotline: 16600-12345
+🌐 siddharthabank.com/dashain-offer
+
+#SiddharthaBank #DashainOffer2081 #HomeLoan #YourTrustedPartner #DashainSpecial`;
+    }
+    
+    if (lowerPrompt.includes('fd') || lowerPrompt.includes('fixed deposit')) {
+      return `📢 **महत्त्वपूर्ण सूचना — FD Rate Update!**
+
+Siddhartha Bank ले Fixed Deposit rates revise गरेको छ:
+
+| Duration | Rate |
+|----------|------|
+| 3 Months | 8.5% |
+| 6 Months | 9.0% |
+| 1 Year | **10%** ⭐ |
+| 2 Years | 10.25% |
+| 3 Years | 10.5% |
+
+🎁 **Senior Citizens** लाई थप **0.5%** extra!
+💡 **Women's FD** — Extra 0.25% bonus rate
+
+Minimum: Rs. 5,000 | Interest: Monthly/Quarterly/Annual
+
+📞 नजिकको branch मा सम्पर्क गर्नुस् वा SBL mBanking मा Book FD click गर्नुस्।
+
+#SiddharthaBank #FDRates #Investment #SaveWithSiddhartha`;
+    }
+    
+    // Default demo
+    return `📢 **Siddhartha Bank — Your Trusted Banking Partner**
+
+${platform === 'Instagram' ? '🌟 ' : ''}Nepal को सबैभन्दा trusted banks मध्ये एक, Siddhartha Bank सँग banking सुरु गर्नुस्!
+
+🏦 **हाम्रो Services:**
+✅ Home, Auto, Education र Personal Loans
+✅ High-yield Fixed Deposits
+✅ Digital Banking (SBL mBanking)
+✅ International Remittance
+✅ Business Banking Solutions
+
+💡 **किन Siddhartha Bank?**
+• 20+ वर्षको experience
+• 200+ branches across Nepal
+• 24/7 customer support
+• Nepal को fastest growing bank
+
+📱 SBL mBanking download गर्नुस् र banking अझ सजिलो बनाउनुस्!
+
+🔗 www.siddharthabank.com
+📞 Hotline: 16600-12345
+
+#SiddharthaBank #YourTrustedPartner #DigitalBanking #Nepal #NepaliBank`;
+  }
+
+  /*
+   * createLoadingSkeleton — Loading हुँदा skeleton UI देखाउने
+   */
+  function createLoadingSkeleton() {
+    const el = document.createElement('div');
+    el.className = 'loading-card';
+    el.id = 'loadingSkeleton';
+    el.innerHTML = `
+      <div class="skeleton" style="height:16px; width:40%; margin-bottom:16px;"></div>
+      <div class="skeleton" style="height:14px; width:100%;"></div>
+      <div class="skeleton" style="height:14px; width:90%; margin-top:8px;"></div>
+      <div class="skeleton" style="height:14px; width:95%; margin-top:8px;"></div>
+      <div class="skeleton" style="height:14px; width:75%; margin-top:8px;"></div>
+      <div class="skeleton" style="height:14px; width:85%; margin-top:8px;"></div>
+    `;
+    return el;
+  }
+
+  /*
+   * addContentCard — Generated content card add गर्ने
+   */
+  function addContentCard(content, type, platform) {
+    generatedCount++;
+    
+    const typeEmojis = { social: '📱', campaign: '🎯', sms: '💬', email: '📧', ad: '📺', event: '🎊' };
+    const emoji = typeEmojis[type] || '📝';
+    const charCount = content.length;
+    
+    const card = document.createElement('div');
+    card.className = 'content-card';
+    card.innerHTML = `
+      <div class="content-card-header">
+        <div class="content-card-meta">
+          <span class="platform-tag">${platform}</span>
+          <span class="content-type-tag">${emoji} ${type}</span>
+        </div>
+        <div class="content-card-actions">
+          <button class="action-btn" onclick="copyContent(this)" aria-label="Copy content to clipboard">
+            📋 Copy
+          </button>
+          <button class="action-btn" onclick="regenerate()" aria-label="Regenerate content">
+            🔄 Regenerate
+          </button>
+        </div>
+      </div>
+      <div class="content-body">
+        <div class="content-text" id="content-${generatedCount}">${formatContent(content)}</div>
+        <div class="char-count">📊 ${charCount} characters</div>
+      </div>
+    `;
+    
+    document.getElementById('outputPanel').prepend(card);
+  }
+
+  /*
+   * formatContent — Content को text formatting
+   */
+  function formatContent(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+  }
+
+  /*
+   * copyContent — Content clipboard मा copy गर्ने
+   */
+  async function copyContent(btn) {
+    const contentDiv = btn.closest('.content-card').querySelector('.content-text');
+    const text = contentDiv.innerText;
+    
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = '✅ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    } catch {
+      btn.textContent = '❌ Failed';
+      setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+    }
+  }
+
+  /*
+   * regenerate — फेरि generate गर्ने
+   */
+  function regenerate() {
+    generateContent();
+  }
+
+  /*
+   * addErrorCard — Error भएमा देखाउने
+   */
+  function addErrorCard(msg) {
+    const card = document.createElement('div');
+    card.className = 'content-card';
+    card.innerHTML = `
+      <div class="content-body">
+        <p style="color:#FF6B6B;">⚠️ Error: ${msg}</p>
+        <p style="color:var(--text-muted); font-size:12px; margin-top:8px;">
+          API key check गर्नुस् वा API key नराखीकन demo mode मा use गर्नुस्।
+        </p>
+      </div>
+    `;
+    document.getElementById('outputPanel').prepend(card);
+  }
+</script>
+
+</body>
+</html>
