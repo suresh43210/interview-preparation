@@ -228,13 +228,209 @@ FALLBACK_DATABASE = {
   }
 }
 
+def generate_single_fallback_md(doc_name):
+    dir_path = "chatbot/laws/corporate-laws"
+    os.makedirs(dir_path, exist_ok=True)
+    
+    doc_files = {
+        "nepal_rastra_bank_act_2058": "nepal_rastra_bank_act_2058.md",
+        "bank_and_financial_institutions_act_2073": "bank_and_financial_institutions_act_2073.md",
+        "anti_money_laundering_act_2064": "anti_money_laundering_act_2064.md",
+        "labor_act_2074": "labor_act_2074.md",
+        "banking_offence_and_punishment_act_2064": "banking_offence_and_punishment_act_2064.md"
+    }
+    
+    if doc_name not in doc_files:
+        return
+        
+    doc_chunks = [c for c in FALLBACK_DATABASE["chunks"] if c["doc"] == doc_name]
+    if not doc_chunks:
+        return
+        
+    md_lines = []
+    md_lines.append(f"# {doc_chunks[0]['doc_title']}")
+    md_lines.append("")
+    
+    for chunk in doc_chunks:
+        md_lines.append(f"## {chunk['section']}")
+        md_lines.append(chunk['content'])
+        md_lines.append("")
+        
+    md_content = "\n".join(md_lines)
+    md_path = os.path.join(dir_path, doc_files[doc_name])
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(md_content)
+    print(f"💾 Saved Fallback Markdown to {md_path}")
+
+def generate_fallback_md_files():
+    doc_names = [
+        "nepal_rastra_bank_act_2058",
+        "bank_and_financial_institutions_act_2073",
+        "anti_money_laundering_act_2064",
+        "labor_act_2074",
+        "banking_offence_and_punishment_act_2064"
+    ]
+    for d in doc_names:
+        generate_single_fallback_md(d)
+
+REPLACEMENTS = {
+    "पोर्स्टल अडध र": "पोस्टल अर्डर",
+    "हर्स्िान्त्िरणयोग्य": "हस्तान्तरणयोग्य",
+    "मडान्त्चर र्स्टक": "डिबेन्चर स्टक",
+    "अन्त्िराधहष्ट्रय": "अन्तर्राष्ट्रिय",
+    "पोर्स्टल अडधर": "पोस्टल अर्डर",
+    "पोर्स्टल अडरध": "पोस्टल अर्डर",
+    "हादशी हामनमय": "विदेशी विनिमय",
+    "ाा वाणिज्य": "वाणिज्य",
+    "ाात्त णज्य": "वाणिज्य",
+    "सञ् चालक": "सञ्चालक",
+    "सााजध मनक": "सार्वजनिक",
+    "सााधजमनक": "सार्वजनिक",
+    "अमधिकारपर": "अधिकारपत्र",
+    "हर्स्िान्त्िरण": "हस्तान्तरण",
+    "मडान्त्चर": "डिबेन्चर",
+    "साधसाधारण": "सर्वसाधारण",
+    "र्स्पेशल": "स्पेशल",
+    "िोहकददएको": "तोकिदिएको",
+    "प्रमाणपर": "प्रमाणपत्र",
+    "प्रमििपर": "प्रतीतपत्र",
+    "हामनमयपर": "विनिमयपत्र",
+    "हामनमय": "विनिमय",
+    "मधिोपर": "धितोपत्र",
+    "र्स्ाीकमि": "स्वीकृति",
+    "क्रे मडट": "क्रेडिट",
+    "ममन अडधर": "मनी अर्डर",
+    "ममन अडरध": "मनी अर्डर",
+    "ममन अर्डर": "मनी अर्डर",
+    "ममन अडर": "मनी अर्डर",
+    "पोर्स्टल": "पोस्टल",
+    "कजाधको": "कर्जाको",
+    "कजाको": "कर्जाको",
+    "चित्तल्िमा": "चलनचल्तीमा",
+    "चत्तल्िमा": "चलनचल्तीमा",
+    "ट्राभलसध": "ट्राभलर्स",
+    "हादेशी": "विदेशी",
+    "हादशी": "विदेशी",
+    "हाशेर्ध": "विशेष",
+    "हाशेर्": "विशेष",
+    "बैङ्ककó": "बैंकको",
+    "हािीय": "वित्तीय",
+    "संर्स्था": "संस्था",
+    "भन्त् नाले": "भन्नाले",
+    "कृ हर्": "कृषि",
+    "ामथकध": "आर्थिक",
+    "ामथक": "आर्थिक",
+    "आमथकध": "आर्थिक",
+    "आमथधक": "आर्थिक",
+    "कजाध": "कर्जा",
+    "मनक्षेप": "निक्षेप",
+    "समेिलाई": "समेतलाई",
+    "समेि": "समेत",
+    "मरु ा": "मुद्रा",
+    "मुरा": "मुद्रा",
+    "बैङ्क": "बैंक",
+    "समममि": "समिति",
+    "स“ ” ो": "सो",
+    "डपट í": "डेपुटी",
+    "ात्त णज्य": "वाणिज्य",
+    "नयक्त": "नियुक्त",
+    "इजाजिपर": "इजाजतपत्र",
+    "अन्त्य": "अन्य",
+    "यर्स्िै": "यस्तै",
+    "काडध": "कार्ड",
+    "काड": "कार्ड",
+    "अडरध": "अर्डर",
+    "अडधर": "अर्डर",
+    "अडर": "अर्डर",
+    "ममन": "मनी",
+    "ाा ": "वा ",
+    " ाा": " वा",
+    "अमधकार": "अधिकार",
+    "आम थक": "आर्थिक",
+    "कजा ": "कर्जा ",
+    "कजा": "कर्जा",
+    "मनक्षप": "निक्षेप",
+    "उद्दश्यल": "उद्देश्यले",
+    "र्स्थापना": "स्थापना",
+    "लखकó": "लेखिएको",
+    "सटहí": "सटही",
+    "सङ्ख्या": "संख्या",
+    "लामग": "लागि",
+    "लाभग": "लागि",
+    "साधधारण": "साधारण",
+    "त्तिक्ने": "झिक्ने",
+    "त्तिक्न": "झिक्न",
+    "युमनट": "युनिट",
+    "हकमसमको": "किसिमको",
+    "ममधि": "धितो",
+    "ममधि ": "धितो ",
+    "योपर": "पत्र",
+    "्यत्तक्त": "व्यक्ति",
+    "फमध": "फर्म",
+    "अकó": "अर्को",
+    "सgदठि": "संगठित",
+    "सgदठि": "संगठित",
+    "सगदठि": "संगठित",
+    "सर्स्था": "संस्था",
+    "शयर": "शेयर",
+    "र्स्टक": "स्टक",
+    "बचित": "बचत",
+    "समहगि": "सामूहिक",
+    "राजपर": "राजपत्र",
+    "सचना": "सूचना",
+    "नगदकको": "नगदको",
+    "ददन": "दिन",
+    "मलन": "लिन",
+    "नपाल": "नेपाल",
+    "सशोधन": "संशोधन",
+    "कन्त्रīय": "केन्द्रीय",
+    "कन्त्रीय": "केन्द्रीय",
+    "मलकī": "मुलुकी",
+    "सहिा": "संहिता",
+    "सम्बन्त्धī": "सम्बन्धी",
+    "सम्पत्तिशुद्धीकरण": "सम्पत्ति शुद्धीकरण",
+    "मनाारण": "निवारण",
+    "मनī लाउण्डरिर्ग": "मनी लाउण्डरिङ",
+    "काय": "कार्य",
+    "बनको": "बनेको",
+    "गिदत्त ख": "गतेदेखि",
+    "हाकासमा": "विकासमा",
+    "पग्न": "पुग्न",
+    "मल्य": "मूल्य",
+    "र्स्थाहयत्ा": "स्थायित्व",
+    "र्स्थाहयत्व": "स्थायित्व",
+    "शाहदाको": "शाहदेवको",
+    "पह हलो": "पहिलो",
+    "ार्मा": "वर्षमा",
+    "ससदल": "संसदले",
+    "परि रच्छद": "परिच्छेद",
+    "प्रारत्तम्भक": "प्रारम्भिक",
+    "प्रसगल": "प्रसङ्गले",
+    "सत्त क्षप्त": "संक्षिप्त",
+    "रहक:": "रहेको",
+    "स“ ” ो": "सो",
+    "त्तिक्ने": "झिक्ने",
+    "त्तिक्न": "झिक्न"
+}
+
+def clean_nepali_text(text):
+    if not text:
+        return text
+    # Sort keys by length in descending order to avoid prefix replacement bugs
+    sorted_replacements = sorted(REPLACEMENTS.items(), key=lambda x: len(x[0]), reverse=True)
+    cleaned = text
+    for src, dst in sorted_replacements:
+        cleaned = cleaned.replace(src, dst)
+    return cleaned
+
 async def parse_pdf(file_path, parser):
     print(f"Starting parsing for {file_path} using LlamaParse...")
     try:
         # Load markdown using LlamaParse
         documents = await parser.aload_data(file_path)
         print(f"Finished parsing {file_path}. Extracted {len(documents)} pages/sections.")
-        return "\n\n".join([doc.text for doc in documents])
+        raw_text = "\n\n".join([doc.text for doc in documents])
+        return clean_nepali_text(raw_text)
     except Exception as e:
         print(f"Error parsing {file_path} via LlamaParse API: {e}")
         return None
@@ -327,6 +523,7 @@ async def main():
         print("💡 LLAMA_CLOUD_API_KEY is not set. Using pre-compiled high-quality corporate compliance database...")
         # Write pre-compiled fallback directly
         os.makedirs("chatbot", exist_ok=True)
+        generate_fallback_md_files()
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(FALLBACK_DATABASE, f, indent=2, ensure_ascii=False)
         print(f"✅ Success: Fallback compliance database written to {output_path} with {len(FALLBACK_DATABASE['chunks'])} chunks.")
@@ -337,6 +534,7 @@ async def main():
     except ImportError:
         print("❌ error: llama-parse python library is not installed. Using fallback database...")
         os.makedirs("chatbot", exist_ok=True)
+        generate_fallback_md_files()
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(FALLBACK_DATABASE, f, indent=2, ensure_ascii=False)
         print(f"✅ Success: Fallback compliance database written to {output_path}.")
@@ -390,6 +588,7 @@ async def main():
             
     if not tasks:
         print("❌ No files found to parse. Using fallback database...")
+        generate_fallback_md_files()
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(FALLBACK_DATABASE, f, indent=2, ensure_ascii=False)
         print(f"✅ Success: Fallback database written to {output_path}.")
@@ -401,6 +600,12 @@ async def main():
     for idx, doc in enumerate(valid_docs):
         markdown_text = results[idx]
         if markdown_text:
+            # SAVE THE RAW MARKDOWN TO FILE
+            md_file_path = doc["file"].replace(".pdf", ".md")
+            with open(md_file_path, "w", encoding="utf-8") as md_f:
+                md_f.write(markdown_text)
+            print(f"💾 Saved Markdown to {md_file_path}")
+            
             chunks = chunk_markdown(markdown_text, doc["name"], doc["title"])
             all_chunks.extend(chunks)
             print(f"📝 Generated {len(chunks)} chunks for {doc['title']}.")
@@ -409,6 +614,9 @@ async def main():
             # Inject fallback chunks for this specific document if LlamaParse failed
             fb_chunks = [c for c in FALLBACK_DATABASE["chunks"] if c["doc"] == doc["name"]]
             all_chunks.extend(fb_chunks)
+            
+            # Generate fallback MD file for this failed document
+            generate_single_fallback_md(doc["name"])
 
     # Use default nodes and edges (or enrich with parsed topics if necessary)
     database = {

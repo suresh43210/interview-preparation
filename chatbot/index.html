@@ -1129,6 +1129,8 @@
   let isLoading = false;
   let complianceDatabase = null; // Loaded from laws_db.json
 
+  const SYSTEM_PROMPT = `तिमी Siddhartha Bank Limited को AI Customer Assistant हौ। तिम्रो मुख्य उद्देश्य बैंकका ग्राहकहरूलाई उनीहरूको सोधपुछ (Loans, Interest Rates, Savings, Branch Locations, Mobile Banking) मा सरल र विनम्र भाषामा सहयोग गर्नु हो। नेपाली र अंग्रेजी दुवै भाषा बुझ र विनम्रताका साथ स्पष्ट जवाफ देऊ।`;
+
   // Graph Visualization State
   let nodes = [];
   let edges = [];
