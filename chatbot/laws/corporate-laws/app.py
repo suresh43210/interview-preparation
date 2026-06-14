@@ -176,39 +176,40 @@ Nepali: [Your standalone Nepali translation]"""
 if "app_lang" not in st.session_state:
     st.session_state.app_lang = "नेपाली"
 
+# Read language state
+current_lang = st.session_state.app_lang
+
+# Text Dictionaries
+if current_lang == "English":
+    ui_title = "Nepal Corporate Law AI 🇳🇵"
+    ui_subtitle = "Your intelligent legal companion for Nepal's Corporate Sector"
+    sidebar_title = "Corporate Law AI"
+    sidebar_desc = "Instantly navigate through **1,865 provisions** from the Companies Act, BAFIA, Labor Act, and more. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
+    btn_clear = "🧹 Clear Chat History"
+    ph_input = "Ask your legal question..."
+    msg_welcome = "**Hello!** I am your AI Assistant for Nepal's Corporate Laws.\n\nYou can ask me any legal question related to **BAFIA**, **Companies Act**, **Labor Act**, or **Insurance Act**. I will provide you with accurate answers including official legal citations. How can I help you today?"
+    sugg_heading = "💡 **Logical & Complex Questions (Suggested):**"
+    sugg_q1 = "Can a person convicted of a banking offense become a company director? Answer based on the Companies Act and Banking Offence Act."
+    sugg_q2 = "What action is taken under the Labor Act if an employee's remuneration is not paid, and does it fall under money laundering?"
+    sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
+    sugg_q4 = "What is the company liquidation process, and how is the priority of debt recovery determined?"
+else:
+    ui_title = "नेपाल कर्पोरेट कानुन AI 🇳🇵"
+    ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
+    sidebar_title = "कानुन च्याटबट"
+    sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** पढेर सटिक उत्तर दिने AI।"
+    btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
+    ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
+    msg_welcome = "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
+    sugg_heading = "💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**"
+    sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"
+    sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"
+    sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"
+    sugg_q4 = "कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"
+
+# Sidebar Layout
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/6033/6033333.png", width=80)
-    
-    new_lang = st.radio("🌐 Language / भाषा", ["नेपाली", "English"], horizontal=True, index=0 if st.session_state.app_lang == "नेपाली" else 1)
-    
-    # Text Dictionaries
-    if new_lang == "English":
-        ui_title = "Nepal Corporate Law AI 🇳🇵"
-        ui_subtitle = "Your intelligent legal companion for Nepal's Corporate Sector"
-        sidebar_title = "Corporate Law AI"
-        sidebar_desc = "Instantly navigate through **1,865 provisions** from the Companies Act, BAFIA, Labor Act, and more. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
-        btn_clear = "🧹 Clear Chat History"
-        ph_input = "Ask your legal question..."
-        msg_welcome = "**Hello!** I am your AI Assistant for Nepal's Corporate Laws.\n\nYou can ask me any legal question related to **BAFIA**, **Companies Act**, **Labor Act**, or **Insurance Act**. I will provide you with accurate answers including official legal citations. How can I help you today?"
-        sugg_heading = "💡 **Logical & Complex Questions (Suggested):**"
-        sugg_q1 = "Can a person convicted of a banking offense become a company director? Answer based on the Companies Act and Banking Offence Act."
-        sugg_q2 = "What action is taken under the Labor Act if an employee's remuneration is not paid, and does it fall under money laundering?"
-        sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
-        sugg_q4 = "What is the company liquidation process, and how is the priority of debt recovery determined?"
-    else:
-        ui_title = "नेपाल कर्पोरेट कानुन AI 🇳🇵"
-        ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
-        sidebar_title = "कानुन च्याटबट"
-        sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** पढेर सटिक उत्तर दिने AI।"
-        btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
-        ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
-        msg_welcome = "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
-        sugg_heading = "💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**"
-        sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"
-        sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"
-        sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"
-        sugg_q4 = "कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"
-
     st.title(sidebar_title)
     st.markdown(sidebar_desc)
     st.divider()
@@ -216,18 +217,9 @@ with st.sidebar:
         st.session_state.messages = [st.session_state.messages[0]]
         st.rerun()
     st.divider()
-    st.caption("Powered by: **Claude 3.5 Sonnet**")
-    
-    # If language changed, update state and welcome message
-    if new_lang != st.session_state.app_lang:
-        st.session_state.app_lang = new_lang
-        if len(st.session_state.messages) > 0:
-            st.session_state.messages[0]["content"] = msg_welcome
-        st.rerun()
+    st.caption("Powered by: **Claude Sonnet 4.6**")
 
-# -------------------------------------------------------------------
 # Session State & Main UI
-# -------------------------------------------------------------------
 if "messages" not in st.session_state or len(st.session_state.messages) == 0:
     st.session_state.messages = []
     st.session_state.messages.append({
@@ -236,9 +228,27 @@ if "messages" not in st.session_state or len(st.session_state.messages) == 0:
         "sources": []
     })
 
-st.markdown(f"<div class='main-title'>{ui_title}</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='sub-title'>{ui_subtitle}</div>", unsafe_allow_html=True)
+# Main Header with Title & Language Toggle
+col_title, col_toggle = st.columns([3, 1])
+with col_title:
+    st.markdown(f"<div class='main-title' style='text-align: left; font-size: 2.3rem;'>{ui_title}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='color: #4b5563; font-size: 1.05rem; font-weight: 500; margin-bottom: 20px;'>{ui_subtitle}</div>", unsafe_allow_html=True)
+with col_toggle:
+    st.write("") # vertical spacing helper
+    # Styled Toggle Switch for Language
+    is_english = st.toggle("🌐 English", value=(st.session_state.app_lang == "English"))
+    new_lang = "English" if is_english else "नेपाली"
+    
+    # If language changed, update state, update welcome message, and rerun
+    if new_lang != st.session_state.app_lang:
+        st.session_state.app_lang = new_lang
+        if len(st.session_state.messages) > 0:
+            st.session_state.messages[0]["content"] = msg_welcome
+        st.rerun()
 
+st.divider()
+
+# Render Chat Messages
 for message in st.session_state.messages:
     avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
     with st.chat_message(message["role"], avatar=avatar):
@@ -254,23 +264,24 @@ for message in st.session_state.messages:
                         st.markdown(f"**{src['act']} ({src['section']})**")
                         st.caption(f"{src['text'][:150]}...")
 
-if len(st.session_state.messages) == 1:
-    st.markdown(sugg_heading)
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button(sugg_q1):
-            st.session_state.suggested_prompt = sugg_q1
-            st.rerun()
-        if st.button(sugg_q2):
-            st.session_state.suggested_prompt = sugg_q2
-            st.rerun()
-    with col2:
-        if st.button(sugg_q3):
-            st.session_state.suggested_prompt = sugg_q3
-            st.rerun()
-        if st.button(sugg_q4):
-            st.session_state.suggested_prompt = sugg_q4
-            st.rerun()
+# Render Suggested Questions (Always Visible at the bottom of the chat history)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown(sugg_heading)
+col1, col2 = st.columns(2)
+with col1:
+    if st.button(sugg_q1):
+        st.session_state.suggested_prompt = sugg_q1
+        st.rerun()
+    if st.button(sugg_q2):
+        st.session_state.suggested_prompt = sugg_q2
+        st.rerun()
+with col2:
+    if st.button(sugg_q3):
+        st.session_state.suggested_prompt = sugg_q3
+        st.rerun()
+    if st.button(sugg_q4):
+        st.session_state.suggested_prompt = sugg_q4
+        st.rerun()
 
 prompt = st.chat_input(ph_input)
 if "suggested_prompt" in st.session_state:
