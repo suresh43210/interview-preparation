@@ -144,7 +144,7 @@ English: [Your standalone English translation]
 Nepali: [Your standalone Nepali translation]"""
     
     # Try Anthropic First
-    anthropic_models = ["claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
+    anthropic_models = ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-8"]
     text_response = ""
     if claude_client:
         for model in anthropic_models:
@@ -376,7 +376,7 @@ Question: {prompt}"""
             
             # 1. Try Anthropic
             if claude_client:
-                anthropic_models = ["claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"]
+                anthropic_models = ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-8"]
                 for model in anthropic_models:
                     try:
                         with claude_client.messages.stream(
