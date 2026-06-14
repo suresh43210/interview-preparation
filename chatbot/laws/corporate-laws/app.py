@@ -261,12 +261,9 @@ if prompt:
                 
             if pairs:
                 scores = reranker.predict(pairs)
-                for idx, match in enumerate(match_list):
-                    # Attach the new cross-encoder score
-                    match.rerank_score = scores[idx]
-                
-                # Sort by rerank_score and take top 3
-                best_matches = sorted(match_list, key=lambda x: x.rerank_score, reverse=True)[:3]
+                # Combine match and score into a tuple, sort by score descending, take top 3
+                scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:3]
+                best_matches = [sm[0] for sm in scored_matches]
             else:
                 best_matches = []
             
