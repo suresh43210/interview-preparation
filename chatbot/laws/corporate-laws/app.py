@@ -229,8 +229,8 @@ if prompt:
             for m in recent_msgs:
                 if m["role"] in ["user", "assistant"]:
                     role_name = "User" if m["role"] == "user" else "AI"
-                    # Trim assistant content so prompt doesn't get too large
-                    content_preview = m['content'][:200].replace('\n', ' ')
+                    # Trim assistant content so prompt doesn't get too large, 500 chars is safer
+                    content_preview = m['content'][:500].replace('\n', ' ')
                     history_text += f"{role_name}: {content_preview}\n"
                     
             english_query, nepali_query = translate_query(prompt, history=history_text)
@@ -239,9 +239,9 @@ if prompt:
             np_vector = embedder.encode(nepali_query).tolist()
             
             try:
-                # Fetch top 10 for better recall before reranking
-                res_en = index.query(vector=en_vector, top_k=10, include_metadata=True)
-                res_np = index.query(vector=np_vector, top_k=10, include_metadata=True)
+                # Fetch top 20 for better recall before reranking
+                res_en = index.query(vector=en_vector, top_k=20, include_metadata=True)
+                res_np = index.query(vector=np_vector, top_k=20, include_metadata=True)
             except Exception as e:
                 response_placeholder.error(f"⚠️ Pinecone Database मा खोज्दा समस्या आयो: {e}")
                 st.stop()
@@ -261,8 +261,8 @@ if prompt:
                 
             if pairs:
                 scores = reranker.predict(pairs)
-                # Combine match and score into a tuple, sort by score descending, take top 3
-                scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:3]
+                # Combine match and score into a tuple, sort by score descending, take top 7
+                scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:7]
                 best_matches = [sm[0] for sm in scored_matches]
             else:
                 best_matches = []
