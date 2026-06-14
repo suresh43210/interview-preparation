@@ -155,10 +155,8 @@ Nepali: [Your standalone Nepali translation]"""
                 text_response = trans_response.content[0].text.strip()
                 break
             except Exception as e:
-                if "not_found_error" in str(e):
-                    continue
-                st.error(f"Anthropic Translation Error: {e}")
-                break
+                st.error(f"Translation failed for {model}: {e}")
+                continue
             
     # Parse output
     english_query = prompt
@@ -390,11 +388,8 @@ Question: {prompt}"""
                         success = True
                         break
                     except Exception as e:
-                        if "not_found_error" in str(e):
-                            continue # try next model
-                        else:
-                            st.error(f"Claude API Error: {e}")
-                            break # Fallback to gemini
+                        st.error(f"Generation failed for {model}: {e}")
+                        continue
 
             if not success:
                 st.error("Claude API ले उत्तर दिन सकेन। कृपया आफ्नो API Key वा Credit चेक गर्नुहोस्।")
