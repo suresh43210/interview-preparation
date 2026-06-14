@@ -108,11 +108,9 @@ def load_models():
     
     # Anthropic
     anthropic_key = get_secret("ANTHROPIC_API_KEY")
-    claude_client = anthropic.Anthropic(api_key=anthropic_key) if anthropic_key else None
-    
-    # Gemini
-    gemini_key = get_secret("GEMINI_API_KEY")
-    gemini_client = genai.Client(api_key=gemini_key) if gemini_key else None
+    if not anthropic_key:
+        raise ValueError("ANTHROPIC_API_KEY is missing. Please add it to your Streamlit Secrets or .env file.")
+    claude_client = anthropic.Anthropic(api_key=anthropic_key)
     
     # Init Sentence Transformer
     embedder = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
@@ -120,10 +118,10 @@ def load_models():
     # Init CrossEncoder for Reranking
     reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
     
-    return index, claude_client, gemini_client, embedder, reranker
+    return index, claude_client, embedder, reranker
 
 try:
-    index, claude_client, gemini_client, embedder, reranker = load_models()
+    index, claude_client, embedder, reranker = load_models()
 except Exception as e:
     st.error(f"⚠️ System Initialization Error: {e}")
     st.stop()
@@ -159,17 +157,8 @@ Nepali: [Your standalone Nepali translation]"""
             except Exception as e:
                 if "not_found_error" in str(e):
                     continue
+                st.error(f"Anthropic Translation Error: {e}")
                 break
-    
-    # Fallback to Gemini
-    if not text_response and gemini_client:
-        try:
-            trans_response = gemini_client.models.generate_content(
-                model='gemini-2.5-flash', contents=translation_prompt
-            )
-            text_response = trans_response.text.strip()
-        except Exception:
-            pass
             
     # Parse output
     english_query = prompt
@@ -229,7 +218,7 @@ with st.sidebar:
         st.session_state.messages = [st.session_state.messages[0]]
         st.rerun()
     st.divider()
-    st.caption("Powered by: **Claude 3.5 Sonnet** (Primary) & **Gemini** (Fallback)")
+    st.caption("Powered by: **Claude 3.5 Sonnet**")
     
     # If language changed, update state and welcome message
     if new_lang != st.session_state.app_lang:
@@ -404,29 +393,11 @@ Question: {prompt}"""
                         if "not_found_error" in str(e):
                             continue # try next model
                         else:
-                            st.warning(f"Anthropic API Error: {e}")
+                            st.error(f"Claude API Error: {e}")
                             break # Fallback to gemini
 
-            # 2. Try Gemini Fallback
-            if not success and gemini_client:
-                try:
-                    response_stream = gemini_client.models.generate_content_stream(
-                        model='gemini-2.5-flash', contents=llm_prompt
-                    )
-                    for chunk in response_stream:
-                        if chunk.text:
-                            full_response += chunk.text
-                            response_placeholder.markdown(full_response + " ▌")
-                    success = True
-                except Exception as e:
-                    if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                        response_placeholder.error("⏳ **Limit Reached:** गुगलको नि:शुल्क एकाउन्टमा लिमिट पुग्यो। कृपया १ मिनेट पर्खेर फेरि सोध्नुहोला!")
-                    else:
-                        response_placeholder.error(f"⚠️ Gemini API Error: {e}")
-                    success = False
-            
             if not success:
-                st.warning("कुनै पनि AI मोडलले उत्तर दिन सकेन। कृपया १ मिनेट पर्खनुहोस् वा API Key चेक गर्नुहोस्।")
+                st.error("Claude API ले उत्तर दिन सकेन। कृपया आफ्नो API Key वा Credit चेक गर्नुहोस्।")
 
         if success:
             response_placeholder.markdown(full_response)
@@ -447,7 +418,4 @@ Question: {prompt}"""
             })
             
             # LOGGING: Save to SQLite database
-            used_model = "Anthropic (Claude)" if "claude" in str(success) else "Gemini" 
-            # wait, 'success' is just a boolean. Let's just say we don't know exactly which model unless we track it.
-            # We can use a simple check.
-            database.log_interaction(prompt, full_response, source_metadata, "LLM")
+            database.log_interaction(prompt, full_response, source_metadata, "Claude")
