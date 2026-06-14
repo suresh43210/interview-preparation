@@ -1,0 +1,7 @@
+streamlit
+pinecone-client
+sentence-transformers
+python-dotenv
+anthropic
+google-genai
+torch
