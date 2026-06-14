@@ -215,11 +215,15 @@ with st.sidebar:
     st.divider()
     if st.button(btn_clear, use_container_width=True):
         st.session_state.messages = [st.session_state.messages[0]]
+        st.session_state.suggested_questions = []
         st.rerun()
     st.divider()
     st.caption("Powered by: **Claude Sonnet 4.6**")
 
 # Session State & Main UI
+if "suggested_questions" not in st.session_state:
+    st.session_state.suggested_questions = []
+
 if "messages" not in st.session_state or len(st.session_state.messages) == 0:
     st.session_state.messages = []
     st.session_state.messages.append({
@@ -242,8 +246,13 @@ with col_toggle:
     # If language changed, update state, update welcome message, and rerun
     if new_lang != st.session_state.app_lang:
         st.session_state.app_lang = new_lang
+        new_msg_welcome = (
+            "**Hello!** I am your AI Assistant for Nepal's Corporate Laws.\n\nYou can ask me any legal question related to **BAFIA**, **Companies Act**, **Labor Act**, or **Insurance Act**. I will provide you with accurate answers including official legal citations. How can I help you today?"
+            if new_lang == "English"
+            else "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
+        )
         if len(st.session_state.messages) > 0:
-            st.session_state.messages[0]["content"] = msg_welcome
+            st.session_state.messages[0]["content"] = new_msg_welcome
         st.rerun()
 
 st.divider()
@@ -267,21 +276,21 @@ for message in st.session_state.messages:
 # Render Suggested Questions (Always Visible at the bottom of the chat history)
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown(sugg_heading)
+
+if st.session_state.get("suggested_questions"):
+    display_questions = st.session_state.suggested_questions[:4]
+else:
+    display_questions = [sugg_q1, sugg_q2, sugg_q3, sugg_q4]
+
 col1, col2 = st.columns(2)
-with col1:
-    if st.button(sugg_q1):
-        st.session_state.suggested_prompt = sugg_q1
-        st.rerun()
-    if st.button(sugg_q2):
-        st.session_state.suggested_prompt = sugg_q2
-        st.rerun()
-with col2:
-    if st.button(sugg_q3):
-        st.session_state.suggested_prompt = sugg_q3
-        st.rerun()
-    if st.button(sugg_q4):
-        st.session_state.suggested_prompt = sugg_q4
-        st.rerun()
+for idx, q_text in enumerate(display_questions):
+    col = col1 if idx % 2 == 0 else col2
+    with col:
+        # Unique key based on index and length of messages to prevent DuplicateWidgetID
+        btn_key = f"sugg_{idx}_{len(st.session_state.messages)}"
+        if st.button(q_text, key=btn_key, use_container_width=True):
+            st.session_state.suggested_prompt = q_text
+            st.rerun()
 
 prompt = st.chat_input(ph_input)
 if "suggested_prompt" in st.session_state:
@@ -374,6 +383,9 @@ FORMATTING AND LOGIC RULES:
 1. You MUST explicitly mention the Act Name and Section number (from the context) that your answer is based on.
 2. SYNTHESIS (MULTI-HOP): If the user's question involves multiple topics or spans multiple acts, you MUST synthesize the information comprehensively from all relevant provided contexts. Explicitly compare or combine the rules from different acts as required to provide a complete, high-quality, and logical legal answer.
 3. Use bullet points for readability where appropriate.
+4. DYNAMIC FOLLOW-UP SUGGESTIONS: At the very end of your response, you MUST generate exactly 3 logical, relevant follow-up questions that the user might want to ask next based on your response and the context. Format them on a new line at the end of your response exactly like this:
+[Suggestions: Question 1? || Question 2? || Question 3?]
+The suggestions must be in the same language as your response (English or Nepali). Do not include any other text inside the brackets.
 
 [Context Start]
 {full_context}
@@ -395,7 +407,9 @@ Question: {prompt}"""
                         ) as stream:
                             for text in stream.text_stream:
                                 full_response += text
-                                response_placeholder.markdown(full_response + " ▌")
+                                # Hide suggestions markup during streaming
+                                display_response = re.sub(r"\[Suggestions:.*", "", full_response, flags=re.DOTALL).strip()
+                                response_placeholder.markdown(display_response + " ▌")
                         success = True
                         break
                     except Exception as e:
@@ -406,6 +420,17 @@ Question: {prompt}"""
                 st.error("Claude API ले उत्तर दिन सकेन। कृपया आफ्नो API Key वा Credit चेक गर्नुहोस्।")
 
         if success:
+            # Extract suggestions
+            suggestions = []
+            match = re.search(r"\[Suggestions:\s*(.*?)\s*\]", full_response, re.DOTALL)
+            if match:
+                raw_suggs = match.group(1)
+                suggestions = [s.strip() for s in raw_suggs.split("||") if s.strip()]
+                full_response = re.sub(r"\[Suggestions:\s*(.*?)\s*\]", "", full_response, flags=re.DOTALL).strip()
+            
+            if suggestions:
+                st.session_state.suggested_questions = suggestions
+            
             response_placeholder.markdown(full_response)
             
             with st.expander("📚 कानुनी स्रोतहरू (Legal Sources)"):
