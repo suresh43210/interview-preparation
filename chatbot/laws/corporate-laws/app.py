@@ -25,14 +25,21 @@ st.markdown("""
         header {visibility: hidden;}
         footer {visibility: hidden;}
         
-        /* Modern Glassmorphism & Typography */
+        /* Modern Glassmorphism & Siddhartha Bank Theme */
         .stApp {
-            background-color: #f0f2f5;
+            background-color: #F8F9FA !important;
+            color: #0A3B7C !important;
         }
+        
+        /* Force text colors to fix Dark Mode unreadability */
+        .stMarkdown, p, div, span {
+            color: #1f2937;
+        }
+        
         .main-title {
             font-size: 2.8rem;
             font-weight: 800;
-            background: -webkit-linear-gradient(45deg, #1E3A8A, #3B82F6);
+            background: -webkit-linear-gradient(45deg, #0A3B7C, #F39200);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
@@ -42,7 +49,7 @@ st.markdown("""
         }
         .sub-title {
             text-align: center;
-            color: #6B7280;
+            color: #4b5563;
             font-size: 1.15rem;
             margin-bottom: 40px;
             font-weight: 500;
@@ -52,10 +59,9 @@ st.markdown("""
         div.stButton > button {
             width: 100%;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            color: #1f2937;
+            border: 1px solid rgba(10, 59, 124, 0.2);
+            background: #ffffff;
+            color: #0A3B7C !important;
             font-weight: 600;
             padding: 15px 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -65,9 +71,9 @@ st.markdown("""
         }
         div.stButton > button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.15);
-            border-color: #3B82F6;
-            color: #1D4ED8;
+            box-shadow: 0 8px 15px rgba(243, 146, 0, 0.2);
+            border-color: #F39200;
+            color: #F39200 !important;
             background: white;
         }
         
@@ -172,42 +178,81 @@ Nepali: [Your standalone Nepali translation]"""
     return english_query, nepali_query
 
 # -------------------------------------------------------------------
-# Session State
+# Bilingual Setup & Sidebar
 # -------------------------------------------------------------------
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?",
-        "sources": []
-    })
+if "app_lang" not in st.session_state:
+    st.session_state.app_lang = "नेपाली"
 
-# -------------------------------------------------------------------
-# Sidebar
-# -------------------------------------------------------------------
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/6033/6033333.png", width=80)
-    st.title("कानुन च्याटबट")
-    st.markdown("Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** पढेर सटिक उत्तर दिने AI।")
+    
+    new_lang = st.radio("🌐 Language / भाषा", ["नेपाली", "English"], horizontal=True, index=0 if st.session_state.app_lang == "नेपाली" else 1)
+    
+    # Text Dictionaries
+    if new_lang == "English":
+        ui_title = "Nepal Corporate Law AI 🇳🇵"
+        ui_subtitle = "Your intelligent legal companion for Nepal's Corporate Sector"
+        sidebar_title = "Corporate Law AI"
+        sidebar_desc = "Instantly navigate through **1,865 provisions** from the Companies Act, BAFIA, Labor Act, and more. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
+        btn_clear = "🧹 Clear Chat History"
+        ph_input = "Ask your legal question..."
+        msg_welcome = "**Hello!** I am your AI Assistant for Nepal's Corporate Laws.\n\nYou can ask me any legal question related to **BAFIA**, **Companies Act**, **Labor Act**, or **Insurance Act**. I will provide you with accurate answers including official legal citations. How can I help you today?"
+        sugg_heading = "💡 **Logical & Complex Questions (Suggested):**"
+        sugg_q1 = "Can a person convicted of a banking offense become a company director? Answer based on the Companies Act and Banking Offence Act."
+        sugg_q2 = "What action is taken under the Labor Act if an employee's remuneration is not paid, and does it fall under money laundering?"
+        sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
+        sugg_q4 = "What is the company liquidation process, and how is the priority of debt recovery determined?"
+    else:
+        ui_title = "नेपाल कर्पोरेट कानुन AI 🇳🇵"
+        ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
+        sidebar_title = "कानुन च्याटबट"
+        sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** पढेर सटिक उत्तर दिने AI।"
+        btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
+        ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
+        msg_welcome = "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
+        sugg_heading = "💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**"
+        sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"
+        sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"
+        sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"
+        sugg_q4 = "कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"
+
+    st.title(sidebar_title)
+    st.markdown(sidebar_desc)
     st.divider()
-    if st.button("🧹 Clear Chat History", use_container_width=True):
+    if st.button(btn_clear, use_container_width=True):
         st.session_state.messages = [st.session_state.messages[0]]
         st.rerun()
     st.divider()
     st.caption("Powered by: **Claude 3.5 Sonnet** (Primary) & **Gemini** (Fallback)")
+    
+    # If language changed, update state and welcome message
+    if new_lang != st.session_state.app_lang:
+        st.session_state.app_lang = new_lang
+        if len(st.session_state.messages) > 0:
+            st.session_state.messages[0]["content"] = msg_welcome
+        st.rerun()
 
 # -------------------------------------------------------------------
-# Main UI
+# Session State & Main UI
 # -------------------------------------------------------------------
-st.markdown("<div class='main-title'>नेपाल कर्पोरेट कानुन AI 🇳🇵</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)</div>", unsafe_allow_html=True)
+if "messages" not in st.session_state or len(st.session_state.messages) == 0:
+    st.session_state.messages = []
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": msg_welcome,
+        "sources": []
+    })
+
+st.markdown(f"<div class='main-title'>{ui_title}</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='sub-title'>{ui_subtitle}</div>", unsafe_allow_html=True)
 
 for message in st.session_state.messages:
     avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
         if "sources" in message and message["sources"]:
-            with st.expander("📚 कानुनी स्रोतहरू (Legal Sources)"):
+            exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+            with st.expander(exp_title):
                 seen = set()
                 for src in message["sources"]:
                     key = f"{src['act']}-{src['section']}"
@@ -217,24 +262,24 @@ for message in st.session_state.messages:
                         st.caption(f"{src['text'][:150]}...")
 
 if len(st.session_state.messages) == 1:
-    st.markdown("💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**")
+    st.markdown(sugg_heading)
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"):
-            st.session_state.suggested_prompt = "बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"
+        if st.button(sugg_q1):
+            st.session_state.suggested_prompt = sugg_q1
             st.rerun()
-        if st.button("कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"):
-            st.session_state.suggested_prompt = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"
+        if st.button(sugg_q2):
+            st.session_state.suggested_prompt = sugg_q2
             st.rerun()
     with col2:
-        if st.button("नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"):
-            st.session_state.suggested_prompt = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"
+        if st.button(sugg_q3):
+            st.session_state.suggested_prompt = sugg_q3
             st.rerun()
-        if st.button("कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"):
-            st.session_state.suggested_prompt = "कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"
+        if st.button(sugg_q4):
+            st.session_state.suggested_prompt = sugg_q4
             st.rerun()
 
-prompt = st.chat_input("कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्...")
+prompt = st.chat_input(ph_input)
 if "suggested_prompt" in st.session_state:
     prompt = st.session_state.suggested_prompt
     del st.session_state.suggested_prompt
