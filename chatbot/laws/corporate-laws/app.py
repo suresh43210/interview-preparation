@@ -24,32 +24,57 @@ st.markdown("""
     <style>
         header {visibility: hidden;}
         footer {visibility: hidden;}
+        
+        /* Modern Glassmorphism & Typography */
+        .stApp {
+            background-color: #f0f2f5;
+        }
         .main-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1E3A8A;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: -webkit-linear-gradient(45deg, #1E3A8A, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-align: center;
-            margin-bottom: 0px;
+            margin-bottom: 5px;
             font-family: 'Inter', sans-serif;
+            letter-spacing: -1px;
         }
         .sub-title {
             text-align: center;
             color: #6B7280;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            font-size: 1.15rem;
+            margin-bottom: 40px;
+            font-weight: 500;
         }
+        
+        /* Beautiful Buttons */
         div.stButton > button {
             width: 100%;
-            border-radius: 10px;
-            border: 1px solid #E5E7EB;
-            background-color: #F9FAFB;
-            color: #374151;
-            transition: all 0.2s ease;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            color: #1f2937;
+            font-weight: 600;
+            padding: 15px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: pre-wrap; /* Allows long text to wrap beautifully */
+            height: auto;
         }
         div.stButton > button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.15);
             border-color: #3B82F6;
-            background-color: #EFF6FF;
             color: #1D4ED8;
+            background: white;
+        }
+        
+        /* Chat Input Styling */
+        .stChatFloatingInputContainer {
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
     </style>
 """, unsafe_allow_html=True)
@@ -192,21 +217,21 @@ for message in st.session_state.messages:
                         st.caption(f"{src['text'][:150]}...")
 
 if len(st.session_state.messages) == 1:
-    st.markdown("💡 **प्राय: सोधिने प्रश्नहरू (Suggested):**")
+    st.markdown("💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("लघुवित्त खोल्न कति चुक्ता पुँजी चाहिन्छ?"):
-            st.session_state.suggested_prompt = "लघुवित्त खोल्न कति चुक्ता पुँजी चाहिन्छ?"
+        if st.button("बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"):
+            st.session_state.suggested_prompt = "बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"
             st.rerun()
-        if st.button("श्रम ऐन अनुसार महिला सुत्केरी बिदा कति दिन पाइन्छ?"):
-            st.session_state.suggested_prompt = "श्रम ऐन अनुसार महिला सुत्केरी बिदा कति दिन पाइन्छ?"
+        if st.button("कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"):
+            st.session_state.suggested_prompt = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"
             st.rerun()
     with col2:
-        if st.button("कर्मचारीलाई कस्तो अवस्थामा जागिरबाट हटाउन सकिन्छ?"):
-            st.session_state.suggested_prompt = "कर्मचारीलाई कस्तो अवस्थामा जागिरबाट हटाउन सकिन्छ?"
+        if st.button("नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"):
+            st.session_state.suggested_prompt = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"
             st.rerun()
-        if st.button("कम्पनी दर्ता गर्दा के के कागजात चाहिन्छ?"):
-            st.session_state.suggested_prompt = "कम्पनी दर्ता गर्दा के के कागजात चाहिन्छ?"
+        if st.button("कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"):
+            st.session_state.suggested_prompt = "कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"
             st.rerun()
 
 prompt = st.chat_input("कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्...")
@@ -296,9 +321,10 @@ LANGUAGE RULES FOR YOUR RESPONSE:
 2. If no language is explicitly requested, answer in the same language the user used in their question (e.g., if they asked in English, reply in English).
 3. CRITICAL RULE: If the user asks the question in Romanized Nepali (Nepali written using the English alphabet), you MUST answer in Standard Nepali using the Devanagari script. Never reply in Romanized Nepali.
 
-FORMATTING RULES:
+FORMATTING AND LOGIC RULES:
 1. You MUST explicitly mention the Act Name and Section number (from the context) that your answer is based on.
-2. Use bullet points for readability where appropriate.
+2. SYNTHESIS (MULTI-HOP): If the user's question involves multiple topics or spans multiple acts, you MUST synthesize the information comprehensively from all relevant provided contexts. Explicitly compare or combine the rules from different acts as required to provide a complete, high-quality, and logical legal answer.
+3. Use bullet points for readability where appropriate.
 
 [Context Start]
 {full_context}
