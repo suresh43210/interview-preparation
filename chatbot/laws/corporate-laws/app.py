@@ -95,17 +95,23 @@ BOT_AVATAR = "🏛️"
 def load_models():
     load_dotenv()
     
+    def get_secret(key):
+        try:
+            return st.secrets[key]
+        except Exception:
+            return os.environ.get(key)
+            
     # Pinecone
-    pc_key = os.environ.get("PINECONE_API_KEY")
+    pc_key = get_secret("PINECONE_API_KEY")
     pc = Pinecone(api_key=pc_key)
     index = pc.Index("nepal-corporate-laws")
     
     # Anthropic
-    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
+    anthropic_key = get_secret("ANTHROPIC_API_KEY")
     claude_client = anthropic.Anthropic(api_key=anthropic_key) if anthropic_key else None
     
     # Gemini
-    gemini_key = os.environ.get("GEMINI_API_KEY")
+    gemini_key = get_secret("GEMINI_API_KEY")
     gemini_client = genai.Client(api_key=gemini_key) if gemini_key else None
     
     # Init Sentence Transformer
