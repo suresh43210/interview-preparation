@@ -83,7 +83,7 @@ st.markdown("""
         
         /* Chat Content Typography Re-alignment */
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
-            font-size: 0.98rem !important;
+            font-size: 0.91rem !important;
             line-height: 1.68 !important;
             color: #2D3748 !important;
             margin-bottom: 12px !important;
@@ -96,7 +96,7 @@ st.markdown("""
         }
         
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li {
-            font-size: 0.98rem !important;
+            font-size: 0.91rem !important;
             line-height: 1.68 !important;
             color: #2D3748 !important;
             margin-bottom: 8px !important;
@@ -116,7 +116,7 @@ st.markdown("""
         }
         
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3 {
-            font-size: 1.22rem !important;
+            font-size: 1.12rem !important;
             border-bottom: 1px solid rgba(10, 59, 124, 0.08) !important;
             padding-bottom: 6px !important;
         }
@@ -133,7 +133,7 @@ st.markdown("""
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] blockquote p {
             color: #0A3B7C !important;
             font-weight: 600 !important;
-            font-size: 0.98rem !important;
+            font-size: 0.91rem !important;
             margin-bottom: 0 !important;
         }
         
@@ -143,7 +143,7 @@ st.markdown("""
             color: #0A3B7C !important;
             padding: 2px 6px !important;
             border-radius: 6px !important;
-            font-size: 0.9rem !important;
+            font-size: 0.85rem !important;
             font-weight: 600 !important;
             border: 1px solid rgba(10, 59, 124, 0.1) !important;
             font-family: 'Plus Jakarta Sans', monospace !important;
