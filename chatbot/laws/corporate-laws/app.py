@@ -185,28 +185,32 @@ if current_lang == "English":
     ui_title = "Nepal Corporate Law AI 🇳🇵"
     ui_subtitle = "Your intelligent legal companion for Nepal's Corporate Sector"
     sidebar_title = "Corporate Law AI"
-    sidebar_desc = "Instantly navigate through **1,865 provisions** from the Companies Act, BAFIA, Labor Act, and more. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
+    sidebar_desc = "Instantly navigate through **1,865 provisions** from BAFIA, NRB Act, Banking Offence Act, AML Act, Labor Act, and NRB Unified Directives. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
     btn_clear = "🧹 Clear Chat History"
     ph_input = "Ask your legal question..."
-    msg_welcome = "**Hello!** I am your AI Assistant for Nepal's Corporate Laws.\n\nYou can ask me any legal question related to **BAFIA**, **Companies Act**, **Labor Act**, or **Insurance Act**. I will provide you with accurate answers including official legal citations. How can I help you today?"
+    msg_welcome = "**Hello!** I am your AI Assistant for Nepal's Corporate & Banking Laws.
+
+You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking Offence Act**, **Anti-Money Laundering Act**, **Labor Act**, or **NRB Directives**. I will provide you with accurate answers including official legal citations. How can I help you today?"
     sugg_heading = "💡 **Logical & Complex Questions (Suggested):**"
-    sugg_q1 = "Can a person convicted of a banking offense become a company director? Answer based on the Companies Act and Banking Offence Act."
+    sugg_q1 = "Can a person convicted of a banking offense become a bank director? Answer based on BAFIA and the Banking Offence and Punishment Act."
     sugg_q2 = "What action is taken under the Labor Act if an employee's remuneration is not paid, and does it fall under money laundering?"
     sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
-    sugg_q4 = "What is the company liquidation process, and how is the priority of debt recovery determined?"
+    sugg_q4 = "What is the liquidation process of a Bank/Financial Institution, and how is the priority of debt recovery determined under BAFIA?"
 else:
-    ui_title = "नेपाल कर्पोरेट कानुन AI 🇳🇵"
-    ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
-    sidebar_title = "कानुन च्याटबट"
-    sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** पढेर सटिक उत्तर दिने AI।"
-    btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
-    ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
-    msg_welcome = "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
-    sugg_heading = "💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**"
-    sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले कुनै कम्पनीको सञ्चालक बन्न पाउँछ कि पाउँदैन? कम्पनी ऐन र बैंकिङ कसुर ऐनको आधारमा भन्नुहोस्।"
-    sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ?"
-    sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंक (BAFIA) को व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ?"
-    sugg_q4 = "कम्पनी खारेजी (Liquidation) को प्रक्रिया के हो र यसमा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ?"
+        ui_title = "नेपाल कर्पोरेट कानुन AI 🇳🇵"
+        ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
+        sidebar_title = "कानुन च्याटबट"
+        sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** (BAFIA, राष्ट्र बैंक ऐन, बैंकिङ कसूर ऐन, सम्पत्ति शुद्धीकरण निवारण ऐन, श्रम ऐन र राष्ट्र बैंक एकिकृत निर्देशनहरू) पढेर सटिक उत्तर दिने AI।"
+        btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
+        ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
+        msg_welcome = "**नमस्ते!** म नेपालको कर्पोरेट तथा बैंकिङ कानुनसम्बन्धी AI Assistant हुँ।
+
+मलाई **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन**, वा **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
+        sugg_heading = "💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**"
+        sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले बैंकको सञ्चालक (Director) बन्न पाउँछ कि पाउँदैन? BAFIA र बैंकिङ कसूर ऐनको आधारमा भन्नुहोस्।"
+        sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ सम्पत्ति शुद्धीकरण ऐन अनुसार?"
+        sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंकको व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ? राष्ट्र बैंक ऐन र BAFIA अनुसार स्पष्ट पार्नुहोस्।"
+        sugg_q4 = "बैंक वा वित्तीय संस्था खारेजी (Liquidation) को प्रक्रिया के हो र यसमा निक्षेपकर्ता वा ऋण असुलीको प्राथमिकता कसरी निर्धारण हुन्छ BAFIA अनुसार?"
 
 # Sidebar Layout
 with st.sidebar:
@@ -248,9 +252,13 @@ with col_toggle:
     if new_lang != st.session_state.app_lang:
         st.session_state.app_lang = new_lang
         new_msg_welcome = (
-            "**Hello!** I am your AI Assistant for Nepal's Corporate Laws.\n\nYou can ask me any legal question related to **BAFIA**, **Companies Act**, **Labor Act**, or **Insurance Act**. I will provide you with accurate answers including official legal citations. How can I help you today?"
+            "**Hello!** I am your AI Assistant for Nepal's Corporate & Banking Laws.
+
+You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking Offence Act**, **Anti-Money Laundering Act**, **Labor Act**, or **NRB Directives**. I will provide you with accurate answers including official legal citations. How can I help you today?"
             if new_lang == "English"
-            else "**नमस्ते!** म नेपालको कर्पोरेट कानुनसम्बन्धी (Corporate Law) AI Assistant हुँ।\n\nमलाई **बैंक तथा वित्तीय संस्था (BAFIA)**, **कम्पनी ऐन**, **श्रम ऐन**, वा **बिमा ऐन** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
+            else "**नमस्ते!** म नेपालको कर्पोरेट तथा बैंकिङ कानुनसम्बन्धी AI Assistant हुँ।
+
+मलाई **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन**, वा **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"
         )
         if len(st.session_state.messages) > 0:
             st.session_state.messages[0]["content"] = new_msg_welcome
