@@ -206,6 +206,38 @@ st.markdown("""
             background-color: #ffffff !important;
             padding: 8px !important;
         }
+        
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8rem !important;
+                margin-top: 10px !important;
+                margin-bottom: 2px !important;
+            }
+            .stApp {
+                padding: 10px !important;
+            }
+            div[data-testid="stChatMessage"] {
+                padding: 12px 16px !important;
+                border-radius: 12px !important;
+                margin-bottom: 10px !important;
+            }
+            div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p,
+            div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li {
+                font-size: 0.85rem !important;
+                line-height: 1.5 !important;
+            }
+            div.stButton > button {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+                border-radius: 8px !important;
+            }
+            .sugg-header {
+                font-size: 0.75rem !important;
+                margin-top: 12px !important;
+                margin-bottom: 6px !important;
+            }
+        }
     </style>
 """, unsafe_allow_html=True)
 
