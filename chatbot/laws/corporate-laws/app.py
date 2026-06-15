@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import anthropic
 from google import genai
 import database
+import re
 
 # -------------------------------------------------------------------
 # Streamlit Page Config
