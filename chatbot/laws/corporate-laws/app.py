@@ -294,6 +294,24 @@ Nepali: [Your standalone Nepali translation]"""
                 
     return english_query, nepali_query
 
+def get_technical_flow_info():
+    if st.session_state.app_lang == "English":
+        return """Our Retrieval-Augmented Generation (RAG) pipeline operates in real-time through the following steps:
+1. **Bilingual Standalone Query Generation**: The user's query is converted to a standalone question in both English and Nepali using `Claude 3.5 Sonnet` (resolving pronouns from chat history).
+2. **Local Multi-lingual Encoding**: Both queries are converted into high-dimensional vector embeddings using the local deep learning model `paraphrase-multilingual-MiniLM-L12-v2`.
+3. **Vector Database Retrieval**: Queries are run against the **Pinecone Vector Database** (containing 1,865 chunks of Corporate Laws) to fetch the top 20 candidate matches.
+4. **Neural Reranking**: A local `CrossEncoder` (`ms-marco-MiniLM-L-6-v2`) evaluates user query and candidate texts to select the top 4 highly relevant passages.
+5. **Contextual LLM Synthesis**: The top 4 passages and user prompt are passed to **Claude 3.5 Sonnet** to generate a fact-grounded answer with citations.
+6. **Interaction Audit Trail**: The prompt, response, and citations are recorded in `chat_logs.db` for the admin monitoring dashboard."""
+    else:
+        return """हाम्रो Retrieval-Augmented Generation (RAG) पाइपलाइनले यसरी काम गर्दछ:
+1. **बाइलिङ्गल प्रश्न रुपान्तरण**: हजुरको प्रश्न र पुराना कुराकानीका आधारमा `Claude 3.5 Sonnet` मार्फत नेपाली र अंग्रेजीमा स्वतन्त्र रूपमा बुझिने प्रश्नहरू तयार गरिन्छ।
+2. **स्थानीय मल्टि-लिङ्गल इनकोडिङ**: दुवै भाषाका प्रश्नहरूलाई स्थानीय `SentenceTransformer` (`paraphrase-multilingual-MiniLM-L12-v2`) द्वारा गणितीय संकेत (vector embedding) मा रूपान्तरण गरिन्छ।
+3. **भेक्टर डाटाबेस खोज (Retrieval)**: ती गणितीय संकेतहरूलाई **Pinecone Vector Database** (जसमा १८६५ कानुनी बुँदाहरू छन्) मा खोजी शीर्ष २० वटा मिल्दाजुल्दा बुँदाहरू निकालिन्छ।
+4. **न्यूरल रि-र्याङ्किङ**: स्थानीय `CrossEncoder` (`ms-marco-MiniLM-L-6-v2`) द्वारा ती २० बुँदाहरूमध्ये सबैभन्दा सान्दर्भिक शीर्ष ४ वटा बुँदाहरू मात्र छनोट गरिन्छ।
+5. **आधिकारिक उत्तर संश्लेषण (Synthesis)**: छनोट गरिएका ४ बुँदाहरू र हजुरको प्रश्नलाई **Claude 3.5 Sonnet** मा पठाई तथ्यपरक उत्तर र कानुनी धाराहरू तयार गरिन्छ।
+6. **अडिट ट्रेल (Audit Logging)**: यो सम्पुर्ण प्रक्रिया, सोधिएको प्रश्न र स्रोतहरू `chat_logs.db` मा सुरक्षित राखिन्छ ताकी अडिट ड्यासबोर्डमा हेर्न सकियोस्।"""
+
 # -------------------------------------------------------------------
 # Bilingual Setup & Sidebar
 # -------------------------------------------------------------------
@@ -495,15 +513,21 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
         if "sources" in message and message["sources"]:
-            exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
-            with st.expander(exp_title):
-                seen = set()
-                for src in message["sources"]:
-                    key = f"{src['act']}-{src['section']}"
-                    if key not in seen:
-                        seen.add(key)
-                        st.markdown(f"**{src['act']} ({src['section']})**")
-                        st.caption(f"{src['text'][:150]}...")
+            col_exp1, col_exp2 = st.columns(2)
+            with col_exp1:
+                exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                with st.expander(exp_title):
+                    seen = set()
+                    for src in message["sources"]:
+                        key = f"{src['act']}-{src['section']}"
+                        if key not in seen:
+                            seen.add(key)
+                            st.markdown(f"**{src['act']} ({src['section']})**")
+                            st.caption(f"{src['text'][:150]}...")
+            with col_exp2:
+                tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                with st.expander(tech_title):
+                    st.markdown(get_technical_flow_info())
 
 # Render Suggested Questions (Always Visible at the bottom of the chat history)
 st.markdown("<br>", unsafe_allow_html=True)
@@ -678,14 +702,21 @@ Question: {prompt}"""
             
             response_placeholder.markdown(full_response)
             
-            with st.expander("📚 कानुनी स्रोतहरू (Legal Sources)"):
-                seen = set()
-                for src in source_metadata:
-                    key = f"{src['act']}-{src['section']}"
-                    if key not in seen:
-                        seen.add(key)
-                        st.markdown(f"**{src['act']} ({src['section']})**")
-                        st.caption(f"{src['text'][:150]}...")
+            col_exp1, col_exp2 = st.columns(2)
+            with col_exp1:
+                exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                with st.expander(exp_title):
+                    seen = set()
+                    for src in source_metadata:
+                        key = f"{src['act']}-{src['section']}"
+                        if key not in seen:
+                            seen.add(key)
+                            st.markdown(f"**{src['act']} ({src['section']})**")
+                            st.caption(f"{src['text'][:150]}...")
+            with col_exp2:
+                tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                with st.expander(tech_title):
+                    st.markdown(get_technical_flow_info())
 
             st.session_state.messages.append({
                 "role": "assistant",
