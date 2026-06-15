@@ -14,10 +14,56 @@ An enterprise-grade, cost-effective artificial intelligence suite designed to ac
 
 | # | Solution | Target Audience | Business Impact | Technology |
 |---|----------|-----------------|-----------------|------------|
-| 1 | 🤖 **Bank Customer Chatbot** | Retail Customers | 24/7 bilingual customer support, lowering support center ticket volumes by up to 45%. | HTML5/JS + Gemini 2.0 |
-| 2 | 📢 **AI Marketing Copywriter** | Marketing & PR | Generates brand-consistent campaigns, reducing content production turnaround from days to minutes. | HTML5/JS + Gemini 2.0 |
-| 3 | 👔 **Branch Manager Assistant** | Operations & Management | Automates customer sentiment analysis, creates meeting summaries, and generates real-time operational reports. | HTML5/JS + Chart.js + Gemini 2.0 |
+| 1 | 🤖 **Bank Customer Chatbot** | Retail Customers | 24/7 bilingual customer support, lowering support center ticket volumes by up to 45%. | HTML5/JS + Gemini 2.0 Flash |
+| 2 | 📢 **AI Marketing Copywriter** | Marketing & PR | Generates brand-consistent campaigns, reducing content production turnaround from days to minutes. | HTML5/JS + Gemini 2.0 Flash |
+| 3 | 👔 **Branch Manager Assistant** | Operations & Management | Automates customer sentiment analysis, creates meeting summaries, and generates real-time operational reports. | HTML5/JS + Chart.js + Gemini 2.0 Flash |
 | 4 | ⚖️ **NexSight Law (Legal Search Engine)** | Compliance & Legal | RAG-powered engine querying **1,865 provisions** from BAFIA, NRB Directives, AML Act, and Labor Act with exact legal citations. | Streamlit + Claude + Pinecone + Sentence-Transformers |
+
+---
+
+## 📐 System Architecture & Data Flow
+
+```mermaid
+graph TD
+    subgraph Client_Applications["Client Solutions (Static Web Gateway)"]
+        Landing["index.html (Gateway Lobby)"]
+        Chatbot["chatbot/index.html (Customer Chatbot)"]
+        Marketing["marketing/index.html (AI Copywriter)"]
+        Manager["branch-manager/index.html (Manager Dashboard)"]
+    end
+
+    subgraph Legal_Application["NexSight Law (Enterprise Compliance RAG)"]
+        StreamlitApp["Streamlit Frontend (app.py)"]
+        LocalModel["Sentence Transformers (paraphrase-multilingual-MiniLM-L12-v2)"]
+        Reranker["CrossEncoder Neural Reranker (ms-marco-MiniLM-L-6-v2)"]
+        SQLiteDB["SQLite Audit DB (chat_logs.db)"]
+    end
+
+    subgraph Cloud_Services["Cloud AI Services"]
+        GeminiAPI["Google Gemini 2.0 Flash API"]
+        ClaudeAPI["Anthropic Claude API"]
+        PineconeDB["Pinecone Vector Database"]
+    end
+
+    %% Routing
+    Landing --> Chatbot
+    Landing --> Marketing
+    Landing --> Manager
+
+    %% Client API connections
+    Chatbot --> GeminiAPI
+    Marketing --> GeminiAPI
+    Manager --> GeminiAPI
+
+    %% RAG Pipeline Flow
+    StreamlitApp -->|1. Encode query| LocalModel
+    LocalModel -->|2. Cosine search (Top 20)| PineconeDB
+    PineconeDB -->|3. Return candidates| Reranker
+    Reranker -->|4. Score & Rank (Top 4)| StreamlitApp
+    StreamlitApp -->|5. Context + Query| ClaudeAPI
+    ClaudeAPI -->|6. Accurate legal response| StreamlitApp
+    StreamlitApp -->|7. Log audit trail| SQLiteDB
+```
 
 ---
 
@@ -67,7 +113,7 @@ siddhartha-bank-ai/
 
 ---
 
-## ⚡ Execution & Deployment Guide
+## ⚡ Execution & Guide
 
 ### 1. Running the Client-Side Web Apps
 No backend required. Simply open the gateway in a browser:

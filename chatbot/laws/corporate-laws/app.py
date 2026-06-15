@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import anthropic
 from google import genai
 import database
+import pandas as pd
 import re
 
 # -------------------------------------------------------------------
@@ -345,6 +346,14 @@ with st.sidebar:
         st.session_state.suggested_questions = []
         st.rerun()
     st.divider()
+    st.subheader("🛠️ View Mode / मोड")
+    app_mode = st.radio(
+        "Select Screen / स्क्रिन:",
+        ["⚖️ Compliance Assistant", "📊 Monitoring Dashboard"],
+        index=0,
+        label_visibility="collapsed"
+    )
+    st.divider()
     st.caption("Powered by: **Claude Sonnet 4.6**")
 
 # Session State & Main UI
@@ -358,6 +367,98 @@ if "messages" not in st.session_state or len(st.session_state.messages) == 0:
         "content": msg_welcome,
         "sources": []
     })
+
+# -------------------------------------------------------------------
+# Monitoring Dashboard Page (Renders if selected, stops further execution)
+# -------------------------------------------------------------------
+if app_mode == "📊 Monitoring Dashboard":
+    st.markdown("<div class='main-title' style='text-align: left; font-size: 2.3rem;'>📊 System Monitoring Dashboard</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color: #4b5563; font-size: 1.05rem; font-weight: 500; margin-bottom: 20px;'>Real-time analytical view of NexSight Law interactions</div>", unsafe_allow_html=True)
+    st.divider()
+    
+    # Read logs from SQLite
+    logs = database.get_all_logs()
+    
+    if not logs:
+        st.info("ℹ️ No logs found. Start chatting with the assistant to generate interaction logs.")
+    else:
+        # Convert to DataFrame
+        df = pd.DataFrame(logs)
+        
+        # Display KPIs
+        kpi1, kpi2, kpi3 = st.columns(3)
+        with kpi1:
+            st.metric(label="👥 Total Interactions", value=len(df))
+        with kpi2:
+            st.metric(label="🛡️ Active AI Engine", value="Claude 3.5 Sonnet")
+        with kpi3:
+            st.metric(label="🔎 Unique Queries", value=df["user_query"].nunique())
+            
+        st.divider()
+        
+        # Analytics Chart
+        col_chart, col_empty = st.columns([2, 1])
+        with col_chart:
+            # Count occurrences of main acts in logs
+            act_counts = {
+                "BAFIA": 0, 
+                "NRB Act": 0, 
+                "Banking Offence": 0, 
+                "Money Laundering": 0, 
+                "Labor Act": 0, 
+                "NRB Directives": 0
+            }
+            for src_str in df["sources_used"].dropna():
+                for act in act_counts.keys():
+                    if act.lower() in src_str.lower() or (act == "Money Laundering" and "money" in src_str.lower()) or (act == "Banking Offence" and "offence" in src_str.lower()):
+                        act_counts[act] += 1
+            
+            chart_df = pd.DataFrame({
+                "Document Name": list(act_counts.keys()),
+                "Hits / Searches": list(act_counts.values())
+            }).set_index("Document Name")
+            
+            st.subheader("📚 Consulted Legal Documents (Search Popularity)")
+            st.bar_chart(chart_df)
+            
+        st.divider()
+        
+        # Raw Logs Data Table with search filter
+        st.subheader("📋 Interaction Log Auditing Table")
+        
+        # Add a search filter box
+        search_query = st.text_input("🔍 Filter logs by query keyword:", "")
+        if search_query:
+            filtered_df = df[df["user_query"].str.contains(search_query, case=False, na=False)]
+        else:
+            filtered_df = df
+            
+        # Select columns to display in a clean layout
+        display_df = filtered_df[["timestamp", "user_query", "bot_response", "sources_used", "model_used"]].copy()
+        
+        st.dataframe(
+            display_df, 
+            column_config={
+                "timestamp": st.column_config.DatetimeColumn("Date & Time", format="YYYY-MM-DD HH:mm:ss"),
+                "user_query": st.column_config.TextColumn("User Query", width="medium"),
+                "bot_response": st.column_config.TextColumn("AI Response", width="large"),
+                "sources_used": st.column_config.TextColumn("Citations Used", width="medium"),
+                "model_used": st.column_config.TextColumn("Model", width="small")
+            },
+            hide_index=True,
+            use_container_width=True
+        )
+        
+        # CSV Export Button
+        csv_data = df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="📥 Export Audit Logs to CSV",
+            data=csv_data,
+            file_name="nexsight_law_audit_logs.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+    st.stop()
 
 # Main Header with Title & Language Toggle
 col_title, col_toggle = st.columns([3, 1])
@@ -475,8 +576,8 @@ if prompt:
                 
             if pairs:
                 scores = reranker.predict(pairs)
-                # Combine match and score into a tuple, sort by score descending, take top 7
-                scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:7]
+                # Combine match and score into a tuple, sort by score descending, take top 4
+                scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:4]
                 best_matches = [sm[0] for sm in scored_matches]
             else:
                 best_matches = []
@@ -522,6 +623,7 @@ FORMATTING AND LOGIC RULES:
 4. DYNAMIC FOLLOW-UP SUGGESTIONS: At the very end of your response, you MUST generate exactly 3 logical, relevant follow-up questions that the user might want to ask next based on your response and the context. Format them on a new line at the end of your response exactly like this:
 [Suggestions: Question 1? || Question 2? || Question 3?]
 The suggestions must be in the same language as your response (English or Nepali). Do not include any other text inside the brackets.
+5. CONCISENESS & TOKEN OPTIMIZATION: Be highly concise, clear, and direct. Avoid repeating the provided context sentences literally. Keep explanations brief and focused entirely on answering the user's specific query. Aim to keep the total response length under 250 words.
 
 [Context Start]
 {full_context}

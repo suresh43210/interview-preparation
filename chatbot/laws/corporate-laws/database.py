@@ -41,5 +41,19 @@ def log_interaction(user_query, bot_response, sources_used, model_used):
     except Exception as e:
         print(f"Error logging to database: {e}")
 
+def get_all_logs():
+    """Fetch all logged interactions for the analytics dashboard."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM logs ORDER BY id DESC")
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+    except Exception as e:
+        print(f"Error fetching logs: {e}")
+        return []
+
 # Initialize the DB when this module is loaded
 init_db()
