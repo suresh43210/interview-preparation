@@ -279,7 +279,7 @@ Nepali: [Your standalone Nepali translation]"""
                 text_response = trans_response.content[0].text.strip()
                 break
             except Exception as e:
-                st.error(f"Translation failed for {model}: {e}")
+                print(f"Translation failed for {model}: {e}")
                 continue
             
     # Parse output
@@ -558,7 +558,11 @@ if prompt:
                 res_en = index.query(vector=en_vector, top_k=20, include_metadata=True)
                 res_np = index.query(vector=np_vector, top_k=20, include_metadata=True)
             except Exception as e:
-                response_placeholder.error(f"⚠️ Pinecone Database मा खोज्दा समस्या आयो: {e}")
+                print(f"Pinecone Database search error: {e}")
+                if st.session_state.app_lang == "English":
+                    response_placeholder.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                else:
+                    response_placeholder.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
                 st.stop()
             
             # Merge and deduplicate matches
@@ -651,11 +655,14 @@ Question: {prompt}"""
                         success = True
                         break
                     except Exception as e:
-                        st.error(f"Generation failed for {model}: {e}")
+                        print(f"Generation failed for {model}: {e}")
                         continue
 
             if not success:
-                st.error("Claude API ले उत्तर दिन सकेन। कृपया आफ्नो API Key वा Credit चेक गर्नुहोस्।")
+                if st.session_state.app_lang == "English":
+                    st.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                else:
+                    st.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
 
         if success:
             # Extract suggestions
