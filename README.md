@@ -1,32 +1,32 @@
 # 🏦 Siddhartha Bank — AI Solutions Demo
 
-> **Interview Demo Project** | Powered by Google Gemini 2.0 Flash AI
+> **Interview Demo Project** | Powered by Google Gemini 2.0 Flash & Anthropic Claude AI
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue)](https://yourusername.github.io/siddhartha-bank-ai)
 
 ---
 
-## 🚀 तीन वटा AI Solutions
+## 🚀 Three AI Solutions
 
 | # | Project | Description |
 |---|---------|-------------|
-| 1 | 🤖 **Bank Customer Chatbot** | Nepali+English AI customer service, 24/7 |
-| 2 | 📢 **AI Marketing Tool** | Pomelli-inspired brand-consistent content generator |
-| 3 | 👔 **Branch Manager Assistant** | Dashboard, complaint analyzer, meeting notes |
+| 1 | 🤖 **Bank Customer Chatbot** | Nepali + English AI customer service, available 24/7 |
+| 2 | 📢 **AI Marketing Tool** | Pomelli-inspired, brand-consistent content generator |
+| 3 | 👔 **Branch Manager Assistant** | Dashboard featuring complaint analyzer and meeting notes generator |
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **AI Model:** Google Gemini 2.0 Flash (latest, fastest, free tier available)
-- **Frontend:** HTML5 + CSS3 + Vanilla JavaScript (zero framework, zero cost)
+- **AI Models:** Google Gemini 2.0 Flash (for fast frontend-only tasks) & Anthropic Claude (for advanced legal RAG reasoning)
+- **Frontend:** HTML5 + CSS3 + Vanilla JavaScript (zero framework, zero infrastructure cost)
 - **Charts:** Chart.js 4.4
-- **Hosting:** GitHub Pages (free)
-- **Total Infrastructure Cost:** ₹0
+- **Hosting:** GitHub Pages (free hosting for prototypes)
+- **Total Infrastructure Cost:** Rs. 0
 
 ---
 
-## ⚡ Local मा चलाउने तरिका
+## ⚡ How to Run Locally
 
 ```bash
 # Option 1: Direct file open
@@ -34,66 +34,66 @@ open index.html
 
 # Option 2: Local server (recommended)
 python3 -m http.server 8080
-# Browser मा जानुस्: http://localhost:8080
+# Go to browser: http://localhost:8080
 ```
 
 ---
 
 ## 🔑 API Key Setup
 
-1. [Google AI Studio](https://aistudio.google.com/app/apikey) मा जानुस्
-2. Free API key generate गर्नुस्
-3. App को sidebar/header मा API key enter गर्नुस्
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Generate a free API key
+3. Enter the API key in the app's sidebar/header input field
 
-> ⚠️ **Security:** API key कहिल्यै code मा hardcode नगर्नुस्। यो app मा user ले runtime मा enter गर्छ।
+> ⚠️ **Security:** Never hardcode your API keys in the code. Users supply their own keys at runtime in the app interface.
 
 ---
 
-## 📁 Project Structure & Layout (प्रोजेक्टको पूर्ण संरचना)
+## 📁 Project Structure & Layout
 
-यो प्रोजेक्टलाई तीनवटा मुख्य व्यवसायिक समाधान (Business Solutions) मा विभाजन गरिएको छ:
+This project is divided into three key business solutions:
 
 ```
 siddhartha-bank-ai/
-├── index.html                ← Main Landing Page (प्रवेशद्वार)
+├── index.html                ← Main Landing Page (Lobby)
 ├── chatbot/
-│   ├── index.html            ← Customer Service Chatbot (ग्राहक सेवा च्याटबट)
+│   ├── index.html            ← Customer Service Chatbot
 │   └── laws/
-│       └── corporate-laws/   ← NexSight Law (एड्भान्स कानुनी च्याटबट)
-│           ├── app.py        ← Application Interface (मुख्य स्क्रिन)
-│           ├── database.py   ← SQLite database logger (प्रश्न-उत्तर रेकर्ड गर्ने डायरी)
-│           └── chunks/       ← 1,865 database sections (कानुनका टुक्राहरू)
+│       └── corporate-laws/   ← NexSight Law (Advanced Corporate Legal RAG)
+│           ├── app.py        ← Application Interface (Streamlit)
+│           ├── database.py   ← SQLite database logger (Logs interactions)
+│           └── chunks/       ← 1,865 database sections (Embedded law fragments)
 ├── marketing/
-│   └── index.html            ← AI Marketing Copywriter (विज्ञापन सामग्री लेखक)
+│   └── index.html            ← AI Marketing Copywriter
 └── branch-manager/
-    └── index.html            ← Manager's AI Dashboard (शाखा प्रबन्धक ड्यासबोर्ड)
+    └── index.html            ← Manager's AI Dashboard
 ```
 
-### 🏢 १. मुख्य गेटवे (Main Gateway)
-* **`index.html`**: यो एपको साझा गृहपृष्ठ (Landing Page) हो। यसले सिद्धार्थ बैंकको नीलो र सुन्तला रङको ब्रान्डिङसहित एउटै ठाउँबाट सबै ३ वटा AI सेवाहरू खोल्न मद्दत गर्दछ।
+### 🏢 1. Main Gateway
+* **`index.html`**: The unified homepage of the prototype. Styled with Siddhartha Bank's Navy Blue & Orange theme, it allows users to navigate to any of the 3 AI applications in one click.
 
-### 💻 २. तत्काल चल्ने प्रोटोटाइपहरू (Frontend-Only Apps)
-यी एप्लिकेसनहरू सिधै युजरको ब्राउजरमा चल्छन् र यसका लागि कुनै महँगो सर्भर वा डाटाबेस सेटअप चाहिँदैन (Zero-cost infrastructure):
-* **`chatbot/index.html` (Customer Chatbot)**: बैंकका बचत खाता, ब्याजदर र डिजिटल सेवाहरूका बारेमा ग्राहकहरूले नेपाली र अंग्रेजीमा २४/७ जानकारी लिन मिल्ने च्याट विन्डो।
-* **`marketing/index.html` (AI Marketing Writer)**: सिद्धार्थ बैंकको ब्रान्ड टोनसँग मिल्ने फेसबुक पोस्ट, इमेल र एसएमएस सामग्री स्वतः लेखिदिने सृजनात्मक AI टूल।
-* **`branch-manager/index.html` (Branch Manager Assistant)**: प्रबन्धकहरूले ग्राहकका जटिल गुनासाहरूको विश्लेषण गर्न, मिटिङ नोटहरू स्वतः तयार पार्न र शाखाको रिपोर्ट हेर्न प्रयोग गर्ने ड्यासबोर्ड।
+### 💻 2. Client-Side Prototypes (Frontend-Only Apps)
+These applications run directly in the user's browser without requiring backend servers or database overhead:
+* **`chatbot/index.html` (Customer Chatbot)**: A responsive chat screen where customers can ask about bank accounts, interest rates, and digital banking services in standard English or Nepali.
+* **`marketing/index.html` (AI Marketing Writer)**: A creative tool that automatically writes Facebook posts, emails, and SMS alerts aligned with Siddhartha Bank's official brand guidelines.
+* **`branch-manager/index.html` (Branch Manager Assistant)**: A management dashboard used to analyze customer complaints, summarize meeting minutes, and compile branch reports.
 
-### ⚖️ ३. एड्भान्स बैंकिङ तथा कर्पोरेट कानुन प्रणाली — **NexSight Law** (`chatbot/laws/corporate-laws/`)
-यो यो प्रोजेक्टकै सबैभन्दा बौद्धिक र शक्तिशाली व्यावसायिक AI प्रणाली हो। यसले नेपालको बैंकिङ र कर्पोरेट कानुनका पुस्तकहरू पढेर वकिल सरह सटिक जवाफ दिन्छ:
-* **`app.py` (मुख्य एप्लिकेसन)**: कानुन सम्बन्धी प्रश्न सोध्ने र Claude AI को सहायताले सटिक बुँदागत उत्तर देखाउने मुख्य इन्टरफेस।
-* **`database.py` र `chat_logs.db`**: भविष्यमा विश्लेषण गर्न र कानुनी सुरक्षाका लागि कुन युजरले के प्रश्न सोधे र AI ले के उत्तर दियो भनेर रेकर्ड राख्ने कानुनी डायरी।
-* **कानुनका पुस्तकहरू (`.pdf` Files)**: BAFIA, नेपाल राष्ट्र बैंक ऐन, बैंकिङ कसूर ऐन, सम्पत्ति शुद्धीकरण निवारण ऐन, र श्रम ऐन जस्ता आधिकारिक सरकारी कानुनी दस्तावेजहरू।
-* **डाटा लोड गर्ने संयन्त्र (`ingest_to_pinecone.py`)**: कानुनका १,८६५ वटा भन्दा बढी दफाहरूलाई टुक्रा-टुक्रा पारेर सुरक्षित क्लाउड डाटाबेसमा राख्ने कोड, ताकि च्याटबटले सेकेन्डमै दफा खोज्न सकोस्।
+### ⚖️ 3. Advanced Legal Search Engine — **NexSight Law** (`chatbot/laws/corporate-laws/`)
+The core enterprise AI system that parses bank directives and corporate laws to answer questions with exact citations:
+* **`app.py`**: The Streamlit user interface that receives questions, queries the vector database, and generates structured legal summaries using Claude.
+* **`database.py` & `chat_logs.db`**: A local SQLite database logging queries, citations, and responses for auditing and optimization.
+* **Source Documents (`.pdf` files)**: Official regulatory acts including BAFIA, Nepal Rastra Bank Act, Banking Offence Act, Anti-Money Laundering Act, and Labor Act.
+* **Ingestion Pipeline (`ingest_to_pinecone.py`)**: Script that parsed 1,865+ legal sections, generated embeddings, and uploaded them to Pinecone for sub-second vector search.
 
 ---
 
 ## 🎯 Interview Key Points
 
-1. **Cost-effective:** Gemini free tier = Rs. 0 infrastructure cost
-2. **Scalable:** Prototype to production in 3 months
-3. **Nepali Language:** First-class support for Nepali customers
-4. **No vendor lock-in:** Standard HTML/JS, deployable anywhere
-5. **Google Pomelli concept:** Bank DNA-aware marketing AI
+1. **Cost-effective:** Utilizes free tier models for zero-cost infrastructure and fast client-side prototyping.
+2. **Scalable:** Built on a production-ready RAG search engine (Pinecone + Claude) that can scale to cover all banking directives.
+3. **Nepali Language:** Native Devanagari translation and response generation optimized for local customers.
+4. **No Vendor Lock-in:** Standard HTML/JS frontend deployable on any platform (GitHub Pages, S3, etc.).
+5. **Google Pomelli Concept:** Marketing writer is trained on Siddhartha Bank's brand DNA for consistent copywriting.
 
 ---
 
