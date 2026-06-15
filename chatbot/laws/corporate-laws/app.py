@@ -23,18 +23,22 @@ st.set_page_config(
 # -------------------------------------------------------------------
 st.markdown("""
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        
         header {visibility: hidden;}
         footer {visibility: hidden;}
         
-        /* Modern Glassmorphism & Siddhartha Bank Theme */
+        /* Modern Siddhartha Bank Theme Setup */
         .stApp {
             background-color: #F8F9FA !important;
-            color: #0A3B7C !important;
+            color: #2D3748 !important;
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
         }
         
-        /* Force text colors to fix Dark Mode unreadability */
-        .stMarkdown, p, div, span {
-            color: #1f2937;
+        /* Prevent browser dark mode issues with soft dark text */
+        .stApp p, .stApp span, .stApp div, .stApp li, .stApp label {
+            color: #2D3748 !important;
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
         }
         
         .main-title {
@@ -45,43 +49,161 @@ st.markdown("""
             -webkit-text-fill-color: transparent;
             text-align: center;
             margin-bottom: 5px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif !important;
             letter-spacing: -1px;
         }
-        .sub-title {
-            text-align: center;
-            color: #4b5563;
-            font-size: 1.15rem;
-            margin-bottom: 40px;
-            font-weight: 500;
+        
+        /* Sidebar layout styling */
+        [data-testid="stSidebar"] {
+            background-color: #ffffff !important;
+            border-right: 1px solid rgba(10, 59, 124, 0.08) !important;
+        }
+        [data-testid="stSidebar"] * {
+            color: #2D3748 !important;
+        }
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+            color: #0A3B7C !important;
+            font-family: 'Outfit', sans-serif !important;
         }
         
-        /* Beautiful Buttons */
+        /* Premium Chat Container Card styling */
+        div[data-testid="stChatMessage"] {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(10, 59, 124, 0.06) !important;
+            border-radius: 18px !important;
+            padding: 22px 26px !important;
+            box-shadow: 0 4px 25px rgba(10, 59, 124, 0.03) !important;
+            margin-bottom: 16px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        div[data-testid="stChatMessage"]:hover {
+            box-shadow: 0 8px 30px rgba(10, 59, 124, 0.06) !important;
+            border-color: rgba(10, 59, 124, 0.12) !important;
+        }
+        
+        /* Chat Content Typography Re-alignment */
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
+            font-size: 0.98rem !important;
+            line-height: 1.68 !important;
+            color: #2D3748 !important;
+            margin-bottom: 12px !important;
+        }
+        
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] ul, 
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] ol {
+            padding-left: 22px !important;
+            margin-bottom: 14px !important;
+        }
+        
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li {
+            font-size: 0.98rem !important;
+            line-height: 1.68 !important;
+            color: #2D3748 !important;
+            margin-bottom: 8px !important;
+        }
+        
+        /* Chat Content Headings */
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h1,
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h2,
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3,
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h4 {
+            color: #0A3B7C !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 700 !important;
+            margin-top: 22px !important;
+            margin-bottom: 12px !important;
+            letter-spacing: -0.3px !important;
+        }
+        
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3 {
+            font-size: 1.22rem !important;
+            border-bottom: 1px solid rgba(10, 59, 124, 0.08) !important;
+            padding-bottom: 6px !important;
+        }
+        
+        /* Custom Blockquote (Key Summary Callout Box) */
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] blockquote {
+            border-left: 4px solid #F39200 !important;
+            background-color: rgba(243, 146, 0, 0.04) !important;
+            padding: 14px 20px !important;
+            border-radius: 4px 14px 14px 4px !important;
+            margin: 18px 0 !important;
+        }
+        
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] blockquote p {
+            color: #0A3B7C !important;
+            font-weight: 600 !important;
+            font-size: 0.98rem !important;
+            margin-bottom: 0 !important;
+        }
+        
+        /* Inline references code tags */
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] code {
+            background-color: rgba(10, 59, 124, 0.05) !important;
+            color: #0A3B7C !important;
+            padding: 2px 6px !important;
+            border-radius: 6px !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            border: 1px solid rgba(10, 59, 124, 0.1) !important;
+            font-family: 'Plus Jakarta Sans', monospace !important;
+        }
+        
+        /* Source Citation Expanders styling */
+        div[data-testid="stExpander"] {
+            border: 1px solid rgba(10, 59, 124, 0.08) !important;
+            border-radius: 14px !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(10, 59, 124, 0.01) !important;
+            margin-top: 10px !important;
+            transition: all 0.3s ease !important;
+        }
+        div[data-testid="stExpander"]:hover {
+            border-color: rgba(10, 59, 124, 0.15) !important;
+            box-shadow: 0 6px 18px rgba(10, 59, 124, 0.03) !important;
+        }
+        
+        /* Premium Buttons (Suggested Questions & Clear Chat) */
         div.stButton > button {
             width: 100%;
             border-radius: 12px;
-            border: 1px solid rgba(10, 59, 124, 0.2);
+            border: 1px solid rgba(10, 59, 124, 0.08);
             background: #ffffff;
             color: #0A3B7C !important;
-            font-weight: 600;
-            padding: 15px 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            font-weight: 500;
+            font-size: 0.9rem !important;
+            padding: 12px 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: pre-wrap; /* Allows long text to wrap beautifully */
+            white-space: pre-wrap;
             height: auto;
+            text-align: left;
         }
         div.stButton > button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(243, 146, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(243, 146, 0, 0.15);
             border-color: #F39200;
             color: #F39200 !important;
-            background: white;
+            background: #ffffff;
+        }
+        
+        /* Suggested Questions Section Header */
+        .sugg-header {
+            color: #718096 !important;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 24px !important;
+            margin-bottom: 12px !important;
         }
         
         /* Chat Input Styling */
         .stChatFloatingInputContainer {
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(10, 59, 124, 0.08);
+            background-color: #ffffff !important;
+            padding: 8px !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -191,7 +313,7 @@ if current_lang == "English":
     msg_welcome = """**Hello!** I am your AI Assistant for Nepal's Corporate & Banking Laws.
 
 You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking Offence Act**, **Anti-Money Laundering Act**, **Labor Act**, or **NRB Directives**. I will provide you with accurate answers including official legal citations. How can I help you today?"""
-    sugg_heading = "💡 **Logical & Complex Questions (Suggested):**"
+    sugg_heading = "<div class='sugg-header'>💡 Logical & Complex Questions (Suggested)</div>"
     sugg_q1 = "Can a person convicted of a banking offense become a bank director? Answer based on BAFIA and the Banking Offence and Punishment Act."
     sugg_q2 = "What action is taken under the Labor Act if an employee's remuneration is not paid, and does it fall under money laundering?"
     sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
@@ -206,7 +328,7 @@ else:
         msg_welcome = """**नमस्ते!** म नेपालको कर्पोरेट तथा बैंकिङ कानुनसम्बन्धी AI Assistant हुँ।
 
 मलाई **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन**, वा **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"""
-        sugg_heading = "💡 **जटिल र लजिकल प्रश्नहरू (Suggested):**"
+        sugg_heading = "<div class='sugg-header'>💡 जटिल र लजिकल प्रश्नहरू (Suggested)</div>"
         sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले बैंकको सञ्चालक (Director) बन्न पाउँछ कि पाउँदैन? BAFIA र बैंकिङ कसूर ऐनको आधारमा भन्नुहोस्।"
         sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ सम्पत्ति शुद्धीकरण ऐन अनुसार?"
         sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंकको व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ? राष्ट्र बैंक ऐन र BAFIA अनुसार स्पष्ट पार्नुहोस्।"
@@ -284,7 +406,7 @@ for message in st.session_state.messages:
 
 # Render Suggested Questions (Always Visible at the bottom of the chat history)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown(sugg_heading)
+st.markdown(sugg_heading, unsafe_allow_html=True)
 
 if st.session_state.get("suggested_questions"):
     display_questions = st.session_state.suggested_questions[:4]
@@ -391,7 +513,12 @@ LANGUAGE RULES FOR YOUR RESPONSE:
 FORMATTING AND LOGIC RULES:
 1. You MUST explicitly mention the Act Name and Section number (from the context) that your answer is based on.
 2. SYNTHESIS (MULTI-HOP): If the user's question involves multiple topics or spans multiple acts, you MUST synthesize the information comprehensively from all relevant provided contexts. Explicitly compare or combine the rules from different acts as required to provide a complete, high-quality, and logical legal answer.
-3. Use bullet points for readability where appropriate.
+3. RESPONSE STRUCTURE & AESTHETICS:
+   Format your response professionally with this exact structure:
+   - **Key Takeaway / मुख्य निष्कर्ष**: Start with a concise, 1-2 sentence key legal answer wrapped in a blockquote (`> **Key Takeaway / मुख्य निष्कर्ष**: ...`).
+   - **Legal Analysis / कानुनी विश्लेषण**: Divide your detailed answer into logical sections using clean markdown headings (e.g., `### 🔍 Analysis` or `### ⚖️ Applicable Rules`).
+   - **Relevant Provisions / सम्बद्ध कानुनी व्यवस्थाहरू**: List key sections cited, formatted as clean bullet points (e.g., `- 📌 **BAFIA, Section 12**: [Brief provision summary]`).
+   Use bold text for critical terms to make the response highly scannable and easy to read. Keep the language professional, authoritative, and structured. Do not use very large headers or excessive markdown formatting outside of this layout.
 4. DYNAMIC FOLLOW-UP SUGGESTIONS: At the very end of your response, you MUST generate exactly 3 logical, relevant follow-up questions that the user might want to ask next based on your response and the context. Format them on a new line at the end of your response exactly like this:
 [Suggestions: Question 1? || Question 2? || Question 3?]
 The suggestions must be in the same language as your response (English or Nepali). Do not include any other text inside the brackets.
