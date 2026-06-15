@@ -12,7 +12,7 @@ import re
 # Streamlit Page Config
 # -------------------------------------------------------------------
 st.set_page_config(
-    page_title="Nepal Corporate Law Chatbot",
+    page_title="NexSight Law",
     page_icon="⚖️",
     layout="centered",
     initial_sidebar_state="expanded"
@@ -304,9 +304,9 @@ current_lang = st.session_state.app_lang
 
 # Text Dictionaries
 if current_lang == "English":
-    ui_title = "Nepal Corporate Law AI 🇳🇵"
+    ui_title = "NexSight Law 🇳🇵"
     ui_subtitle = "Your intelligent legal companion for Nepal's Corporate Sector"
-    sidebar_title = "Corporate Law AI"
+    sidebar_title = "NexSight Law"
     sidebar_desc = "Instantly navigate through **1,865 provisions** from BAFIA, NRB Act, Banking Offence Act, AML Act, Labor Act, and NRB Unified Directives. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
     btn_clear = "🧹 Clear Chat History"
     ph_input = "Ask your legal question..."
@@ -319,9 +319,9 @@ You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking O
     sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
     sugg_q4 = "What is the liquidation process of a Bank/Financial Institution, and how is the priority of debt recovery determined under BAFIA?"
 else:
-        ui_title = "नेपाल कर्पोरेट कानुन AI 🇳🇵"
+        ui_title = "NexSight Law 🇳🇵"
         ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
-        sidebar_title = "कानुन च्याटबट"
+        sidebar_title = "NexSight Law"
         sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** (BAFIA, राष्ट्र बैंक ऐन, बैंकिङ कसूर ऐन, सम्पत्ति शुद्धीकरण निवारण ऐन, श्रम ऐन र राष्ट्र बैंक एकिकृत निर्देशनहरू) पढेर सटिक उत्तर दिने AI।"
         btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
         ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
