@@ -29,23 +29,32 @@ st.markdown("""
         header {visibility: hidden;}
         footer {visibility: hidden;}
         
-        /* Modern Siddhartha Bank Theme Setup */
+        /* Global Page Container Adjustments */
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+            max-width: 850px !important;
+        }
+        
+        /* Modern Theme Setup */
         .stApp {
-            background-color: #F8F9FA !important;
-            color: #2D3748 !important;
+            background-color: #F8FAFC !important;
+            color: #1E293B !important;
             font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
         }
         
-        /* Prevent browser dark mode issues with soft dark text */
+        /* Force dark text and soft theme colors */
         .stApp p, .stApp span, .stApp div, .stApp li, .stApp label {
-            color: #2D3748 !important;
-            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
+            color: #334155 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
         
         .main-title {
             font-size: 2.8rem;
             font-weight: 800;
-            background: -webkit-linear-gradient(45deg, #0A3B7C, #F39200);
+            background: -webkit-linear-gradient(45deg, #0A3B7C, #2563EB);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
@@ -57,36 +66,49 @@ st.markdown("""
         /* Sidebar layout styling */
         [data-testid="stSidebar"] {
             background-color: #ffffff !important;
-            border-right: 1px solid rgba(10, 59, 124, 0.08) !important;
+            border-right: 1px solid rgba(10, 59, 124, 0.06) !important;
         }
         [data-testid="stSidebar"] * {
-            color: #2D3748 !important;
+            color: #334155 !important;
         }
         [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
             color: #0A3B7C !important;
             font-family: 'Outfit', sans-serif !important;
+            font-weight: 700 !important;
         }
         
-        /* Premium Chat Container Card styling */
+        /* General Chat Message styling */
         div[data-testid="stChatMessage"] {
+            padding: 22px 26px !important;
+            margin-bottom: 16px !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 18px !important;
+        }
+        
+        /* User Chat Message - Indigo Accent */
+        div[data-testid="stChatMessage"][aria-label*="user" i] {
+            background-color: rgba(37, 99, 235, 0.05) !important;
+            border: 1px solid rgba(37, 99, 235, 0.1) !important;
+            border-bottom-right-radius: 4px !important;
+        }
+        
+        /* Assistant Chat Message - Soft White */
+        div[data-testid="stChatMessage"][aria-label*="assistant" i] {
             background-color: #ffffff !important;
             border: 1px solid rgba(10, 59, 124, 0.06) !important;
-            border-radius: 18px !important;
-            padding: 22px 26px !important;
-            box-shadow: 0 4px 25px rgba(10, 59, 124, 0.03) !important;
-            margin-bottom: 16px !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-bottom-left-radius: 4px !important;
         }
+        
         div[data-testid="stChatMessage"]:hover {
-            box-shadow: 0 8px 30px rgba(10, 59, 124, 0.06) !important;
-            border-color: rgba(10, 59, 124, 0.12) !important;
+            box-shadow: 0 8px 30px rgba(10, 59, 124, 0.05) !important;
         }
         
         /* Chat Content Typography Re-alignment */
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
-            font-size: 0.91rem !important;
+            font-size: 0.92rem !important;
             line-height: 1.68 !important;
-            color: #2D3748 !important;
+            color: #334155 !important;
             margin-bottom: 12px !important;
         }
         
@@ -97,9 +119,9 @@ st.markdown("""
         }
         
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li {
-            font-size: 0.91rem !important;
+            font-size: 0.92rem !important;
             line-height: 1.68 !important;
-            color: #2D3748 !important;
+            color: #334155 !important;
             margin-bottom: 8px !important;
         }
         
@@ -117,7 +139,7 @@ st.markdown("""
         }
         
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3 {
-            font-size: 1.12rem !important;
+            font-size: 1.15rem !important;
             border-bottom: 1px solid rgba(10, 59, 124, 0.08) !important;
             padding-bottom: 6px !important;
         }
@@ -134,7 +156,7 @@ st.markdown("""
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] blockquote p {
             color: #0A3B7C !important;
             font-weight: 600 !important;
-            font-size: 0.91rem !important;
+            font-size: 0.92rem !important;
             margin-bottom: 0 !important;
         }
         
@@ -142,17 +164,17 @@ st.markdown("""
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] code {
             background-color: rgba(10, 59, 124, 0.05) !important;
             color: #0A3B7C !important;
-            padding: 2px 6px !important;
+            padding: 3px 7px !important;
             border-radius: 6px !important;
             font-size: 0.85rem !important;
             font-weight: 600 !important;
-            border: 1px solid rgba(10, 59, 124, 0.1) !important;
+            border: 1px solid rgba(10, 59, 124, 0.08) !important;
             font-family: 'Plus Jakarta Sans', monospace !important;
         }
         
         /* Source Citation Expanders styling */
         div[data-testid="stExpander"] {
-            border: 1px solid rgba(10, 59, 124, 0.08) !important;
+            border: 1px solid rgba(10, 59, 124, 0.06) !important;
             border-radius: 14px !important;
             background-color: #ffffff !important;
             box-shadow: 0 4px 12px rgba(10, 59, 124, 0.01) !important;
@@ -160,37 +182,38 @@ st.markdown("""
             transition: all 0.3s ease !important;
         }
         div[data-testid="stExpander"]:hover {
-            border-color: rgba(10, 59, 124, 0.15) !important;
+            border-color: rgba(10, 59, 124, 0.12) !important;
             box-shadow: 0 6px 18px rgba(10, 59, 124, 0.03) !important;
         }
         
-        /* Premium Buttons (Suggested Questions & Clear Chat) */
+        /* Suggested Questions & Action Buttons */
         div.stButton > button {
             width: 100%;
-            border-radius: 12px;
-            border: 1px solid rgba(10, 59, 124, 0.08);
-            background: #ffffff;
+            border-radius: 14px !important;
+            border: 1px solid rgba(10, 59, 124, 0.08) !important;
+            background: #ffffff !important;
             color: #0A3B7C !important;
-            font-weight: 500;
-            font-size: 0.9rem !important;
-            padding: 12px 14px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: pre-wrap;
-            height: auto;
-            text-align: left;
+            font-weight: 550 !important;
+            font-size: 0.88rem !important;
+            padding: 14px 18px !important;
+            box-shadow: 0 4px 12px rgba(10, 59, 124, 0.02) !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            white-space: pre-wrap !important;
+            height: auto !important;
+            text-align: left !important;
+            line-height: 1.45 !important;
         }
         div.stButton > button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(243, 146, 0, 0.15);
-            border-color: #F39200;
-            color: #F39200 !important;
-            background: #ffffff;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.1) !important;
+            border-color: #2563EB !important;
+            color: #2563EB !important;
+            background: rgba(37, 99, 235, 0.02) !important;
         }
         
         /* Suggested Questions Section Header */
         .sugg-header {
-            color: #718096 !important;
+            color: #64748B !important;
             font-size: 0.88rem !important;
             font-weight: 700 !important;
             text-transform: uppercase;
@@ -201,41 +224,53 @@ st.markdown("""
         
         /* Chat Input Styling */
         .stChatFloatingInputContainer {
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(10, 59, 124, 0.08);
+            border-radius: 18px !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
             background-color: #ffffff !important;
-            padding: 8px !important;
+            padding: 10px !important;
+            border: 1px solid rgba(10, 59, 124, 0.05) !important;
         }
         
         /* Mobile Responsive Adjustments */
         @media (max-width: 768px) {
+            .block-container {
+                padding-top: 1rem !important;
+                padding-bottom: 1.5rem !important;
+                padding-left: 0.8rem !important;
+                padding-right: 0.8rem !important;
+            }
             .main-title {
                 font-size: 1.8rem !important;
                 margin-top: 10px !important;
                 margin-bottom: 2px !important;
             }
-            .stApp {
-                padding: 10px !important;
-            }
             div[data-testid="stChatMessage"] {
-                padding: 12px 16px !important;
-                border-radius: 12px !important;
-                margin-bottom: 10px !important;
+                padding: 14px 18px !important;
+                border-radius: 14px !important;
+                margin-bottom: 12px !important;
             }
             div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p,
             div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li {
-                font-size: 0.85rem !important;
-                line-height: 1.5 !important;
+                font-size: 0.88rem !important;
+                line-height: 1.55 !important;
             }
             div.stButton > button {
-                padding: 8px 10px !important;
-                font-size: 0.8rem !important;
-                border-radius: 8px !important;
+                padding: 12px 14px !important;
+                font-size: 0.82rem !important;
+                border-radius: 10px !important;
             }
             .sugg-header {
-                font-size: 0.75rem !important;
-                margin-top: 12px !important;
-                margin-bottom: 6px !important;
+                font-size: 0.78rem !important;
+                margin-top: 16px !important;
+                margin-bottom: 8px !important;
+            }
+            
+            /* Clean stacking for columns on small devices */
+            div[data-testid="column"] {
+                width: 100% !important;
+                flex: 1 1 100% !important;
+                min-width: 100% !important;
+                margin-bottom: 10px !important;
             }
         }
     </style>
