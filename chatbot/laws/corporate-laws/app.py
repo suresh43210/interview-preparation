@@ -86,18 +86,27 @@ st.markdown("""
             border-radius: 18px !important;
         }
         
-        /* User Chat Message - Indigo Accent */
+        /* User Chat Message - Indigo Accent, Right Aligned */
         div[data-testid="stChatMessage"][aria-label*="user" i] {
+            flex-direction: row-reverse !important;
             background-color: rgba(37, 99, 235, 0.05) !important;
             border: 1px solid rgba(37, 99, 235, 0.1) !important;
             border-bottom-right-radius: 4px !important;
+            margin-left: 10% !important;
         }
         
-        /* Assistant Chat Message - Soft White */
+        /* Adjust User Avatar margins when row-reversed */
+        div[data-testid="stChatMessage"][aria-label*="user" i] > div[data-testid="stChatMessageAvatar"] {
+            margin-left: 12px !important;
+            margin-right: 0px !important;
+        }
+        
+        /* Assistant Chat Message - Soft White, Left Aligned */
         div[data-testid="stChatMessage"][aria-label*="assistant" i] {
             background-color: #ffffff !important;
             border: 1px solid rgba(10, 59, 124, 0.06) !important;
             border-bottom-left-radius: 4px !important;
+            margin-right: 10% !important;
         }
         
         div[data-testid="stChatMessage"]:hover {
@@ -431,15 +440,32 @@ with st.sidebar:
         st.session_state.suggested_questions = []
         st.rerun()
     st.divider()
-    st.subheader("🛠️ View Mode / मोड")
-    app_mode = st.radio(
-        "Select Screen / स्क्रिन:",
-        ["⚖️ Compliance Assistant", "📊 Monitoring Dashboard"],
-        index=0,
-        label_visibility="collapsed"
-    )
-    st.divider()
-    st.caption("Powered by: **Claude Sonnet 4.6**")
+    
+    # Secure Developer / Admin Mode Check
+    admin_pwd = os.environ.get("ADMIN_CODE", "admin123")
+    try:
+        admin_pwd = st.secrets["ADMIN_CODE"]
+    except Exception:
+        pass
+        
+    with st.expander("🔑 Admin Settings"):
+        admin_code = st.text_input("Access Code:", type="password", key="dev_access_input")
+        is_admin = (admin_code == admin_pwd)
+        if is_admin:
+            st.success("Developer Mode Unlocked!")
+            
+    if is_admin:
+        st.subheader("🛠️ View Mode / मोड")
+        app_mode = st.radio(
+            "Select Screen / स्क्रिन:",
+            ["⚖️ Compliance Assistant", "📊 Monitoring Dashboard"],
+            index=0,
+            label_visibility="collapsed"
+        )
+        st.divider()
+        st.caption("Powered by: **Claude Sonnet 4.6**")
+    else:
+        app_mode = "⚖️ Compliance Assistant"
 
 # Session State & Main UI
 if "suggested_questions" not in st.session_state:
@@ -580,8 +606,23 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
         if "sources" in message and message["sources"]:
-            col_exp1, col_exp2 = st.columns(2)
-            with col_exp1:
+            if is_admin:
+                col_exp1, col_exp2 = st.columns(2)
+                with col_exp1:
+                    exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                    with st.expander(exp_title):
+                        seen = set()
+                        for src in message["sources"]:
+                            key = f"{src['act']}-{src['section']}"
+                            if key not in seen:
+                                seen.add(key)
+                                st.markdown(f"**{src['act']} ({src['section']})**")
+                                st.caption(f"{src['text'][:150]}...")
+                with col_exp2:
+                    tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                    with st.expander(tech_title):
+                        st.markdown(get_technical_flow_info())
+            else:
                 exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
                 with st.expander(exp_title):
                     seen = set()
@@ -591,10 +632,6 @@ for message in st.session_state.messages:
                             seen.add(key)
                             st.markdown(f"**{src['act']} ({src['section']})**")
                             st.caption(f"{src['text'][:150]}...")
-            with col_exp2:
-                tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
-                with st.expander(tech_title):
-                    st.markdown(get_technical_flow_info())
 
 # Render Suggested Questions (Always Visible at the bottom of the chat history)
 st.markdown("<br>", unsafe_allow_html=True)
@@ -769,8 +806,23 @@ Question: {prompt}"""
             
             response_placeholder.markdown(full_response)
             
-            col_exp1, col_exp2 = st.columns(2)
-            with col_exp1:
+            if is_admin:
+                col_exp1, col_exp2 = st.columns(2)
+                with col_exp1:
+                    exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                    with st.expander(exp_title):
+                        seen = set()
+                        for src in source_metadata:
+                            key = f"{src['act']}-{src['section']}"
+                            if key not in seen:
+                                seen.add(key)
+                                st.markdown(f"**{src['act']} ({src['section']})**")
+                                st.caption(f"{src['text'][:150]}...")
+                with col_exp2:
+                    tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                    with st.expander(tech_title):
+                        st.markdown(get_technical_flow_info())
+            else:
                 exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
                 with st.expander(exp_title):
                     seen = set()
@@ -780,10 +832,6 @@ Question: {prompt}"""
                             seen.add(key)
                             st.markdown(f"**{src['act']} ({src['section']})**")
                             st.caption(f"{src['text'][:150]}...")
-            with col_exp2:
-                tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
-                with st.expander(tech_title):
-                    st.markdown(get_technical_flow_info())
 
             st.session_state.messages.append({
                 "role": "assistant",
