@@ -35,7 +35,7 @@ st.markdown("""
             padding-bottom: 2rem !important;
             padding-left: 2rem !important;
             padding-right: 2rem !important;
-            max-width: 950px !important;
+            max-width: 1300px !important;
         }
         
         /* Modern Theme Setup */
@@ -293,6 +293,52 @@ st.markdown("""
             font-size: 0.82rem;
         }
         
+        /* Reference Card Box styling */
+        .ref-card-box {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(15, 23, 42, 0.06) !important;
+            border-radius: 12px !important;
+            padding: 24px !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02) !important;
+            margin-bottom: 16px !important;
+        }
+        .ref-card-box h3 {
+            font-size: 1.15rem !important;
+            color: #1E40AF !important;
+            font-weight: 700 !important;
+            margin-bottom: 12px !important;
+            border-bottom: 1px solid rgba(30, 64, 175, 0.08) !important;
+            padding-bottom: 6px !important;
+        }
+        .ref-card-box p {
+            font-size: 0.88rem !important;
+            color: #334155 !important;
+            line-height: 1.55 !important;
+            margin-bottom: 10px !important;
+        }
+        .ref-card-box ul {
+            padding-left: 18px !important;
+            margin-bottom: 10px !important;
+        }
+        .ref-card-box li {
+            font-size: 0.85rem !important;
+            line-height: 1.5 !important;
+            color: #334155 !important;
+            margin-bottom: 6px !important;
+        }
+        .ref-badge {
+            display: inline-block !important;
+            background-color: rgba(30, 64, 175, 0.04) !important;
+            color: #1E40AF !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 3px 8px !important;
+            border-radius: 6px !important;
+            margin-right: 4px !important;
+            margin-bottom: 6px !important;
+            border: 1px solid rgba(30, 64, 175, 0.08) !important;
+        }
+        
         /* Mobile Responsive Adjustments */
         @media (max-width: 768px) {
             .block-container {
@@ -453,30 +499,34 @@ current_lang = st.session_state.app_lang
 # Text Dictionaries
 if current_lang == "English":
     ui_title = "NexSight Law 🇳🇵"
-    ui_subtitle = "Your intelligent legal companion for Nepal's Corporate Sector"
+    ui_subtitle = "Professional Regulatory Compliance & Legal Reference Portal"
     sidebar_title = "NexSight Law"
-    sidebar_desc = "Instantly navigate through **1,865 provisions** from BAFIA, NRB Act, Banking Offence Act, AML Act, Labor Act, and NRB Unified Directives. Get precise, AI-powered insights with exact legal citations to ensure compliance and mitigate risks."
+    sidebar_desc = "A structured regulatory reference portal covering BAFIA, Nepal Rastra Bank Act, Banking Offence and Punishment Act, Anti-Money Laundering Act, Labor Act, and NRB Unified Directives. Designed to support legal reference and compliance checks with precise citations."
     btn_clear = "🧹 Clear Chat History"
     ph_input = "Ask your legal question..."
-    msg_welcome = """**Hello!** I am your AI Assistant for Nepal's Corporate & Banking Laws.
+    msg_welcome = """**Welcome to the NexSight Law Compliance Portal.**
 
-You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking Offence Act**, **Anti-Money Laundering Act**, **Labor Act**, or **NRB Directives**. I will provide you with accurate answers including official legal citations. How can I help you today?"""
-    sugg_heading = "<div class='sugg-header'>💡 Logical & Complex Questions (Suggested)</div>"
+This portal provides structured access to key statutory frameworks in Nepal's corporate and banking sectors, including **BAFIA**, **Nepal Rastra Bank Act**, **Banking Offence and Punishment Act**, **Anti-Money Laundering Act**, **Labor Act**, and **NRB Unified Directives**. 
+
+Please enter your compliance query or legal question below. The system will search the database and present the relevant provisions alongside a detailed regulatory analysis. How may I assist you with your compliance search today?"""
+    sugg_heading = "<div class='sugg-header'>💡 Common Regulatory Reference Scenarios</div>"
     sugg_q1 = "Can a person convicted of a banking offense become a bank director? Answer based on BAFIA and the Banking Offence and Punishment Act."
     sugg_q2 = "What action is taken under the Labor Act if an employee's remuneration is not paid, and does it fall under money laundering?"
     sugg_q3 = "Under what circumstances can Nepal Rastra Bank take control of the management of any bank (BAFIA)?"
     sugg_q4 = "What is the liquidation process of a Bank/Financial Institution, and how is the priority of debt recovery determined under BAFIA?"
 else:
         ui_title = "NexSight Law 🇳🇵"
-        ui_subtitle = "तपाईंको भरपर्दो कानुनी सल्लाहकार (Corporate Law Assistant)"
+        ui_subtitle = "नेपालको बैंकिङ तथा कर्पोरेट क्षेत्रको आधिकारिक कानुनी सन्दर्भ पोर्टल"
         sidebar_title = "NexSight Law"
-        sidebar_desc = "Pinecone Vector Database मा रहेका **१८६५ कानुनी दफाहरू** (BAFIA, राष्ट्र बैंक ऐन, बैंकिङ कसूर ऐन, सम्पत्ति शुद्धीकरण निवारण ऐन, श्रम ऐन र राष्ट्र बैंक एकिकृत निर्देशनहरू) पढेर सटिक उत्तर दिने AI।"
+        sidebar_desc = "नेपालको वित्तीय र कर्पोरेट क्षेत्रका प्रमुख ऐन तथा नीतिगत व्यवस्थाहरूको एकीकृत प्रणाली। बैंक तथा वित्तीय संस्था ऐन, नेपाल राष्ट्र बैंक ऐन, बैंकिङ कसूर ऐन, सम्पत्ति शुद्धीकरण निवारण ऐन, श्रम ऐन र राष्ट्र बैंक एकिकृत निर्देशनहरू सम्बन्धी प्रावधानहरूको कानुनी सन्दर्भ र अनुपालन विश्लेषण।"
         btn_clear = "🧹 कुराकानी मेट्नुहोस् (Clear Chat)"
         ph_input = "कानुनसम्बन्धी आफ्नो प्रश्न सोध्नुहोस्..."
-        msg_welcome = """**नमस्ते!** म नेपालको कर्पोरेट तथा बैंकिङ कानुनसम्बन्धी AI Assistant हुँ।
+        msg_welcome = """**NexSight Law कानुनी अनुपालन (Compliance) पोर्टलमा स्वागत छ।**
 
-मलाई **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन**, वा **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"""
-        sugg_heading = "<div class='sugg-header'>💡 जटिल र लजिकल प्रश्नहरू (Suggested)</div>"
+यो पोर्टल नेपालको बैंकिङ तथा संगठित क्षेत्रका प्रमुख कानुनी दस्तावेजहरू जस्तै— **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर तथा सजाय ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन** र **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** का प्रावधानहरूको सटिक विश्लेषण र जानकारी प्रदान गर्न डिजाइन गरिएको हो।
+
+तपाईंले आफ्नो जिज्ञासा वा कानुनी प्रश्न तल राख्न सक्नुहुन्छ। प्रणालीले आधिकारिक दफाहरूको सन्दर्भ सहित सटिक विश्लेषणात्मक विवरण प्रस्तुत गर्नेछ। आज म तपाईंलाई कुन कानुनी विषयमा मद्दत गरौं?"""
+        sugg_heading = "<div class='sugg-header'>💡 धेरै सोधिने केही कानुनी व्यवस्थाहरू (नमूना)</div>"
         sugg_q1 = "बैंकिङ कसुर लागेको व्यक्तिले बैंकको सञ्चालक (Director) बन्न पाउँछ कि पाउँदैन? BAFIA र बैंकिङ कसूर ऐनको आधारमा भन्नुहोस्।"
         sugg_q2 = "कर्मचारीको पारिश्रमिक नदिएमा श्रम ऐन अनुसार कस्तो कारबाही हुन्छ र के यो सम्पत्ति शुद्धीकरणको दायरामा आउँछ सम्पत्ति शुद्धीकरण ऐन अनुसार?"
         sugg_q3 = "नेपाल राष्ट्र बैंकले कुन अवस्थामा कुनै पनि बैंकको व्यवस्थापन आफ्नो नियन्त्रणमा लिन सक्छ? राष्ट्र बैंक ऐन र BAFIA अनुसार स्पष्ट पार्नुहोस्।"
@@ -648,13 +698,17 @@ with col_toggle:
     if new_lang != st.session_state.app_lang:
         st.session_state.app_lang = new_lang
         new_msg_welcome = (
-            """**Hello!** I am your AI Assistant for Nepal's Corporate & Banking Laws.
+            """**Welcome to the NexSight Law Compliance Portal.**
 
-You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking Offence Act**, **Anti-Money Laundering Act**, **Labor Act**, or **NRB Directives**. I will provide you with accurate answers including official legal citations. How can I help you today?"""
+This portal provides structured access to key statutory frameworks in Nepal's corporate and banking sectors, including **BAFIA**, **Nepal Rastra Bank Act**, **Banking Offence and Punishment Act**, **Anti-Money Laundering Act**, **Labor Act**, and **NRB Unified Directives**. 
+
+Please enter your compliance query or legal question below. The system will search the database and present the relevant provisions alongside a detailed regulatory analysis. How may I assist you with your compliance search today?"""
             if new_lang == "English"
-            else """**नमस्ते!** म नेपालको कर्पोरेट तथा बैंकिङ कानुनसम्बन्धी AI Assistant हुँ।
+            else """**NexSight Law कानुनी अनुपालन (Compliance) पोर्टलमा स्वागत छ।**
 
-मलाई **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन**, वा **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** सँग सम्बन्धित कुनै पनि कानुनी प्रश्न सोध्न सक्नुहुन्छ। म तपाईंलाई आधिकारिक कानुनी दफाहरू सहित सटिक उत्तर दिनेछु। म कसरी सहयोग गरौं?"""
+यो पोर्टल नेपालको बैंकिङ तथा संगठित क्षेत्रका प्रमुख कानुनी दस्तावेजहरू जस्तै— **बैंक तथा वित्तीय संस्था ऐन (BAFIA)**, **नेपाल राष्ट्र बैंक ऐन**, **बैंकिङ कसूर तथा सजाय ऐन**, **सम्पत्ति शुद्धीकरण निवारण ऐन**, **श्रम ऐन** र **नेपाल राष्ट्र बैंक एकिकृत निर्देशनहरू** का प्रावधानहरूको सटिक विश्लेषण र जानकारी प्रदान गर्न डिजाइन गरिएको हो।
+
+तपाईंले आफ्नो जिज्ञासा वा कानुनी प्रश्न तल राख्न सक्नुहुन्छ। प्रणालीले आधिकारिक दफाहरूको सन्दर्भ सहित सटिक विश्लेषणात्मक विवरण प्रस्तुत गर्नेछ। आज म तपाईंलाई कुन कानुनी विषयमा मद्दत गरौं?"""
         )
         if len(st.session_state.messages) > 0:
             st.session_state.messages[0]["content"] = new_msg_welcome
@@ -662,15 +716,32 @@ You can ask me any legal question related to **BAFIA**, **NRB Act**, **Banking O
 
 st.divider()
 
-# Render Chat Messages
-for message in st.session_state.messages:
-    avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
-    with st.chat_message(message["role"], avatar=avatar):
-        st.markdown(message["content"])
-        if "sources" in message and message["sources"]:
-            if is_admin:
-                col_exp1, col_exp2 = st.columns(2)
-                with col_exp1:
+# Render Chat Messages & Sidebar Desk Layout
+col_main, col_ref = st.columns([2.2, 1])
+
+with col_main:
+    for message in st.session_state.messages:
+        avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
+        with st.chat_message(message["role"], avatar=avatar):
+            st.markdown(message["content"])
+            if "sources" in message and message["sources"]:
+                if is_admin:
+                    col_exp1, col_exp2 = st.columns(2)
+                    with col_exp1:
+                        exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                        with st.expander(exp_title):
+                            seen = set()
+                            for src in message["sources"]:
+                                key = f"{src['act']}-{src['section']}"
+                                if key not in seen:
+                                    seen.add(key)
+                                    st.markdown(f"**{src['act']} ({src['section']})**")
+                                    st.caption(f"{src['text'][:150]}...")
+                    with col_exp2:
+                        tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                        with st.expander(tech_title):
+                            st.markdown(get_technical_flow_info())
+                else:
                     exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
                     with st.expander(exp_title):
                         seen = set()
@@ -680,124 +751,110 @@ for message in st.session_state.messages:
                                 seen.add(key)
                                 st.markdown(f"**{src['act']} ({src['section']})**")
                                 st.caption(f"{src['text'][:150]}...")
-                with col_exp2:
-                    tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
-                    with st.expander(tech_title):
-                        st.markdown(get_technical_flow_info())
-            else:
-                exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
-                with st.expander(exp_title):
-                    seen = set()
-                    for src in message["sources"]:
-                        key = f"{src['act']}-{src['section']}"
-                        if key not in seen:
-                            seen.add(key)
-                            st.markdown(f"**{src['act']} ({src['section']})**")
-                            st.caption(f"{src['text'][:150]}...")
 
-# Render Suggested Questions (Always Visible at the bottom of the chat history)
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown(sugg_heading, unsafe_allow_html=True)
+    # Render Suggested Questions (Always Visible at the bottom of the chat history)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(sugg_heading, unsafe_allow_html=True)
 
-if st.session_state.get("suggested_questions"):
-    display_questions = st.session_state.suggested_questions[:4]
-else:
-    display_questions = [sugg_q1, sugg_q2, sugg_q3, sugg_q4]
+    if st.session_state.get("suggested_questions"):
+        display_questions = st.session_state.suggested_questions[:4]
+    else:
+        display_questions = [sugg_q1, sugg_q2, sugg_q3, sugg_q4]
 
-col1, col2 = st.columns(2)
-for idx, q_text in enumerate(display_questions):
-    col = col1 if idx % 2 == 0 else col2
-    with col:
-        # Unique key based on index and length of messages to prevent DuplicateWidgetID
-        btn_key = f"sugg_{idx}_{len(st.session_state.messages)}"
-        if st.button(q_text, key=btn_key, use_container_width=True):
-            st.session_state.suggested_prompt = q_text
-            st.rerun()
+    col1, col2 = st.columns(2)
+    for idx, q_text in enumerate(display_questions):
+        col = col1 if idx % 2 == 0 else col2
+        with col:
+            # Unique key based on index and length of messages to prevent DuplicateWidgetID
+            btn_key = f"sugg_{idx}_{len(st.session_state.messages)}"
+            if st.button(q_text, key=btn_key, use_container_width=True):
+                st.session_state.suggested_prompt = q_text
+                st.rerun()
 
-prompt = st.chat_input(ph_input)
-if "suggested_prompt" in st.session_state:
-    prompt = st.session_state.suggested_prompt
-    del st.session_state.suggested_prompt
+    prompt = st.chat_input(ph_input)
+    if "suggested_prompt" in st.session_state:
+        prompt = st.session_state.suggested_prompt
+        del st.session_state.suggested_prompt
 
-if prompt:
-    with st.chat_message("user", avatar=USER_AVATAR):
-        st.markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    if prompt:
+        with st.chat_message("user", avatar=USER_AVATAR):
+            st.markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
-    with st.chat_message("assistant", avatar=BOT_AVATAR):
-        response_placeholder = st.empty()
-        
-        with st.spinner("🔍 कानुनका किताबहरू पल्टाउँदै..."):
-            # Prepare conversation history for memory
-            history_text = ""
-            recent_msgs = st.session_state.messages[-5:] if len(st.session_state.messages) > 1 else []
-            for m in recent_msgs:
-                if m["role"] in ["user", "assistant"]:
-                    role_name = "User" if m["role"] == "user" else "AI"
-                    # Trim assistant content so prompt doesn't get too large, 500 chars is safer
-                    content_preview = m['content'][:500].replace('\n', ' ')
-                    history_text += f"{role_name}: {content_preview}\n"
-                    
-            english_query, nepali_query = translate_query(prompt, history=history_text)
+        with st.chat_message("assistant", avatar=BOT_AVATAR):
+            response_placeholder = st.empty()
             
-            en_vector = embedder.encode(english_query).tolist()
-            np_vector = embedder.encode(nepali_query).tolist()
-            
-            try:
-                # Fetch top 20 for better recall before reranking
-                res_en = index.query(vector=en_vector, top_k=20, include_metadata=True)
-                res_np = index.query(vector=np_vector, top_k=20, include_metadata=True)
-            except Exception as e:
-                print(f"Pinecone Database search error: {e}")
-                if st.session_state.app_lang == "English":
-                    response_placeholder.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
-                else:
-                    response_placeholder.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
-                st.stop()
-            
-            # Merge and deduplicate matches
-            all_matches = {}
-            for match in list(res_en.matches) + list(res_np.matches):
-                if match.id not in all_matches:
-                    all_matches[match.id] = match
+            with st.spinner("🔍 कानुनका किताबहरू पल्टाउँदै..." if st.session_state.app_lang != "English" else "🔍 Consulting statutes..."):
+                # Prepare conversation history for memory
+                history_text = ""
+                recent_msgs = st.session_state.messages[-5:] if len(st.session_state.messages) > 1 else []
+                for m in recent_msgs:
+                    if m["role"] in ["user", "assistant"]:
+                        role_name = "User" if m["role"] == "user" else "AI"
+                        # Trim assistant content so prompt doesn't get too large, 500 chars is safer
+                        content_preview = m['content'][:500].replace('\n', ' ')
+                        history_text += f"{role_name}: {content_preview}\n"
                         
-            # RERANKING
-            # We use the english_query because the CrossEncoder is English-optimized
-            pairs = []
-            match_list = list(all_matches.values())
-            for match in match_list:
-                pairs.append((english_query, match.metadata.get("text", "")))
+                english_query, nepali_query = translate_query(prompt, history=history_text)
                 
-            if pairs:
-                scores = reranker.predict(pairs)
-                # Combine match and score into a tuple, sort by score descending, take top 4
-                scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:4]
-                best_matches = [sm[0] for sm in scored_matches]
-            else:
-                best_matches = []
-            
-            contexts = []
-            source_metadata = []
-            
-            # Filter matches by an absolute threshold if needed, cross-encoder scores vary but > 0 usually means somewhat relevant.
-            for match in best_matches:
-                    act_name = match.metadata.get("Act Name", "Unknown Act")
-                    section = str(match.metadata.get("Section", "")).replace("**", "")
-                    text = match.metadata.get("text", "")
+                en_vector = embedder.encode(english_query).tolist()
+                np_vector = embedder.encode(nepali_query).tolist()
+                
+                try:
+                    # Fetch top 20 for better recall before reranking
+                    res_en = index.query(vector=en_vector, top_k=20, include_metadata=True)
+                    res_np = index.query(vector=np_vector, top_k=20, include_metadata=True)
+                except Exception as e:
+                    print(f"Pinecone Database search error: {e}")
+                    if st.session_state.app_lang == "English":
+                        response_placeholder.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                    else:
+                        response_placeholder.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
+                    st.stop()
+                
+                # Merge and deduplicate matches
+                all_matches = {}
+                for match in list(res_en.matches) + list(res_np.matches):
+                    if match.id not in all_matches:
+                        all_matches[match.id] = match
+                            
+                # RERANKING
+                # We use the english_query because the CrossEncoder is English-optimized
+                pairs = []
+                match_list = list(all_matches.values())
+                for match in match_list:
+                    pairs.append((english_query, match.metadata.get("text", "")))
                     
-                    contexts.append(f"Source: {act_name} - {section}\nText: {text}")
-                    source_metadata.append({"act": act_name, "section": section, "text": text})
-            
-            if not contexts:
-                error_msg = "माफ गर्नुहोला, तपाईंको प्रश्नसँग सम्बन्धित कुनै पनि कानुनी दफा मेरो डाटाबेसमा भेटिएन।"
-                response_placeholder.markdown(error_msg)
-                st.session_state.messages.append({"role": "assistant", "content": error_msg, "sources": []})
+                if pairs:
+                    scores = reranker.predict(pairs)
+                    # Combine match and score into a tuple, sort by score descending, take top 4
+                    scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:4]
+                    best_matches = [sm[0] for sm in scored_matches]
+                else:
+                    best_matches = []
                 
-        if not contexts:
-            st.stop()
+                contexts = []
+                source_metadata = []
+                
+                # Filter matches by an absolute threshold if needed, cross-encoder scores vary but > 0 usually means somewhat relevant.
+                for match in best_matches:
+                        act_name = match.metadata.get("Act Name", "Unknown Act")
+                        section = str(match.metadata.get("Section", "")).replace("**", "")
+                        text = match.metadata.get("text", "")
+                        
+                        contexts.append(f"Source: {act_name} - {section}\nText: {text}")
+                        source_metadata.append({"act": act_name, "section": section, "text": text})
+                
+                if not contexts:
+                    error_msg = "माफ गर्नुहोला, तपाईंको प्रश्नसँग सम्बन्धित कुनै पनि कानुनी दफा मेरो डाटाबेसमा भेटिएन।" if st.session_state.app_lang != "English" else "I apologize, but no relevant legal sections were found in the database for your query."
+                    response_placeholder.markdown(error_msg)
+                    st.session_state.messages.append({"role": "assistant", "content": error_msg, "sources": []})
+                    
+            if not contexts:
+                st.stop()
 
-        full_context = "\n\n---\n\n".join(contexts)
-        llm_prompt = f"""You are an excellent and reliable expert AI in Nepal Corporate Laws. 
+            full_context = "\n\n---\n\n".join(contexts)
+            llm_prompt = f"""You are an excellent and reliable expert AI in Nepal Corporate Laws. 
 Read the legal context provided below and answer the user's question clearly and accurately.
 
 LANGUAGE RULES FOR YOUR RESPONSE:
@@ -825,52 +882,66 @@ The suggestions must be in the same language as your response (English or Nepali
 
 Question: {prompt}"""
 
-        with st.spinner("✍️ आधिकारिक उत्तर तयार गर्दै (Claude)..."):
-            full_response = ""
-            success = False
-            
-            # 1. Try Anthropic
-            if claude_client:
-                anthropic_models = ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-8"]
-                for model in anthropic_models:
-                    try:
-                        with claude_client.messages.stream(
-                            model=model, max_tokens=2048, messages=[{"role": "user", "content": llm_prompt}]
-                        ) as stream:
-                            for text in stream.text_stream:
-                                full_response += text
-                                # Hide suggestions markup during streaming
-                                display_response = re.sub(r"\[Suggestions:.*", "", full_response, flags=re.DOTALL).strip()
-                                response_placeholder.markdown(display_response + " ▌")
-                        success = True
-                        break
-                    except Exception as e:
-                        print(f"Generation failed for {model}: {e}")
-                        continue
+            with st.spinner("✍️ आधिकारिक उत्तर तयार गर्दै (Claude)..." if st.session_state.app_lang != "English" else "✍️ Synthesizing legal analysis (Claude)..."):
+                full_response = ""
+                success = False
+                
+                # 1. Try Anthropic
+                if claude_client:
+                    anthropic_models = ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-8"]
+                    for model in anthropic_models:
+                        try:
+                            with claude_client.messages.stream(
+                                model=model, max_tokens=2048, messages=[{"role": "user", "content": llm_prompt}]
+                            ) as stream:
+                                for text in stream.text_stream:
+                                    full_response += text
+                                    # Hide suggestions markup during streaming
+                                    display_response = re.sub(r"\[Suggestions:.*", "", full_response, flags=re.DOTALL).strip()
+                                    response_placeholder.markdown(display_response + " ▌")
+                            success = True
+                            break
+                        except Exception as e:
+                            print(f"Generation failed for {model}: {e}")
+                            continue
 
-            if not success:
-                if st.session_state.app_lang == "English":
-                    st.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                if not success:
+                    if st.session_state.app_lang == "English":
+                        st.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                    else:
+                        st.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
+
+            if success:
+                # Extract suggestions
+                suggestions = []
+                match = re.search(r"\[Suggestions:\s*(.*?)\s*\]", full_response, re.DOTALL)
+                if match:
+                    raw_suggs = match.group(1)
+                    suggestions = [s.strip() for s in raw_suggs.split("||") if s.strip()]
+                    full_response = re.sub(r"\[Suggestions:\s*(.*?)\s*\]", "", full_response, flags=re.DOTALL).strip()
+                
+                if suggestions:
+                    st.session_state.suggested_questions = suggestions
+                
+                response_placeholder.markdown(full_response)
+                
+                if is_admin:
+                    col_exp1, col_exp2 = st.columns(2)
+                    with col_exp1:
+                        exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                        with st.expander(exp_title):
+                            seen = set()
+                            for src in source_metadata:
+                                key = f"{src['act']}-{src['section']}"
+                                if key not in seen:
+                                    seen.add(key)
+                                    st.markdown(f"**{src['act']} ({src['section']})**")
+                                    st.caption(f"{src['text'][:150]}...")
+                    with col_exp2:
+                        tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                        with st.expander(tech_title):
+                            st.markdown(get_technical_flow_info())
                 else:
-                    st.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
-
-        if success:
-            # Extract suggestions
-            suggestions = []
-            match = re.search(r"\[Suggestions:\s*(.*?)\s*\]", full_response, re.DOTALL)
-            if match:
-                raw_suggs = match.group(1)
-                suggestions = [s.strip() for s in raw_suggs.split("||") if s.strip()]
-                full_response = re.sub(r"\[Suggestions:\s*(.*?)\s*\]", "", full_response, flags=re.DOTALL).strip()
-            
-            if suggestions:
-                st.session_state.suggested_questions = suggestions
-            
-            response_placeholder.markdown(full_response)
-            
-            if is_admin:
-                col_exp1, col_exp2 = st.columns(2)
-                with col_exp1:
                     exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
                     with st.expander(exp_title):
                         seen = set()
@@ -880,26 +951,76 @@ Question: {prompt}"""
                                 seen.add(key)
                                 st.markdown(f"**{src['act']} ({src['section']})**")
                                 st.caption(f"{src['text'][:150]}...")
-                with col_exp2:
-                    tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
-                    with st.expander(tech_title):
-                        st.markdown(get_technical_flow_info())
-            else:
-                exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
-                with st.expander(exp_title):
-                    seen = set()
-                    for src in source_metadata:
-                        key = f"{src['act']}-{src['section']}"
-                        if key not in seen:
-                            seen.add(key)
-                            st.markdown(f"**{src['act']} ({src['section']})**")
-                            st.caption(f"{src['text'][:150]}...")
 
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": full_response,
-                "sources": source_metadata
-            })
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": full_response,
+                    "sources": source_metadata
+                })
+                
+                # LOGGING: Save to SQLite database
+                database.log_interaction(prompt, full_response, source_metadata, "Claude")
+
+with col_ref:
+    if st.session_state.app_lang == "English":
+        st.markdown("""
+        <div class="ref-card-box">
+            <h3>⚖️ Legal Reference Desk</h3>
+            <p>This system references the official statutes, regulations, and circulars of Nepal. Use this panel to understand the coverage and maximize search accuracy.</p>
             
-            # LOGGING: Save to SQLite database
-            database.log_interaction(prompt, full_response, source_metadata, "Claude")
+            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">📚 Covered Statutes</h4>
+            <div style="margin-bottom: 12px;">
+                <span class="ref-badge">BAFIA, 2073</span>
+                <span class="ref-badge">NRB Act, 2058</span>
+                <span class="ref-badge">Banking Offence Act, 2064</span>
+                <span class="ref-badge">AML Act, 2064</span>
+                <span class="ref-badge">Labor Act, 2074</span>
+                <span class="ref-badge">NRB Directives 2080</span>
+            </div>
+            
+            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">💡 Query Recommendations</h4>
+            <ul>
+                <li><strong>Cross-Act Synthesis:</strong> Try asking questions that span multiple laws, such as comparing labor disputes and banking penalties.</li>
+                <li><strong>Romanized Input:</strong> You can type queries in Romanized Nepali (e.g. <code>sanchalak ko yogyata</code>). The portal will translate and respond in official Devanagari.</li>
+                <li><strong>Provision Search:</strong> Cite specific sections if known (e.g., "Section 29 of BAFIA") for direct reference lookup.</li>
+            </ul>
+            
+            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">🔄 Dataset Information</h4>
+            <p style="font-size: 0.82rem; color: #64748B; margin-bottom: 0;">
+                • <strong>Status:</strong> Active & Synced<br/>
+                • <strong>Knowledge Index:</strong> 1,865 provisions<br/>
+                • <strong>Last Update:</strong> June 2026 (including latest NRB circulars)
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div class="ref-card-box">
+            <h3>⚖️ कानुनी सन्दर्भ सहायता</h3>
+            <p>यस पोर्टलले नेपालका आधिकारिक ऐन, नियम र नेपाल राष्ट्र बैंकका निर्देशनहरूलाई सन्दर्भ सामग्रीको रूपमा प्रयोग गर्दछ। पोर्टलको अधिकतम सदुपयोगका लागि तलका जानकारीहरू हेर्नुहोला।</p>
+            
+            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">📚 समेटिएका कानुनहरू</h4>
+            <div style="margin-bottom: 12px;">
+                <span class="ref-badge">बाफिया (BAFIA), २०७३</span>
+                <span class="ref-badge">नेपाल राष्ट्र बैंक ऐन, २०५८</span>
+                <span class="ref-badge">बैंकिङ कसूर ऐन, २०६४</span>
+                <span class="ref-badge">सम्पत्ति शुद्धीकरण ऐन, २०६४</span>
+                <span class="ref-badge">श्रम ऐन, २०७४</span>
+                <span class="ref-badge">राष्ट्र बैंक निर्देशन २०८०</span>
+            </div>
+            
+            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">💡 खोज सम्बन्धी सुझावहरू</h4>
+            <ul>
+                <li><strong>बहु-ऐन विश्लेषण:</strong> एकभन्दा बढी ऐन आकर्षित हुने जटिल कानुनी अवस्थाबारे सोध्न सक्नुहुन्छ (जस्तै: बैंकिङ कसूर र श्रम ऐन बीचको अन्तरसम्बन्ध)।</li>
+                <li><strong>रोमन नेपाली खोज:</strong> तपाईंले रोमन अंग्रेजीमा (जस्तै: <code>sanchalak ko yogyata</code>) लेखी पनि प्रश्न सोध्न सक्नुहुन्छ, उत्तर देवनागरी नेपालीमा प्राप्त हुनेछ।</li>
+                <li><strong>विशिष्ट दफाहरू:</strong> कानुनी दफा थाहा भएमा सिधै उल्लेख गर्नुहोस् (जस्तै: "बाफियाको दफा २९"), पोर्टलले सिधै सन्दर्भ खोज्नेछ।</li>
+            </ul>
+            
+            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">🔄 डाटाबेसको अवस्था</h4>
+            <p style="font-size: 0.82rem; color: #64748B; margin-bottom: 0;">
+                • <strong>अवस्था:</strong> सक्रिय र अद्यावधिक (Active)<br/>
+                • <strong>कानुनी बुँदाहरू:</strong> १८६५ दफाहरू<br/>
+                • <strong>अन्तिम परिमार्जन:</strong> जुन २०२६ (NRB का पछिल्ला परिपत्रहरू सहित)
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
