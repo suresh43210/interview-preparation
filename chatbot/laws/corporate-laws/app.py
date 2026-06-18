@@ -15,7 +15,7 @@ import re
 st.set_page_config(
     page_title="NexSight Law",
     page_icon="⚖️",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
@@ -24,7 +24,7 @@ st.set_page_config(
 # -------------------------------------------------------------------
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Mukta:wght@300;400;500;600;700;800;900&display=swap');
         
         header {visibility: hidden;}
         footer {visibility: hidden;}
@@ -35,45 +35,46 @@ st.markdown("""
             padding-bottom: 2rem !important;
             padding-left: 2rem !important;
             padding-right: 2rem !important;
-            max-width: 850px !important;
+            max-width: 950px !important;
         }
         
         /* Modern Theme Setup */
         .stApp {
             background-color: #F8FAFC !important;
-            color: #1E293B !important;
-            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif !important;
+            color: #0F172A !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
         }
         
         /* Force dark text and soft theme colors */
         .stApp p, .stApp span, .stApp div, .stApp li, .stApp label {
-            color: #334155 !important;
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            color: #0F172A !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
         }
         
         .main-title {
             font-size: 2.8rem;
             font-weight: 800;
-            background: -webkit-linear-gradient(45deg, #0A3B7C, #2563EB);
+            background: -webkit-linear-gradient(45deg, #0F172A, #1E40AF);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
             margin-bottom: 5px;
-            font-family: 'Outfit', sans-serif !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
             letter-spacing: -1px;
         }
         
         /* Sidebar layout styling */
         [data-testid="stSidebar"] {
             background-color: #ffffff !important;
-            border-right: 1px solid rgba(10, 59, 124, 0.06) !important;
+            border-right: 1px solid rgba(15, 23, 42, 0.06) !important;
         }
         [data-testid="stSidebar"] * {
-            color: #334155 !important;
+            color: #0F172A !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
         }
         [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-            color: #0A3B7C !important;
-            font-family: 'Outfit', sans-serif !important;
+            color: #1E40AF !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
             font-weight: 700 !important;
         }
         
@@ -89,8 +90,8 @@ st.markdown("""
         /* User Chat Message - Indigo Accent, Right Aligned */
         div[data-testid="stChatMessage"][aria-label*="user" i] {
             flex-direction: row-reverse !important;
-            background-color: rgba(37, 99, 235, 0.05) !important;
-            border: 1px solid rgba(37, 99, 235, 0.1) !important;
+            background-color: rgba(30, 64, 175, 0.05) !important;
+            border: 1px solid rgba(30, 64, 175, 0.1) !important;
             border-bottom-right-radius: 4px !important;
             margin-left: 10% !important;
         }
@@ -104,20 +105,20 @@ st.markdown("""
         /* Assistant Chat Message - Soft White, Left Aligned */
         div[data-testid="stChatMessage"][aria-label*="assistant" i] {
             background-color: #ffffff !important;
-            border: 1px solid rgba(10, 59, 124, 0.06) !important;
+            border: 1px solid rgba(15, 23, 42, 0.06) !important;
             border-bottom-left-radius: 4px !important;
             margin-right: 10% !important;
         }
         
         div[data-testid="stChatMessage"]:hover {
-            box-shadow: 0 8px 30px rgba(10, 59, 124, 0.05) !important;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04) !important;
         }
         
         /* Chat Content Typography Re-alignment */
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
             font-size: 0.92rem !important;
             line-height: 1.68 !important;
-            color: #334155 !important;
+            color: #0F172A !important;
             margin-bottom: 12px !important;
         }
         
@@ -130,7 +131,7 @@ st.markdown("""
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] li {
             font-size: 0.92rem !important;
             line-height: 1.68 !important;
-            color: #334155 !important;
+            color: #0F172A !important;
             margin-bottom: 8px !important;
         }
         
@@ -139,8 +140,8 @@ st.markdown("""
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h2,
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3,
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h4 {
-            color: #0A3B7C !important;
-            font-family: 'Outfit', sans-serif !important;
+            color: #1E40AF !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
             font-weight: 700 !important;
             margin-top: 22px !important;
             margin-bottom: 12px !important;
@@ -149,21 +150,21 @@ st.markdown("""
         
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3 {
             font-size: 1.15rem !important;
-            border-bottom: 1px solid rgba(10, 59, 124, 0.08) !important;
+            border-bottom: 1px solid rgba(30, 64, 175, 0.08) !important;
             padding-bottom: 6px !important;
         }
         
         /* Custom Blockquote (Key Summary Callout Box) */
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] blockquote {
-            border-left: 4px solid #F39200 !important;
-            background-color: rgba(243, 146, 0, 0.04) !important;
+            border-left: 4px solid #1E40AF !important;
+            background-color: rgba(30, 64, 175, 0.03) !important;
             padding: 14px 20px !important;
             border-radius: 4px 14px 14px 4px !important;
             margin: 18px 0 !important;
         }
         
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] blockquote p {
-            color: #0A3B7C !important;
+            color: #1E40AF !important;
             font-weight: 600 !important;
             font-size: 0.92rem !important;
             margin-bottom: 0 !important;
@@ -171,53 +172,85 @@ st.markdown("""
         
         /* Inline references code tags */
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] code {
-            background-color: rgba(10, 59, 124, 0.05) !important;
-            color: #0A3B7C !important;
+            background-color: rgba(30, 64, 175, 0.04) !important;
+            color: #1E40AF !important;
             padding: 3px 7px !important;
             border-radius: 6px !important;
             font-size: 0.85rem !important;
             font-weight: 600 !important;
-            border: 1px solid rgba(10, 59, 124, 0.08) !important;
-            font-family: 'Plus Jakarta Sans', monospace !important;
+            border: 1px solid rgba(30, 64, 175, 0.08) !important;
+            font-family: 'Inter', 'Mukta', monospace !important;
         }
         
         /* Source Citation Expanders styling */
         div[data-testid="stExpander"] {
-            border: 1px solid rgba(10, 59, 124, 0.06) !important;
+            border: 1px solid rgba(15, 23, 42, 0.06) !important;
             border-radius: 14px !important;
             background-color: #ffffff !important;
-            box-shadow: 0 4px 12px rgba(10, 59, 124, 0.01) !important;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.01) !important;
             margin-top: 10px !important;
             transition: all 0.3s ease !important;
         }
         div[data-testid="stExpander"]:hover {
-            border-color: rgba(10, 59, 124, 0.12) !important;
-            box-shadow: 0 6px 18px rgba(10, 59, 124, 0.03) !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.03) !important;
         }
         
-        /* Suggested Questions & Action Buttons */
+        /* General Action Buttons (Accent Blue #1E40AF) */
         div.stButton > button {
             width: 100%;
-            border-radius: 14px !important;
-            border: 1px solid rgba(10, 59, 124, 0.08) !important;
-            background: #ffffff !important;
-            color: #0A3B7C !important;
-            font-weight: 550 !important;
-            font-size: 0.88rem !important;
-            padding: 14px 18px !important;
-            box-shadow: 0 4px 12px rgba(10, 59, 124, 0.02) !important;
+            border-radius: 10px !important;
+            border: 1px solid #1E40AF !important;
+            background-color: #1E40AF !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            padding: 12px 14px !important;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1) !important;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
             white-space: pre-wrap !important;
             height: auto !important;
-            text-align: left !important;
-            line-height: 1.45 !important;
+            text-align: center !important;
         }
         div.stButton > button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.1) !important;
-            border-color: #2563EB !important;
-            color: #2563EB !important;
-            background: rgba(37, 99, 235, 0.02) !important;
+            transform: scale(1.02) !important;
+            background-color: #1D4ED8 !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(30, 64, 175, 0.2) !important;
+        }
+        
+        /* Suggested Questions Card-Style overrides */
+        div[data-testid="column"]:has(div.stButton) {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(15, 23, 42, 0.06) !important;
+            border-radius: 10px !important;
+            padding: 0px !important;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02) !important;
+            transition: all 0.25s ease-in-out !important;
+        }
+        div[data-testid="column"]:has(div.stButton):hover {
+            transform: translateY(-4px) !important;
+            border-color: #1E40AF !important;
+            box-shadow: 0 8px 24px rgba(30, 64, 175, 0.08) !important;
+        }
+        div[data-testid="column"] div.stButton > button {
+            background: transparent !important;
+            border: none !important;
+            color: #0F172A !important;
+            font-weight: 550 !important;
+            font-size: 0.88rem !important;
+            padding: 20px !important;
+            box-shadow: none !important;
+            height: 100% !important;
+            width: 100% !important;
+            text-align: left !important;
+            transform: none !important;
+        }
+        div[data-testid="column"] div.stButton > button:hover {
+            background: transparent !important;
+            color: #1E40AF !important;
+            box-shadow: none !important;
+            transform: none !important;
         }
         
         /* Suggested Questions Section Header */
@@ -233,11 +266,31 @@ st.markdown("""
         
         /* Chat Input Styling */
         .stChatFloatingInputContainer {
-            border-radius: 18px !important;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
             background-color: #ffffff !important;
             padding: 10px !important;
-            border: 1px solid rgba(10, 59, 124, 0.05) !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+        .stChatInput textarea {
+            border-radius: 12px !important;
+            font-family: 'Inter', 'Mukta', sans-serif !important;
+        }
+        
+        /* Disclaimer Box styling */
+        .disclaimer-box {
+            border-left: 3px solid #64748B;
+            background-color: rgba(100, 116, 139, 0.03);
+            padding: 12px 14px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: #64748B !important;
+        }
+        .disclaimer-box p, .disclaimer-box strong {
+            color: #64748B !important;
+            font-size: 0.82rem;
         }
         
         /* Mobile Responsive Adjustments */
@@ -466,6 +519,15 @@ with st.sidebar:
         st.caption("Powered by: **Claude Sonnet 4.6**")
     else:
         app_mode = "⚖️ Compliance Assistant"
+        
+    st.divider()
+    # Bilingual Legal Disclaimer Block
+    disclaimer_text = (
+        "⚠️ **Disclaimer**: This tool provides AI-based legal guidance for informational purposes only and does not constitute official legal counsel or binding legal advice."
+        if st.session_state.app_lang == "English"
+        else "⚠️ **अस्वीकरण**: यो उपकरणले सूचनामूलक उद्देश्यका लागि AI-आधारित कानुनी मार्गदर्शन मात्र प्रदान गर्दछ र यसलाई आधिकारिक कानुनी सल्लाह वा बाध्यकारी कानुनी राय मान्न सकिँदैन।"
+    )
+    st.markdown(f"<div class='disclaimer-box'>{disclaimer_text}</div>", unsafe_allow_html=True)
 
 # Session State & Main UI
 if "suggested_questions" not in st.session_state:
