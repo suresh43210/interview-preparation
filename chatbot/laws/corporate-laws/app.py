@@ -687,7 +687,7 @@ if app_mode == "📊 Monitoring Dashboard":
 col_title, col_toggle = st.columns([3, 1])
 with col_title:
     st.markdown(f"<div class='main-title' style='text-align: left; font-size: 2.3rem;'>{ui_title}</div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='color: #4b5563; font-size: 1.05rem; font-weight: 500; margin-bottom: 20px;'>{ui_subtitle}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='color: #4b5563; font-size: 1.05rem; font-weight: 500; margin-bottom: 8px;'>{ui_subtitle}</div>", unsafe_allow_html=True)
 with col_toggle:
     st.write("") # vertical spacing helper
     # Styled Toggle Switch for Language
@@ -728,8 +728,10 @@ if app_mode == "⚖️ Compliance Assistant":
                 }
                 .block-container {
                     height: 100vh !important;
-                    padding-bottom: 0px !important;
+                    padding-top: 0.5rem !important;
+                    padding-bottom: 0.5rem !important;
                     overflow: hidden !important;
+                    box-sizing: border-box !important;
                 }
             }
         </style>
@@ -737,7 +739,7 @@ if app_mode == "⚖️ Compliance Assistant":
 
 with col_main:
     # Scrollable container for chat history and real-time responses
-    chat_container = st.container(height=320, border=False)
+    chat_container = st.container(height=260, border=False)
 
     # Render Suggested Questions (Always Visible at the bottom of the chat history)
     st.markdown(sugg_heading, unsafe_allow_html=True)
