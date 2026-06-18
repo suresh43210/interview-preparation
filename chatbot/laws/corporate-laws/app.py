@@ -719,38 +719,27 @@ st.divider()
 # Render Chat Messages & Sidebar Desk Layout
 col_main, col_ref = st.columns([2.2, 1])
 
+# Prevent vertical scrolling on desktop for Compliance Assistant
+if app_mode == "⚖️ Compliance Assistant":
+    st.markdown("""
+        <style>
+            @media (min-width: 769px) {
+                .stApp {
+                    height: 100vh !important;
+                    overflow: hidden !important;
+                }
+                .block-container {
+                    height: 100vh !important;
+                    padding-bottom: 0px !important;
+                    overflow: hidden !important;
+                }
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
 with col_main:
-    for message in st.session_state.messages:
-        avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
-        with st.chat_message(message["role"], avatar=avatar):
-            st.markdown(message["content"])
-            if "sources" in message and message["sources"]:
-                if is_admin:
-                    col_exp1, col_exp2 = st.columns(2)
-                    with col_exp1:
-                        exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
-                        with st.expander(exp_title):
-                            seen = set()
-                            for src in message["sources"]:
-                                key = f"{src['act']}-{src['section']}"
-                                if key not in seen:
-                                    seen.add(key)
-                                    st.markdown(f"**{src['act']} ({src['section']})**")
-                                    st.caption(f"{src['text'][:150]}...")
-                    with col_exp2:
-                        tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
-                        with st.expander(tech_title):
-                            st.markdown(get_technical_flow_info())
-                else:
-                    exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
-                    with st.expander(exp_title):
-                        seen = set()
-                        for src in message["sources"]:
-                            key = f"{src['act']}-{src['section']}"
-                            if key not in seen:
-                                seen.add(key)
-                                st.markdown(f"**{src['act']} ({src['section']})**")
-                                st.caption(f"{src['text'][:150]}...")
+    # Scrollable container for chat history and real-time responses
+    chat_container = st.container(height=400, border=False)
 
     # Render Suggested Questions (Always Visible at the bottom of the chat history)
     st.markdown("<br>", unsafe_allow_html=True)
@@ -776,85 +765,118 @@ with col_main:
         prompt = st.session_state.suggested_prompt
         del st.session_state.suggested_prompt
 
-    if prompt:
-        with st.chat_message("user", avatar=USER_AVATAR):
-            st.markdown(prompt)
-        st.session_state.messages.append({"role": "user", "content": prompt})
-
-        with st.chat_message("assistant", avatar=BOT_AVATAR):
-            response_placeholder = st.empty()
-            
-            with st.spinner("🔍 कानुनका किताबहरू पल्टाउँदै..." if st.session_state.app_lang != "English" else "🔍 Consulting statutes..."):
-                # Prepare conversation history for memory
-                history_text = ""
-                recent_msgs = st.session_state.messages[-5:] if len(st.session_state.messages) > 1 else []
-                for m in recent_msgs:
-                    if m["role"] in ["user", "assistant"]:
-                        role_name = "User" if m["role"] == "user" else "AI"
-                        # Trim assistant content so prompt doesn't get too large, 500 chars is safer
-                        content_preview = m['content'][:500].replace('\n', ' ')
-                        history_text += f"{role_name}: {content_preview}\n"
-                        
-                english_query, nepali_query = translate_query(prompt, history=history_text)
-                
-                en_vector = embedder.encode(english_query).tolist()
-                np_vector = embedder.encode(nepali_query).tolist()
-                
-                try:
-                    # Fetch top 20 for better recall before reranking
-                    res_en = index.query(vector=en_vector, top_k=20, include_metadata=True)
-                    res_np = index.query(vector=np_vector, top_k=20, include_metadata=True)
-                except Exception as e:
-                    print(f"Pinecone Database search error: {e}")
-                    if st.session_state.app_lang == "English":
-                        response_placeholder.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+    with chat_container:
+        for message in st.session_state.messages:
+            avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
+            with st.chat_message(message["role"], avatar=avatar):
+                st.markdown(message["content"])
+                if "sources" in message and message["sources"]:
+                    if is_admin:
+                        col_exp1, col_exp2 = st.columns(2)
+                        with col_exp1:
+                            exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                            with st.expander(exp_title):
+                                seen = set()
+                                for src in message["sources"]:
+                                    key = f"{src['act']}-{src['section']}"
+                                    if key not in seen:
+                                        seen.add(key)
+                                        st.markdown(f"**{src['act']} ({src['section']})**")
+                                        st.caption(f"{src['text'][:150]}...")
+                        with col_exp2:
+                            tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                            with st.expander(tech_title):
+                                st.markdown(get_technical_flow_info())
                     else:
-                        response_placeholder.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
-                    st.stop()
-                
-                # Merge and deduplicate matches
-                all_matches = {}
-                for match in list(res_en.matches) + list(res_np.matches):
-                    if match.id not in all_matches:
-                        all_matches[match.id] = match
-                            
-                # RERANKING
-                # We use the english_query because the CrossEncoder is English-optimized
-                pairs = []
-                match_list = list(all_matches.values())
-                for match in match_list:
-                    pairs.append((english_query, match.metadata.get("text", "")))
-                    
-                if pairs:
-                    scores = reranker.predict(pairs)
-                    # Combine match and score into a tuple, sort by score descending, take top 4
-                    scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:4]
-                    best_matches = [sm[0] for sm in scored_matches]
-                else:
-                    best_matches = []
-                
-                contexts = []
-                source_metadata = []
-                
-                # Filter matches by an absolute threshold if needed, cross-encoder scores vary but > 0 usually means somewhat relevant.
-                for match in best_matches:
-                        act_name = match.metadata.get("Act Name", "Unknown Act")
-                        section = str(match.metadata.get("Section", "")).replace("**", "")
-                        text = match.metadata.get("text", "")
-                        
-                        contexts.append(f"Source: {act_name} - {section}\nText: {text}")
-                        source_metadata.append({"act": act_name, "section": section, "text": text})
-                
-                if not contexts:
-                    error_msg = "माफ गर्नुहोला, तपाईंको प्रश्नसँग सम्बन्धित कुनै पनि कानुनी दफा मेरो डाटाबेसमा भेटिएन।" if st.session_state.app_lang != "English" else "I apologize, but no relevant legal sections were found in the database for your query."
-                    response_placeholder.markdown(error_msg)
-                    st.session_state.messages.append({"role": "assistant", "content": error_msg, "sources": []})
-                    
-            if not contexts:
-                st.stop()
+                        exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                        with st.expander(exp_title):
+                            seen = set()
+                            for src in message["sources"]:
+                                key = f"{src['act']}-{src['section']}"
+                                if key not in seen:
+                                    seen.add(key)
+                                    st.markdown(f"**{src['act']} ({src['section']})**")
+                                    st.caption(f"{src['text'][:150]}...")
 
-            full_context = "\n\n---\n\n".join(contexts)
-            llm_prompt = f"""You are an excellent and reliable expert AI in Nepal Corporate Laws. 
+        if prompt:
+            with st.chat_message("user", avatar=USER_AVATAR):
+                st.markdown(prompt)
+            st.session_state.messages.append({"role": "user", "content": prompt})
+
+            with st.chat_message("assistant", avatar=BOT_AVATAR):
+                response_placeholder = st.empty()
+                
+                with st.spinner("🔍 कानुनका किताबहरू पल्टाउँदै..." if st.session_state.app_lang != "English" else "🔍 Consulting statutes..."):
+                    # Prepare conversation history for memory
+                    history_text = ""
+                    recent_msgs = st.session_state.messages[-5:] if len(st.session_state.messages) > 1 else []
+                    for m in recent_msgs:
+                        if m["role"] in ["user", "assistant"]:
+                            role_name = "User" if m["role"] == "user" else "AI"
+                            # Trim assistant content so prompt doesn't get too large, 500 chars is safer
+                            content_preview = m['content'][:500].replace('\n', ' ')
+                            history_text += f"{role_name}: {content_preview}\n"
+                            
+                    english_query, nepali_query = translate_query(prompt, history=history_text)
+                    
+                    en_vector = embedder.encode(english_query).tolist()
+                    np_vector = embedder.encode(nepali_query).tolist()
+                    
+                    try:
+                        # Fetch top 20 for better recall before reranking
+                        res_en = index.query(vector=en_vector, top_k=20, include_metadata=True)
+                        res_np = index.query(vector=np_vector, top_k=20, include_metadata=True)
+                    except Exception as e:
+                        print(f"Pinecone Database search error: {e}")
+                        if st.session_state.app_lang == "English":
+                            response_placeholder.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                        else:
+                            response_placeholder.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
+                        st.stop()
+                    
+                    # Merge and deduplicate matches
+                    all_matches = {}
+                    for match in list(res_en.matches) + list(res_np.matches):
+                        if match.id not in all_matches:
+                            all_matches[match.id] = match
+                                
+                    # RERANKING
+                    # We use the english_query because the CrossEncoder is English-optimized
+                    pairs = []
+                    match_list = list(all_matches.values())
+                    for match in match_list:
+                        pairs.append((english_query, match.metadata.get("text", "")))
+                        
+                    if pairs:
+                        scores = reranker.predict(pairs)
+                        # Combine match and score into a tuple, sort by score descending, take top 4
+                        scored_matches = sorted(zip(match_list, scores), key=lambda x: x[1], reverse=True)[:4]
+                        best_matches = [sm[0] for sm in scored_matches]
+                    else:
+                        best_matches = []
+                    
+                    contexts = []
+                    source_metadata = []
+                    
+                    # Filter matches by an absolute threshold if needed, cross-encoder scores vary but > 0 usually means somewhat relevant.
+                    for match in best_matches:
+                            act_name = match.metadata.get("Act Name", "Unknown Act")
+                            section = str(match.metadata.get("Section", "")).replace("**", "")
+                            text = match.metadata.get("text", "")
+                            
+                            contexts.append(f"Source: {act_name} - {section}\nText: {text}")
+                            source_metadata.append({"act": act_name, "section": section, "text": text})
+                    
+                    if not contexts:
+                        error_msg = "माफ गर्नुहोला, तपाईंको प्रश्नसँग सम्बन्धित कुनै पनि कानुनी दफा मेरो डाटाबेसमा भेटिएन।" if st.session_state.app_lang != "English" else "I apologize, but no relevant legal sections were found in the database for your query."
+                        response_placeholder.markdown(error_msg)
+                        st.session_state.messages.append({"role": "assistant", "content": error_msg, "sources": []})
+                        
+                if not contexts:
+                    st.stop()
+
+                full_context = "\n\n---\n\n".join(contexts)
+                llm_prompt = f"""You are an excellent and reliable expert AI in Nepal Corporate Laws. 
 Read the legal context provided below and answer the user's question clearly and accurately.
 
 LANGUAGE RULES FOR YOUR RESPONSE:
@@ -882,52 +904,66 @@ The suggestions must be in the same language as your response (English or Nepali
 
 Question: {prompt}"""
 
-            with st.spinner("✍️ आधिकारिक उत्तर तयार गर्दै (Claude)..." if st.session_state.app_lang != "English" else "✍️ Synthesizing legal analysis (Claude)..."):
-                full_response = ""
-                success = False
-                
-                # 1. Try Anthropic
-                if claude_client:
-                    anthropic_models = ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-8"]
-                    for model in anthropic_models:
-                        try:
-                            with claude_client.messages.stream(
-                                model=model, max_tokens=2048, messages=[{"role": "user", "content": llm_prompt}]
-                            ) as stream:
-                                for text in stream.text_stream:
-                                    full_response += text
-                                    # Hide suggestions markup during streaming
-                                    display_response = re.sub(r"\[Suggestions:.*", "", full_response, flags=re.DOTALL).strip()
-                                    response_placeholder.markdown(display_response + " ▌")
-                            success = True
-                            break
-                        except Exception as e:
-                            print(f"Generation failed for {model}: {e}")
-                            continue
+                with st.spinner("✍️ आधिकारिक उत्तर तयार गर्दै (Claude)..." if st.session_state.app_lang != "English" else "✍️ Synthesizing legal analysis (Claude)..."):
+                    full_response = ""
+                    success = False
+                    
+                    # 1. Try Anthropic
+                    if claude_client:
+                        anthropic_models = ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-8"]
+                        for model in anthropic_models:
+                            try:
+                                with claude_client.messages.stream(
+                                    model=model, max_tokens=2048, messages=[{"role": "user", "content": llm_prompt}]
+                                ) as stream:
+                                    for text in stream.text_stream:
+                                        full_response += text
+                                        # Hide suggestions markup during streaming
+                                        display_response = re.sub(r"\[Suggestions:.*", "", full_response, flags=re.DOTALL).strip()
+                                        response_placeholder.markdown(display_response + " ▌")
+                                success = True
+                                break
+                            except Exception as e:
+                                print(f"Generation failed for {model}: {e}")
+                                continue
 
-                if not success:
-                    if st.session_state.app_lang == "English":
-                        st.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                    if not success:
+                        if st.session_state.app_lang == "English":
+                            st.error("⚠️ The server is currently experiencing unusually high traffic. Please try again in a few minutes.")
+                        else:
+                            st.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
+
+                if success:
+                    # Extract suggestions
+                    suggestions = []
+                    match = re.search(r"\[Suggestions:\s*(.*?)\s*\]", full_response, re.DOTALL)
+                    if match:
+                        raw_suggs = match.group(1)
+                        suggestions = [s.strip() for s in raw_suggs.split("||") if s.strip()]
+                        full_response = re.sub(r"\[Suggestions:\s*(.*?)\s*\]", "", full_response, flags=re.DOTALL).strip()
+                    
+                    if suggestions:
+                        st.session_state.suggested_questions = suggestions
+                    
+                    response_placeholder.markdown(full_response)
+                    
+                    if is_admin:
+                        col_exp1, col_exp2 = st.columns(2)
+                        with col_exp1:
+                            exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
+                            with st.expander(exp_title):
+                                seen = set()
+                                for src in source_metadata:
+                                    key = f"{src['act']}-{src['section']}"
+                                    if key not in seen:
+                                        seen.add(key)
+                                        st.markdown(f"**{src['act']} ({src['section']})**")
+                                        st.caption(f"{src['text'][:150]}...")
+                        with col_exp2:
+                            tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
+                            with st.expander(tech_title):
+                                st.markdown(get_technical_flow_info())
                     else:
-                        st.error("⚠️ सर्भरमा अत्यधिक चाप भएकाले सेवा अस्थायी रूपमा अवरुद्ध छ। कृपया केही समयपछि पुनः प्रयास गर्नुहोला।")
-
-            if success:
-                # Extract suggestions
-                suggestions = []
-                match = re.search(r"\[Suggestions:\s*(.*?)\s*\]", full_response, re.DOTALL)
-                if match:
-                    raw_suggs = match.group(1)
-                    suggestions = [s.strip() for s in raw_suggs.split("||") if s.strip()]
-                    full_response = re.sub(r"\[Suggestions:\s*(.*?)\s*\]", "", full_response, flags=re.DOTALL).strip()
-                
-                if suggestions:
-                    st.session_state.suggested_questions = suggestions
-                
-                response_placeholder.markdown(full_response)
-                
-                if is_admin:
-                    col_exp1, col_exp2 = st.columns(2)
-                    with col_exp1:
                         exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
                         with st.expander(exp_title):
                             seen = set()
@@ -937,29 +973,15 @@ Question: {prompt}"""
                                     seen.add(key)
                                     st.markdown(f"**{src['act']} ({src['section']})**")
                                     st.caption(f"{src['text'][:150]}...")
-                    with col_exp2:
-                        tech_title = "⚙️ Technical Flow" if st.session_state.app_lang == "English" else "⚙️ प्राविधिक प्रक्रिया (Technical Flow)"
-                        with st.expander(tech_title):
-                            st.markdown(get_technical_flow_info())
-                else:
-                    exp_title = "📚 Legal Sources" if st.session_state.app_lang == "English" else "📚 कानुनी स्रोतहरू (Legal Sources)"
-                    with st.expander(exp_title):
-                        seen = set()
-                        for src in source_metadata:
-                            key = f"{src['act']}-{src['section']}"
-                            if key not in seen:
-                                seen.add(key)
-                                st.markdown(f"**{src['act']} ({src['section']})**")
-                                st.caption(f"{src['text'][:150]}...")
 
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": full_response,
-                    "sources": source_metadata
-                })
-                
-                # LOGGING: Save to SQLite database
-                database.log_interaction(prompt, full_response, source_metadata, "Claude")
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": full_response,
+                        "sources": source_metadata
+                    })
+                    
+                    # LOGGING: Save to SQLite database
+                    database.log_interaction(prompt, full_response, source_metadata, "Claude")
 
 with col_ref:
     if st.session_state.app_lang == "English":
