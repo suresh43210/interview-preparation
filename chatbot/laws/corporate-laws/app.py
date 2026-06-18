@@ -963,64 +963,54 @@ Question: {prompt}"""
 
 with col_ref:
     if st.session_state.app_lang == "English":
-        st.markdown("""
-        <div class="ref-card-box">
-            <h3>⚖️ Legal Reference Desk</h3>
-            <p>This system references the official statutes, regulations, and circulars of Nepal. Use this panel to understand the coverage and maximize search accuracy.</p>
-            
-            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">📚 Covered Statutes</h4>
-            <div style="margin-bottom: 12px;">
-                <span class="ref-badge">BAFIA, 2073</span>
-                <span class="ref-badge">NRB Act, 2058</span>
-                <span class="ref-badge">Banking Offence Act, 2064</span>
-                <span class="ref-badge">AML Act, 2064</span>
-                <span class="ref-badge">Labor Act, 2074</span>
-                <span class="ref-badge">NRB Directives 2080</span>
-            </div>
-            
-            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">💡 Query Recommendations</h4>
-            <ul>
-                <li><strong>Cross-Act Synthesis:</strong> Try asking questions that span multiple laws, such as comparing labor disputes and banking penalties.</li>
-                <li><strong>Romanized Input:</strong> You can type queries in Romanized Nepali (e.g. <code>sanchalak ko yogyata</code>). The portal will translate and respond in official Devanagari.</li>
-                <li><strong>Provision Search:</strong> Cite specific sections if known (e.g., "Section 29 of BAFIA") for direct reference lookup.</li>
-            </ul>
-            
-            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">🔄 Dataset Information</h4>
-            <p style="font-size: 0.82rem; color: #64748B; margin-bottom: 0;">
-                • <strong>Status:</strong> Active & Synced<br/>
-                • <strong>Knowledge Index:</strong> 1,865 provisions<br/>
-                • <strong>Last Update:</strong> June 2026 (including latest NRB circulars)
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="ref-card-box">
+<h3>⚖️ Legal Reference Desk</h3>
+<p>This system references the official statutes, regulations, and circulars of Nepal. Use this panel to understand the coverage and maximize search accuracy.</p>
+<h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">📚 Covered Statutes</h4>
+<div style="margin-bottom: 12px;">
+<span class="ref-badge">BAFIA, 2073</span>
+<span class="ref-badge">NRB Act, 2058</span>
+<span class="ref-badge">Banking Offence Act, 2064</span>
+<span class="ref-badge">AML Act, 2064</span>
+<span class="ref-badge">Labor Act, 2074</span>
+<span class="ref-badge">NRB Directives 2080</span>
+</div>
+<h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">💡 Query Recommendations</h4>
+<ul>
+<li><strong>Cross-Act Synthesis:</strong> Try asking questions that span multiple laws, such as comparing labor disputes and banking penalties.</li>
+<li><strong>Romanized Input:</strong> You can type queries in Romanized Nepali (e.g. <code>sanchalak ko yogyata</code>). The portal will translate and respond in official Devanagari.</li>
+<li><strong>Provision Search:</strong> Cite specific sections if known (e.g., "Section 29 of BAFIA") for direct reference lookup.</li>
+</ul>
+<h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">🔄 Dataset Information</h4>
+<p style="font-size: 0.82rem; color: #64748B; margin-bottom: 0;">
+• <strong>Status:</strong> Active & Synced<br/>
+• <strong>Knowledge Index:</strong> 1,865 provisions<br/>
+• <strong>Last Update:</strong> June 2026 (including latest NRB circulars)
+</p>
+</div>""", unsafe_allow_html=True)
     else:
-        st.markdown("""
-        <div class="ref-card-box">
-            <h3>⚖️ कानुनी सन्दर्भ सहायता</h3>
-            <p>यस पोर्टलले नेपालका आधिकारिक ऐन, नियम र नेपाल राष्ट्र बैंकका निर्देशनहरूलाई सन्दर्भ सामग्रीको रूपमा प्रयोग गर्दछ। पोर्टलको अधिकतम सदुपयोगका लागि तलका जानकारीहरू हेर्नुहोला।</p>
-            
-            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">📚 समेटिएका कानुनहरू</h4>
-            <div style="margin-bottom: 12px;">
-                <span class="ref-badge">बाफिया (BAFIA), २०७३</span>
-                <span class="ref-badge">नेपाल राष्ट्र बैंक ऐन, २०५८</span>
-                <span class="ref-badge">बैंकिङ कसूर ऐन, २०६४</span>
-                <span class="ref-badge">सम्पत्ति शुद्धीकरण ऐन, २०६४</span>
-                <span class="ref-badge">श्रम ऐन, २०७४</span>
-                <span class="ref-badge">राष्ट्र बैंक निर्देशन २०८०</span>
-            </div>
-            
-            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">💡 खोज सम्बन्धी सुझावहरू</h4>
-            <ul>
-                <li><strong>बहु-ऐन विश्लेषण:</strong> एकभन्दा बढी ऐन आकर्षित हुने जटिल कानुनी अवस्थाबारे सोध्न सक्नुहुन्छ (जस्तै: बैंकिङ कसूर र श्रम ऐन बीचको अन्तरसम्बन्ध)।</li>
-                <li><strong>रोमन नेपाली खोज:</strong> तपाईंले रोमन अंग्रेजीमा (जस्तै: <code>sanchalak ko yogyata</code>) लेखी पनि प्रश्न सोध्न सक्नुहुन्छ, उत्तर देवनागरी नेपालीमा प्राप्त हुनेछ।</li>
-                <li><strong>विशिष्ट दफाहरू:</strong> कानुनी दफा थाहा भएमा सिधै उल्लेख गर्नुहोस् (जस्तै: "बाफियाको दफा २९"), पोर्टलले सिधै सन्दर्भ खोज्नेछ।</li>
-            </ul>
-            
-            <h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">🔄 डाटाबेसको अवस्था</h4>
-            <p style="font-size: 0.82rem; color: #64748B; margin-bottom: 0;">
-                • <strong>अवस्था:</strong> सक्रिय र अद्यावधिक (Active)<br/>
-                • <strong>कानुनी बुँदाहरू:</strong> १८६५ दफाहरू<br/>
-                • <strong>अन्तिम परिमार्जन:</strong> जुन २०२६ (NRB का पछिल्ला परिपत्रहरू सहित)
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="ref-card-box">
+<h3>⚖️ कानुनी सन्दर्भ सहायता</h3>
+<p>यस पोर्टलले नेपालका आधिकारिक ऐन, नियम र नेपाल राष्ट्र बैंकका निर्देशनहरूलाई सन्दर्भ सामग्रीको रूपमा प्रयोग गर्दछ। पोर्टलको अधिकतम सदुपयोगका लागि तलका जानकारीहरू हेर्नुहोला।</p>
+<h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">📚 समेटिएका कानुनहरू</h4>
+<div style="margin-bottom: 12px;">
+<span class="ref-badge">बाफिया (BAFIA), २०७३</span>
+<span class="ref-badge">नेपाल राष्ट्र बैंक ऐन, २०५८</span>
+<span class="ref-badge">बैंकिङ कसूर ऐन, २०६४</span>
+<span class="ref-badge">सम्पत्ति शुद्धीकरण ऐन, २०६४</span>
+<span class="ref-badge">श्रम ऐन, २०७४</span>
+<span class="ref-badge">राष्ट्र बैंक निर्देशन २०८०</span>
+</div>
+<h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">💡 खोज सम्बन्धी सुझावहरू</h4>
+<ul>
+<li><strong>बहु-ऐन विश्लेषण:</strong> एकभन्दा बढी ऐन आकर्षित हुने जटिल कानुनी अवस्थाबारे सोध्न सक्नुहुन्छ (जस्तै: बैंकिङ कसूर र श्रम ऐन बीचको अन्तरसम्बन्ध)।</li>
+<li><strong>रोमन नेपाली खोज:</strong> तपाईंले रोमन अंग्रेजीमा (जस्तै: <code>sanchalak ko yogyata</code>) लेखी पनि प्रश्न सोध्न सक्नुहुन्छ, उत्तर देवनागरी नेपालीमा प्राप्त हुनेछ।</li>
+<li><strong>विशिष्ट दफाहरू:</strong> कानुनी दफा थाहा भएमा सिधै उल्लेख गर्नुहोस् (जस्तै: "बाफियाको दफा २९"), पोर्टलले सिधै सन्दर्भ खोज्नेछ।</li>
+</ul>
+<h4 style="margin-top:16px; font-weight:600; color:#1E40AF; font-size:0.95rem;">🔄 DATA/डाटाबेसको अवस्था</h4>
+<p style="font-size: 0.82rem; color: #64748B; margin-bottom: 0;">
+• <strong>अवस्था:</strong> सक्रिय र अद्यावधिक (Active)<br/>
+• <strong>कानुनी बुँदाहरू:</strong> १८६५ दफाहरू<br/>
+• <strong>अन्तिम परिमार्जन:</strong> जुन २०२६ (NRB का पछिल्ला परिपत्रहरू सहित)
+</p>
+</div>""", unsafe_allow_html=True)
