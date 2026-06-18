@@ -238,8 +238,8 @@ st.markdown("""
             border: none !important;
             color: #0F172A !important;
             font-weight: 550 !important;
-            font-size: 0.88rem !important;
-            padding: 20px !important;
+            font-size: 0.82rem !important;
+            padding: 12px 16px !important;
             box-shadow: none !important;
             height: 100% !important;
             width: 100% !important;
@@ -714,8 +714,6 @@ Please enter your compliance query or legal question below. The system will sear
             st.session_state.messages[0]["content"] = new_msg_welcome
         st.rerun()
 
-st.divider()
-
 # Render Chat Messages & Sidebar Desk Layout
 col_main, col_ref = st.columns([2.2, 1])
 
@@ -739,10 +737,9 @@ if app_mode == "⚖️ Compliance Assistant":
 
 with col_main:
     # Scrollable container for chat history and real-time responses
-    chat_container = st.container(height=400, border=False)
+    chat_container = st.container(height=320, border=False)
 
     # Render Suggested Questions (Always Visible at the bottom of the chat history)
-    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(sugg_heading, unsafe_allow_html=True)
 
     if st.session_state.get("suggested_questions"):
