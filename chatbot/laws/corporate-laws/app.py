@@ -221,30 +221,33 @@ st.markdown("""
         
         /* Suggested Questions Card-Style overrides */
         div[data-testid="column"]:has(div.stButton) {
-            background-color: #ffffff !important;
-            border: 1px solid rgba(15, 23, 42, 0.06) !important;
-            border-radius: 10px !important;
+            background: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(30, 64, 175, 0.08) !important;
+            border-radius: 8px !important;
             padding: 0px !important;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02) !important;
-            transition: all 0.25s ease-in-out !important;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.01) !important;
+            transition: all 0.2s ease-in-out !important;
         }
         div[data-testid="column"]:has(div.stButton):hover {
-            transform: translateY(-4px) !important;
+            transform: translateY(-2px) !important;
             border-color: #1E40AF !important;
-            box-shadow: 0 8px 24px rgba(30, 64, 175, 0.08) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.05) !important;
         }
         div[data-testid="column"] div.stButton > button {
             background: transparent !important;
             border: none !important;
-            color: #0F172A !important;
-            font-weight: 550 !important;
-            font-size: 0.82rem !important;
-            padding: 12px 16px !important;
+            color: #334155 !important;
+            font-weight: 500 !important;
+            font-size: 0.76rem !important;
+            padding: 8px 12px !important;
             box-shadow: none !important;
             height: 100% !important;
             width: 100% !important;
             text-align: left !important;
             transform: none !important;
+            line-height: 1.35 !important;
         }
         div[data-testid="column"] div.stButton > button:hover {
             background: transparent !important;
@@ -256,12 +259,12 @@ st.markdown("""
         /* Suggested Questions Section Header */
         .sugg-header {
             color: #64748B !important;
-            font-size: 0.88rem !important;
+            font-size: 0.76rem !important;
             font-weight: 700 !important;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-top: 24px !important;
-            margin-bottom: 12px !important;
+            letter-spacing: 0.5px;
+            margin-top: 10px !important;
+            margin-bottom: 6px !important;
         }
         
         /* Chat Input Styling */
