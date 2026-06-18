@@ -539,6 +539,7 @@ else:
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/6033/6033333.png", width=80)
     st.title(sidebar_title)
+    st.caption("Made by Suresh")
     st.markdown(sidebar_desc)
     st.divider()
     if st.button(btn_clear, use_container_width=True):
@@ -689,7 +690,8 @@ if app_mode == "📊 Monitoring Dashboard":
 # Main Header with Title & Language Toggle
 col_title, col_toggle = st.columns([3, 1])
 with col_title:
-    st.markdown(f"<div class='main-title' style='text-align: left; font-size: 2.3rem;'>{ui_title}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='main-title' style='text-align: left; font-size: 2.3rem; margin-bottom: 0px;'>{ui_title}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='color: #64748B; font-size: 0.85rem; font-weight: 600; margin-top: -5px; margin-bottom: 12px;'>Made by Suresh</div>", unsafe_allow_html=True)
     st.markdown(f"<div style='color: #4b5563; font-size: 1.05rem; font-weight: 500; margin-bottom: 8px;'>{ui_subtitle}</div>", unsafe_allow_html=True)
 with col_toggle:
     st.write("") # vertical spacing helper
